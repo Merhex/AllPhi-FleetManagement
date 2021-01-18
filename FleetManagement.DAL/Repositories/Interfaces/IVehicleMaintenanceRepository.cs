@@ -1,0 +1,9 @@
+﻿using FleetManagement.Models;
+
+namespace FleetManagement.DAL.Repositories.Interfaces
+{
+    public interface IVehicleMaintenanceRepository : IRepository<MotorVehicleMaintenance, int>
+    {
+
+    }
+}

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace FleetManagment.API.Write
+namespace FleetManagement.API.Write
 {
     public class Program
     {

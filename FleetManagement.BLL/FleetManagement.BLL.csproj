@@ -1,7 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="9.4.0" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FleetManagement.DAL\FleetManagement.DAL.csproj" />
+    <ProjectReference Include="..\FleetManagement.Mappings\FleetManagement.Mappings.csproj" />
+    <ProjectReference Include="..\FleetManagement.Models\FleetManagement.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Queries\Handlers\" />
+  </ItemGroup>
 
 </Project>

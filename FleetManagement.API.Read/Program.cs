@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace FleetManagment.Read
+namespace FleetManagement.Read
 {
     public class Program
     {
