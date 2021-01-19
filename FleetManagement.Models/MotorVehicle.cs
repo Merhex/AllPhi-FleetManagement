@@ -15,6 +15,14 @@ namespace FleetManagement.Models
         [Required]
         public string ChassisNumber { get; set; }
 
+        [MaxLength(50)]
+        [Required]
+        public string Brand { get; set; }
+
+        [MaxLength(50)]
+        [Required]
+        public string Model { get; set; }
+
         [Required]
         public bool Operational { get; set; }
 
