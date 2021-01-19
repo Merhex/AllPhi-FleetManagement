@@ -25,7 +25,8 @@ namespace FleetManagement.BLL.Validators
                 .InclusiveBetween(0, 999999);
 
             RuleFor(card => card.PropulsionTypes)
-                .IsInEnum();
+                .IsInEnum()
+                .WithMessage("The given propulsion type is not a valid option out of the option list.");
         }
     }
 }

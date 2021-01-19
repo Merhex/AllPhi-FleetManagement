@@ -9,7 +9,7 @@ namespace FleetManagement.BLL.Validators
         {
             RuleFor(motorVehicle => motorVehicle.ChassisNumber)
                 .Matches("[A-HJ-NPR-Z0-9]{17}")
-                .WithMessage("The given VIN number is incorrect. Please check the formatting.");
+                .WithMessage("Please check the VIN formatting. Has to have 17 characters, not containing letters O, I and Q.");
 
             RuleFor(motorVehicle => motorVehicle.BodyType)
                 .IsInEnum()
