@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.Tests", "Fl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.Mappings", "FleetManagement.Mappings\FleetManagement.Mappings.csproj", "{4770876B-D8E8-4019-A508-A84F79EDE481}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManagement.API.Configurations", "FleetManagement.API.Configurations\FleetManagement.API.Configurations.csproj", "{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,18 @@ Global
 		{4770876B-D8E8-4019-A508-A84F79EDE481}.Release|x64.Build.0 = Release|Any CPU
 		{4770876B-D8E8-4019-A508-A84F79EDE481}.Release|x86.ActiveCfg = Release|Any CPU
 		{4770876B-D8E8-4019-A508-A84F79EDE481}.Release|x86.Build.0 = Release|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|x64.Build.0 = Debug|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|x86.Build.0 = Debug|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|x64.ActiveCfg = Release|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|x64.Build.0 = Release|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|x86.ActiveCfg = Release|Any CPU
+		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

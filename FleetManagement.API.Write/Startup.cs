@@ -1,17 +1,12 @@
-using System.Text.Json.Serialization;
-using FleetManagement.API.Write.Filters;
+using FleetManagement.API.Configurations;
 using FleetManagement.BLL;
-using FleetManagement.BLL.Components;
-using FleetManagement.BLL.Components.Interfaces;
-using FleetManagement.BLL.Validators;
-using FleetManagement.BLL.Validators.Interfaces;
 using FleetManagement.DAL;
-using FleetManagement.DAL.Repositories;
-using FleetManagement.DAL.Repositories.Interfaces;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,19 +41,14 @@ namespace FleetManagement.API.Write
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddControllers(options => options.Filters.Add<ValidationFilter>())
-                .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve)
+                .AddControllers()
                 .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(BusinessLogicLayer).Assembly));
 
             services.AddMediatR(typeof(BusinessLogicLayer).Assembly);
 
             services.AddDbContext<FleetManagementContext>();
 
-            services.AddTransient<IDriverRepository, DriverRepository>();
-            services.AddTransient<IDriverComponent, DriverComponent>();
-            services.AddTransient<IMotorVehicleComponent, MotorVehicleComponent>();
-            services.AddTransient<IMotorVehicleRepository, MotorVehicleRepository>();
-            services.AddTransient<IBelgianNationalNumberValidator, BelgianNationalNumberValidator>();
+            services.AddRequiredDependenciesInContainer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +58,14 @@ namespace FleetManagement.API.Write
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseExceptionHandler(a => a.Run(async context =>
+            {
+                var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                var exception = exceptionHandlerPathFeature.Error;
+
+                await context.Response.WriteAsJsonAsync(new { error = exception.Message });
+            }));
 
             app.UseSwagger();
 

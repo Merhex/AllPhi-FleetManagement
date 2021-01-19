@@ -24,6 +24,16 @@ namespace FleetManagement.DAL.Repositories
         public void AddRange(IEnumerable<T> entities) =>
             _context.Set<T>().AddRange(entities);
 
+        public async Task<T> FindAsync(TKey key) =>
+            await _context.Set<T>().FindAsync(key);
+
+        public async Task<T> FindAsync(Expression<Func<T, bool>> predicate) =>
+            await _context.Set<T>().FindAsync(predicate);
+
+
+        public async Task<IEnumerable<T>> FindRangeAsync(Expression<Func<T, bool>> predicate) =>
+            await _context.Set<T>().Where(predicate).ToListAsync();
+
         public void Remove(T entity) =>
             _context.Set<T>().Remove(entity);
 

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.BLL
 {
-    public class BusinessLogicLayer
-    {
-    }
+    /// <summary>
+    /// The BLL assembly handle, for the registrations in the service container.
+    /// </summary>
+    public class BusinessLogicLayer { }
 }

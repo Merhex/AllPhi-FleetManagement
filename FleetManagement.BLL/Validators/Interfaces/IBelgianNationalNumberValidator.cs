@@ -9,6 +9,6 @@ namespace FleetManagement.BLL.Validators.Interfaces
     public interface IBelgianNationalNumberValidator
     {
         bool ValidateFormat(string nationalNumber);
-        bool ValidateChecksum(DateTime birthdate, string nationalNumber);
+        bool Validate(DateTime birthdate, string nationalNumber);
     }
 }

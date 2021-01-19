@@ -6,7 +6,8 @@ namespace FleetManagement.DAL.Repositories.Interfaces
 {
     public interface IDriverRepository : IRepository<Driver, int>
     {
-        Task<Driver> FindDriverByNationalNumber(string nationalNumber);
+        Task<Driver> FindDriverByNationalNumberAsync(string nationalNumber);
+        Task<Driver> FindByIdAsync(int driverId);
         Task<IEnumerable<Driver>> FindAllDrivers();
     }
 }

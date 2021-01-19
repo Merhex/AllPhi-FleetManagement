@@ -65,9 +65,10 @@ namespace FleetManagement.DAL.Migrations
                     b.Property<bool>("Blocked")
                         .HasColumnType("bit");
 
-                    b.Property<int>("CardNumber")
+                    b.Property<string>("CardNumber")
+                        .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
@@ -270,6 +271,11 @@ namespace FleetManagement.DAL.Migrations
                     b.Property<int>("BodyType")
                         .HasColumnType("int");
 
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("ChassisNumber")
                         .IsRequired()
                         .HasMaxLength(17)
@@ -278,6 +284,11 @@ namespace FleetManagement.DAL.Migrations
 
                     b.Property<int?>("DriverId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("Operational")
                         .HasColumnType("bit");

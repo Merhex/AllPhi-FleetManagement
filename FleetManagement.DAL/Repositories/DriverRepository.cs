@@ -14,7 +14,12 @@ namespace FleetManagement.DAL.Repositories
             await _context.Drivers
                 .ToListAsync();
 
-        public async Task<Driver> FindDriverByNationalNumber(string nationalNumber) =>
+        public async Task<Driver> FindByIdAsync(int driverId) =>
+            await _context.Drivers
+                .Include(d => d.DriverLicense)
+                .SingleOrDefaultAsync(d => d.Id == driverId);
+
+        public async Task<Driver> FindDriverByNationalNumberAsync(string nationalNumber) =>
             await _context.Drivers
                 .Include(d => d.DriverLicense)
                 .SingleOrDefaultAsync(d => d.NationalNumber == nationalNumber);

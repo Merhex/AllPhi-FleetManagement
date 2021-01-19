@@ -1,13 +1,16 @@
-﻿using FleetManagement.Models;
+﻿using FleetManagement.Mappings;
+using FleetManagement.Models;
 using MediatR;
 
 namespace FleetManagement.BLL.Commands
 {
-    public class CreateMotorVehicleCommand : IRequest
+    public record CreateMotorVehicleCommand : IRequest<CommandResponse>
     {
-        public string ChassisNumber { get; set; }
-        public bool Operational { get; set; }
-        public MotorVehicleBodyType BodyType { get; set; }
-        public MotorVehiclePropulsionType PropulsionType { get; set; }
+        public string ChassisNumber { get; init; }
+        public string Brand { get; init; }
+        public string Model { get; init; }
+        public bool Operational { get; init; }
+        public MotorVehicleBodyType BodyType { get; init; }
+        public MotorVehiclePropulsionType PropulsionType { get; init; }
     }
 }

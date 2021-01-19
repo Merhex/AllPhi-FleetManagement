@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.BLL.Components.Interfaces
 {
-    public interface IMotorVehicleComponent
+    public interface IFuelCardComponent
     {
-        Task<CommandResponse> CreateMotorVehicle(CreateMotorVehicleCommand command, CancellationToken token);
+        public Task<CommandResponse> CreateFuelCardAsync(CreateFuelCardCommand command, CancellationToken cancellationToken);
     }
 }

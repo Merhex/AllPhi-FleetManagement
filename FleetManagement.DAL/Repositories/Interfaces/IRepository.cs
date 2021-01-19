@@ -17,7 +17,6 @@ namespace FleetManagement.DAL.Repositories.Interfaces
         //Task<T> FindAsync(TKey key);
         //Task<T> FindAsync(Expression<Func<T, bool>> predicate);
         //Task<IEnumerable<T>> FindRangeAsync(Expression<Func<T, bool>> predicate);
-        //Task<IEnumerable<T>> GetAll();
         Task<bool> SaveAsync();
     }
 }

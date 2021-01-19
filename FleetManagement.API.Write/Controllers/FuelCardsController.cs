@@ -7,17 +7,17 @@ namespace FleetManagement.API.Write.Controllers
 {
     [Route("api/write/[controller]")]
     [ApiController]
-    public class MotorVehiclesController : ControllerBase
+    public class FuelCardsController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public MotorVehiclesController(IMediator mediator)
+        public FuelCardsController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateMotorVehicle(CreateMotorVehicleCommand command)
+        public async Task<IActionResult> CreateFuelCard(CreateFuelCardCommand command)
         {
             var response = await _mediator.Send(command);
 

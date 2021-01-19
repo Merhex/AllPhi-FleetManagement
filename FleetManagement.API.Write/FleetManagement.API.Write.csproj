@@ -21,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FleetManagement.BLL\FleetManagement.BLL.csproj" />
-    <ProjectReference Include="..\FleetManagement.DAL\FleetManagement.DAL.csproj" />
+    <ProjectReference Include="..\FleetManagement.API.Configurations\FleetManagement.API.Configurations.csproj" />
   </ItemGroup>
 
 </Project>

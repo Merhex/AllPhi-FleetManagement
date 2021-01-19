@@ -19,9 +19,25 @@ namespace FleetManagement.API.Write.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateDriver(CreateDriverCommand command)
         {
-            await _mediator.Send(command);
+            var response = await _mediator.Send(command);
 
-            return Ok();
+            return StatusCode(response.Status, response);
+        }
+
+        [HttpPut("activity")]
+        public async Task<IActionResult> ChangeActivityOfDriver(ChangeDriverActivityStatusCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return StatusCode(response.Status, response);
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateDriverInformation(UpdateDriverInformationCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return StatusCode(response.Status, response);
         }
     }
 }

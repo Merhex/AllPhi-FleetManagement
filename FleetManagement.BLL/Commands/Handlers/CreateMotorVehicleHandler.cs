@@ -1,11 +1,12 @@
 ﻿using FleetManagement.BLL.Components.Interfaces;
+using FleetManagement.Mappings;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.BLL.Commands.Handlers
 {
-    public class CreateMotorVehicleHandler : IRequestHandler<CreateMotorVehicleCommand>
+    public class CreateMotorVehicleHandler : IRequestHandler<CreateMotorVehicleCommand, CommandResponse>
     {
         private readonly IMotorVehicleComponent _motorVehicleComponent;
 
@@ -14,11 +15,9 @@ namespace FleetManagement.BLL.Commands.Handlers
             _motorVehicleComponent = motorVehicleComponent;
         }
 
-        public async Task<Unit> Handle(CreateMotorVehicleCommand command, CancellationToken cancellationToken)
+        public async Task<CommandResponse> Handle(CreateMotorVehicleCommand command, CancellationToken cancellationToken)
         {
-            await _motorVehicleComponent.CreateMotorVehicle(command);
-
-            return Unit.Value;
+            return await _motorVehicleComponent.CreateMotorVehicle(command, cancellationToken);
         }
     }
 }

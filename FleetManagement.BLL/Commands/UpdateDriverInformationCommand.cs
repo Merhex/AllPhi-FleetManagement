@@ -5,8 +5,9 @@ using System;
 
 namespace FleetManagement.BLL.Commands
 {
-    public record CreateDriverCommand : IRequest<CommandResponse>
+    public record UpdateDriverInformationCommand : IRequest<CommandResponse>
     {
+        public int DriverId { get; set; }
         public string FirstName { get; init; }
         public string LastName { get; init; }
         public DateTime DateOfBirth { get; init; }

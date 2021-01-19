@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using FleetManagement.BLL.Helpers;
 using FleetManagement.BLL.Validators.Interfaces;
+using FluentValidation;
 
 namespace FleetManagement.BLL.Validators
 {
@@ -14,7 +15,7 @@ namespace FleetManagement.BLL.Validators
         private readonly int _modulus = 97;
 
         public bool ValidateFormat(string nationalNumber) => HasCorrectFormat(nationalNumber);
-        public bool ValidateChecksum(DateTime birthdate, string nationalNumber) => ValidateWholeCard(birthdate, nationalNumber);
+        public bool Validate(DateTime birthdate, string nationalNumber) => ValidateWholeCard(birthdate, nationalNumber);
    
 
         #region PRIVATE IMPLEMENTATION DETAIL

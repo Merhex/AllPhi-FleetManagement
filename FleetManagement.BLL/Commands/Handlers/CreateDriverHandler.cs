@@ -1,11 +1,12 @@
 ﻿using FleetManagement.BLL.Components.Interfaces;
+using FleetManagement.Mappings;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.BLL.Commands.Handlers
 {
-    public class CreateDriverHandler : IRequestHandler<CreateDriverCommand>
+    public class CreateDriverHandler : IRequestHandler<CreateDriverCommand, CommandResponse>
     {
         private readonly IDriverComponent _driverComponent;
 
@@ -14,11 +15,9 @@ namespace FleetManagement.BLL.Commands.Handlers
             _driverComponent = driverComponent;
         }
 
-        public async Task<Unit> Handle(CreateDriverCommand command, CancellationToken cancellationToken)
+        public async Task<CommandResponse> Handle(CreateDriverCommand command, CancellationToken cancellationToken)
         {
-            await _driverComponent.CreateDriverAsync(command);
-
-            return Unit.Value;
-        }            
+            return await _driverComponent.CreateDriverAsync(command, cancellationToken);
+        }
     }
 }
