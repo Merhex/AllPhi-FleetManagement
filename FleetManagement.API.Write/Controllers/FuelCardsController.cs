@@ -23,5 +23,13 @@ namespace FleetManagement.API.Write.Controllers
 
             return StatusCode(response.Status, response);
         }
+
+        [HttpPatch("options")]
+        public async Task<IActionResult> AddFuelCardOptions(AddFuelCardOptionsCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return StatusCode(response.Status, response);
+        }
     }
 }

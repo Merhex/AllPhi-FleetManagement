@@ -18,6 +18,7 @@ namespace FleetManagement.API.Configurations
             services.AddTransient<IMotorVehicleRepository, MotorVehicleRepository>();
             services.AddTransient<IBelgianNationalNumberValidator, BelgianNationalNumberValidator>();
             services.AddTransient<IFuelCardRepository, FuelCardRepository>();
+            services.AddTransient<IFuelCardOptionRepository, FuelCardOptionRepository>();
             services.AddTransient<IFuelCardComponent, FuelCardComponent>();
 
             return services;
