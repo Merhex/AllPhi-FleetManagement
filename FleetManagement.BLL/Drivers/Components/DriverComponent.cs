@@ -26,7 +26,6 @@ namespace FleetManagement.BLL.Drivers.Components
         public async Task<ICommandResponse> ChangeDriverActitvityAsync(ChangeDriverActivityStatusCommand command, CancellationToken cancellationToken)
         {
             var driver = await _driverRepository.FindByIdAsync(command.DriverId, cancellationToken);
-
             if (driver is null) 
                 return CommandResponse.BadRequest("The driver with given national number does not exist.");
 
@@ -43,7 +42,6 @@ namespace FleetManagement.BLL.Drivers.Components
         public async Task<ICommandResponse> CreateDriverAsync(CreateDriverCommand command, CancellationToken cancellationToken) 
         {
             var match = await _driverRepository.FindDriverByNationalNumberAsync(command.NationalNumber, cancellationToken);
-
             if (match is not null) 
                 return CommandResponse.BadRequest("The driver already exists.");
                 
@@ -77,7 +75,6 @@ namespace FleetManagement.BLL.Drivers.Components
         public async Task<ICommandResponse> UpdateDriverAsync(UpdateDriverInformationCommand command, CancellationToken cancellationToken)
         {
             var driver = await _driverRepository.FindByIdAsync(command.DriverId, cancellationToken);
-
             if (driver is null)
                 return CommandResponse.BadRequest("The driver with given id does not exists.");
 

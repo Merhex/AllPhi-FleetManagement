@@ -24,8 +24,32 @@ namespace FleetManagement.API.Write.Controllers
             return StatusCode(response.Status, response);
         }
 
-        [HttpPost("create/licenseplate")]
+        [HttpPost("licensePlates/create")]
         public async Task<IActionResult> CreateLicensePlate(CreateLicensePlateCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return StatusCode(response.Status, response);
+        }
+
+        [HttpPost("licensePlates/attach")]
+        public async Task<IActionResult> AttachLicensePlate(AttachLicensePlateCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return StatusCode(response.Status, response);
+        }
+
+        [HttpPost("licensePlates/detach")]
+        public async Task<IActionResult> DetachLicensePlate(DetachLicensePlaceCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return StatusCode(response.Status, response);
+        }
+
+        [HttpPatch("licensePlates/status")]
+        public async Task<IActionResult> ChangeLicensePlateInUse(ChangeLicensePlateInUseStatusCommand command)
         {
             var response = await _mediator.Send(command);
 

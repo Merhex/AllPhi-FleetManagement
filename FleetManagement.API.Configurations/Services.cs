@@ -21,6 +21,7 @@ namespace FleetManagement.API.Configurations
             services.AddTransient<IMotorVehicleRepository, MotorVehicleRepository>();
             services.AddTransient<IFuelCardRepository, FuelCardRepository>();
             services.AddTransient<IFuelCardOptionRepository, FuelCardOptionRepository>();
+            services.AddTransient<ILicensePlateSnaphotRepository, LicensePlateSnapshotRepository>();
 
             services.AddTransient<IDriverComponent, DriverComponent>();
             services.AddTransient<IMotorVehicleComponent, MotorVehicleComponent>();

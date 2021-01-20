@@ -31,13 +31,11 @@ namespace FleetManagement.BLL.FuelCards.Components
         public async Task<ICommandResponse> AddFuelCardOptionsAsync(AddFuelCardOptionsCommand command, CancellationToken cancellationToken)
         {
             var fuelCard = await _fuelCardRepository.FindByIdAsync(command.FuelCardId, cancellationToken);
-
             if (fuelCard is null)
                 return CommandResponse.BadRequest("The fuel card with given id does not exist.");
 
             if (command.Options.Any() is not true)
                 return CommandResponse.BadRequest("An empty list of options is not valid.");
-
 
             var optionListFromCommand = new List<FuelCardOption>();
             foreach (var option in command.Options)
@@ -54,7 +52,6 @@ namespace FleetManagement.BLL.FuelCards.Components
                                 .Union(optionListFromCommand)
                                 .ToList();
 
-
             var saved = await _fuelCardRepository.SaveAsync();
             if (saved is not true)
                 return CommandResponse.BadRequest("Something went wrong saving to the database.");
@@ -66,7 +63,6 @@ namespace FleetManagement.BLL.FuelCards.Components
         public async Task<ICommandResponse> CreateFuelCardAsync(CreateFuelCardCommand command, CancellationToken cancellationToken)
         {
             var match = await _fuelCardRepository.FindByCardNumberAsync(command.CardNumber, cancellationToken);
-
             if (match is not null)
                 return CommandResponse.BadRequest("The fuel card with given card number already exists.");
 
@@ -98,7 +94,6 @@ namespace FleetManagement.BLL.FuelCards.Components
         public async Task<ICommandResponse> DeleteFuelCardAsync(DeleteFuelCardCommand command, CancellationToken cancellationToken)
         {
             var fuelCard = await _fuelCardRepository.FindByIdAsync(command.FuelCardId, cancellationToken);
-
             if (fuelCard is null)
                 return CommandResponse.BadRequest("The fuel card with given id does not exist.");
 

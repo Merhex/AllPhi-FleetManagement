@@ -17,7 +17,7 @@ namespace FleetManagement.BLL.MotorVehicles.Commands.Handlers
 
         public async Task<ICommandResponse> Handle(ChangeMotorVehicleOperationalStatusCommand command, CancellationToken cancellationToken)
         {
-            return await _motorVehicleComponent.ChangeOperationalStatusAsync(command, cancellationToken);
+            return await _motorVehicleComponent.ChangeMotorVehicleOperationalStatusAsync(command, cancellationToken);
         }
     }
 }

@@ -10,6 +10,10 @@ namespace FleetManagement.DAL.Repositories
     {
         public LicensePlateRepository(FleetManagementContext context) : base(context) { }
 
+        public async Task<LicensePlate> FindByIdAsync(int licensePlateId, CancellationToken cancellationToken) =>
+            await _context.LicensePlates
+                .SingleOrDefaultAsync(licensePlate => licensePlate.Id == licensePlateId, cancellationToken);
+
         public async Task<LicensePlate> FindByIdentifierAsync(string identifier, CancellationToken cancellationToken) =>
             await _context.LicensePlates
                 .SingleOrDefaultAsync(licensePlate => licensePlate.Identifier == identifier, cancellationToken);

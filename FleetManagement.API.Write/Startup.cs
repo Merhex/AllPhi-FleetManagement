@@ -42,7 +42,8 @@ namespace FleetManagement.API.Write
         {
             services
                 .AddControllers()
-                .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(BusinessLogicLayer).Assembly));
+                .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(BusinessLogicLayer).Assembly))
+                .AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
 
             services.AddRequiredDependenciesInContainer();
 
