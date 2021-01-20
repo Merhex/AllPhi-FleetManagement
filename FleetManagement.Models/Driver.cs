@@ -8,8 +8,6 @@ namespace FleetManagement.Models
         [Required]
         public bool Active { get; set; }
 
-        public int UserId { get; set; }
-
         [Required]
         public DriverLicense DriverLicense { get; set; }
 

@@ -12,7 +12,7 @@ namespace FleetManagement.Models
 
         [MaxLength(100)]
         [Required]
-        public string Street { get; set; }
+        public string AddressLine { get; set; }
 
         [MaxLength(50)]
         [Required]

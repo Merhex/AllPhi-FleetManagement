@@ -4,14 +4,16 @@ using FleetManagement.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FleetManagement.DAL.Migrations
 {
     [DbContext(typeof(FleetManagementContext))]
-    partial class FleetManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20210120081041_ChangedStreetColumnToAddressLine")]
+    partial class ChangedStreetColumnToAddressLine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -12,7 +12,7 @@ namespace FleetManagement.BLL.Commands
         public string LastName { get; init; }
         public DateTime DateOfBirth { get; init; }
         public string NationalNumber { get; init; }
-        public string Street { get; init; }
+        public string AddressLine { get; init; }
         public string City { get; init; }
         public int ZipCode { get; init; }
 

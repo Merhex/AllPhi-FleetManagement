@@ -17,7 +17,7 @@ namespace FleetManagement.DAL.Configurations
                 .HasMaxLength(50);
 
             builder
-                .Property(g => g.Street)
+                .Property(g => g.AddressLine)
                 .HasMaxLength(100);
         }
     }

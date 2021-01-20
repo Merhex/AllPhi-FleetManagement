@@ -1,8 +1,8 @@
 ﻿using FleetManagement.BLL.Commands;
+using FleetManagement.BLL.Commands.Response;
 using FleetManagement.BLL.Components.Interfaces;
 using FleetManagement.BLL.Validators;
 using FleetManagement.DAL.Repositories.Interfaces;
-using FleetManagement.Mappings;
 using FleetManagement.Models;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +22,7 @@ namespace FleetManagement.BLL.Components
             _motorVehicleValidator = motorVehicleValidator;
         }
 
-        public async Task<CommandResponse> CreateMotorVehicle(CreateMotorVehicleCommand command, CancellationToken token)
+        public async Task<ICommandResponse> CreateMotorVehicle(CreateMotorVehicleCommand command, CancellationToken token)
         {
             var match = await _motorVehicleRepository.FindByChassisNumber(command.ChassisNumber);
 
@@ -43,8 +43,8 @@ namespace FleetManagement.BLL.Components
                 return CommandResponse.BadRequest(validation);
 
             _motorVehicleRepository.Add(motorVehicle);
-            var saved = await _motorVehicleRepository.SaveAsync();
 
+            var saved = await _motorVehicleRepository.SaveAsync();
             if (saved is not true)
                 return CommandResponse.BadRequest("Something went wrong saving to the database.");
 

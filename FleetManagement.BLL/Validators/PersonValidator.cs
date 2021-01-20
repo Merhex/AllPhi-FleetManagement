@@ -33,7 +33,7 @@ namespace FleetManagement.BLL.Validators
                 .MaximumLength(50)
                 .NotEmpty();
 
-            RuleFor(person => person.Street)
+            RuleFor(person => person.AddressLine)
                 .MaximumLength(100)
                 .NotEmpty();
 

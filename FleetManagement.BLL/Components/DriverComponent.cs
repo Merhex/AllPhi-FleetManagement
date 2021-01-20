@@ -55,7 +55,7 @@ namespace FleetManagement.BLL.Components
                 LastName = command.LastName,
                 NationalNumber = command.NationalNumber,
                 City = command.City,
-                Street = command.Street,
+                AddressLine = command.AddressLine,
                 ZipCode = command.ZipCode
             };
 
@@ -64,6 +64,7 @@ namespace FleetManagement.BLL.Components
                 return CommandResponse.BadRequest(validation);
 
             _driverRepository.Add(driver);
+
             var saved = await _driverRepository.SaveAsync();
             if (saved is not true)
                 return CommandResponse.BadRequest("Something went wrong saving to the database.");
@@ -85,7 +86,7 @@ namespace FleetManagement.BLL.Components
             driver.LastName = command.LastName;
             driver.NationalNumber = command.NationalNumber;
             driver.City = command.City;
-            driver.Street = command.Street;
+            driver.AddressLine = command.AddressLine;
             driver.ZipCode = command.ZipCode;
 
             var validation = await _personValidator.ValidateAsync(driver, token);
