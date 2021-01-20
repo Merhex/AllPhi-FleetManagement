@@ -1,0 +1,20 @@
+﻿using FleetManagement.BLL.Shared.Interfaces;
+using FleetManagement.Models;
+using MediatR;
+using System;
+
+namespace FleetManagement.BLL.Drivers.Commands
+{
+    public record CreateDriverCommand : IRequest<ICommandResponse>
+    {
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public DateTime DateOfBirth { get; init; }
+        public string NationalNumber { get; init; }
+        public string AddressLine { get; init; }
+        public string City { get; init; }
+        public int ZipCode { get; init; }
+
+        public DriverLicense DriverLicense { get; init; }
+    }
+}

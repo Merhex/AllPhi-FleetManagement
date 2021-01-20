@@ -44,11 +44,12 @@ namespace FleetManagement.API.Write
                 .AddControllers()
                 .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(BusinessLogicLayer).Assembly));
 
+            services.AddRequiredDependenciesInContainer();
+
             services.AddMediatR(typeof(BusinessLogicLayer).Assembly);
 
             services.AddDbContext<FleetManagementContext>();
 
-            services.AddRequiredDependenciesInContainer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

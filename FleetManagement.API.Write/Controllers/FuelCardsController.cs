@@ -1,4 +1,4 @@
-﻿using FleetManagement.BLL.Commands;
+﻿using FleetManagement.BLL.FuelCards.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -26,6 +26,14 @@ namespace FleetManagement.API.Write.Controllers
 
         [HttpPatch("options")]
         public async Task<IActionResult> AddFuelCardOptions(AddFuelCardOptionsCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return StatusCode(response.Status, response);
+        }
+
+        [HttpDelete("card")]
+        public async Task<IActionResult> DeleteFuelCard(DeleteFuelCardCommand command)
         {
             var response = await _mediator.Send(command);
 

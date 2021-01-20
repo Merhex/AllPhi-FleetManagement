@@ -2,6 +2,7 @@
 using FleetManagement.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.Repositories
@@ -10,19 +11,19 @@ namespace FleetManagement.DAL.Repositories
     {
         public DriverRepository(FleetManagementContext context) : base (context) { }
 
-        public async Task<IEnumerable<Driver>> FindAllDrivers() =>
+        public async Task<IEnumerable<Driver>> FindAllDrivers(CancellationToken cancellationToken) =>
             await _context.Drivers
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-        public async Task<Driver> FindByIdAsync(int driverId) =>
+        public async Task<Driver> FindByIdAsync(int driverId, CancellationToken cancellationToken) =>
             await _context.Drivers
                 .Include(d => d.DriverLicense)
-                .SingleOrDefaultAsync(d => d.Id == driverId);
+                .SingleOrDefaultAsync(d => d.Id == driverId, cancellationToken);
 
-        public async Task<Driver> FindDriverByNationalNumberAsync(string nationalNumber) =>
+        public async Task<Driver> FindDriverByNationalNumberAsync(string nationalNumber, CancellationToken cancellationToken) =>
             await _context.Drivers
                 .Include(d => d.DriverLicense)
-                .SingleOrDefaultAsync(d => d.NationalNumber == nationalNumber);
+                .SingleOrDefaultAsync(d => d.NationalNumber == nationalNumber, cancellationToken);
            
     }
 }
