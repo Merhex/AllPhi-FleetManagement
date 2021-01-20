@@ -1,10 +1,10 @@
-﻿using FleetManagement.Mappings;
+﻿using FleetManagement.BLL.Commands.Response;
 using FleetManagement.Models;
 using MediatR;
 
 namespace FleetManagement.BLL.Commands
 {
-    public record CreateMotorVehicleCommand : IRequest<CommandResponse>
+    public record CreateMotorVehicleCommand : IRequest<ICommandResponse>
     {
         public string ChassisNumber { get; init; }
         public string Brand { get; init; }

@@ -1,11 +1,12 @@
-﻿using FleetManagement.Mappings;
+﻿using FleetManagement.BLL.Commands.Response;
+using FleetManagement.Mappings;
 using FleetManagement.Models;
 using MediatR;
 using System;
 
 namespace FleetManagement.BLL.Commands
 {
-    public record CreateDriverCommand : IRequest<CommandResponse>
+    public record CreateDriverCommand : IRequest<ICommandResponse>
     {
         public string FirstName { get; init; }
         public string LastName { get; init; }

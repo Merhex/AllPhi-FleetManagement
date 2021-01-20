@@ -1,11 +1,11 @@
-﻿using FleetManagement.Mappings;
+﻿using FleetManagement.BLL.Commands.Response;
 using FleetManagement.Models;
 using MediatR;
 using System;
 
 namespace FleetManagement.BLL.Commands
 {
-    public record UpdateDriverInformationCommand : IRequest<CommandResponse>
+    public record UpdateDriverInformationCommand : IRequest<ICommandResponse>
     {
         public int DriverId { get; set; }
         public string FirstName { get; init; }

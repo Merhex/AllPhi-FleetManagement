@@ -1,14 +1,9 @@
 ﻿using FleetManagement.BLL.Commands;
+using FleetManagement.BLL.Commands.Response;
 using FleetManagement.BLL.Components.Interfaces;
 using FleetManagement.BLL.Validators;
-using FleetManagement.BLL.Validators.Interfaces;
 using FleetManagement.DAL.Repositories.Interfaces;
-using FleetManagement.Mappings;
 using FleetManagement.Models;
-using FluentValidation;
-using FluentValidation.Results;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,7 +22,7 @@ namespace FleetManagement.BLL.Components
             _personValidator = validator;
         }
 
-        public async Task<CommandResponse> ChangeDriverActitvityAsync(ChangeDriverActivityStatusCommand command, CancellationToken token)
+        public async Task<ICommandResponse> ChangeDriverActitvityAsync(ChangeDriverActivityStatusCommand command, CancellationToken token)
         {
             var driver = await _driverRepository.FindByIdAsync(command.DriverId);
 
@@ -44,7 +39,7 @@ namespace FleetManagement.BLL.Components
             return CommandResponse.Ok();
         }
 
-        public async Task<CommandResponse> CreateDriverAsync(CreateDriverCommand command, CancellationToken token) 
+        public async Task<ICommandResponse> CreateDriverAsync(CreateDriverCommand command, CancellationToken token) 
         {
             var match = await _driverRepository.FindDriverByNationalNumberAsync(command.NationalNumber);
 
@@ -77,7 +72,7 @@ namespace FleetManagement.BLL.Components
             return CommandResponse.Created();
         }
 
-        public async Task<CommandResponse> UpdateDriverAsync(UpdateDriverInformationCommand command, CancellationToken token)
+        public async Task<ICommandResponse> UpdateDriverAsync(UpdateDriverInformationCommand command, CancellationToken token)
         {
             var driver = await _driverRepository.FindByIdAsync(command.DriverId);
 

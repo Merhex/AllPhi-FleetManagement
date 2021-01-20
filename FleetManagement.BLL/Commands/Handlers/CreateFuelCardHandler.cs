@@ -1,12 +1,12 @@
-﻿using FleetManagement.BLL.Components.Interfaces;
-using FleetManagement.Mappings;
+﻿using FleetManagement.BLL.Commands.Response;
+using FleetManagement.BLL.Components.Interfaces;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.BLL.Commands.Handlers
 {
-    public class CreateFuelCardHandler : IRequestHandler<CreateFuelCardCommand, CommandResponse>
+    public class CreateFuelCardHandler : IRequestHandler<CreateFuelCardCommand, ICommandResponse>
     {
         private readonly IFuelCardComponent _fuelCardComponent;
 
@@ -15,7 +15,7 @@ namespace FleetManagement.BLL.Commands.Handlers
             _fuelCardComponent = fuelCardComponent;
         }
 
-        public async Task<CommandResponse> Handle(CreateFuelCardCommand command, CancellationToken cancellationToken)
+        public async Task<ICommandResponse> Handle(CreateFuelCardCommand command, CancellationToken cancellationToken)
         {
             return await _fuelCardComponent.CreateFuelCardAsync(command, cancellationToken);
         }

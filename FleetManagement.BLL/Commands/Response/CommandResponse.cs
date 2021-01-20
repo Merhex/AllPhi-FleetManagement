@@ -4,22 +4,30 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 
-namespace FleetManagement.BLL.Commands
+namespace FleetManagement.BLL.Commands.Response
 {
-    public record CommandResponse
+    public record CommandResponse : ICommandResponse
     {
         public string Type { get; init; }
         public int Status { get; init; }
         public string Title { get; init; }
         public IEnumerable<object> Errors { get; init; }
 
-        public static CommandResponse Ok() => new CommandResponse 
+        /// <summary>
+        /// "The 200 (OK) status code indicates that the request has succeeded."
+        /// </summary>
+        /// <returns></returns>
+        public static CommandResponse Ok() => new CommandResponse
         { 
             Status = 200,
             Type = "https://tools.ietf.org/html/rfc7231#section-6.3.1",
             Title = "The 200 (OK) status code indicates that the request has succeeded."
         };
 
+        /// <summary>
+        /// "The 201 (Created) status code indicates that the request has been fulfilled and has resulted in one or more new resources being created."
+        /// </summary>
+        /// <returns></returns>
         public static CommandResponse Created() => new CommandResponse 
         { 
             Status = 201,
@@ -27,6 +35,14 @@ namespace FleetManagement.BLL.Commands
             Title = "The 201 (Created) status code indicates that the request has been fulfilled and has resulted in one or more new resources being created."
         };
 
+
+        /// <summary>
+        /// The 400 (Bad Request) status code indicates that the server cannot or will not process the request due to something that is perceived to be
+        /// a client error(e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
+        /// </summary>
+        /// <param name="validationResult">The validation result object used to extract validation errors from.</param>
+        /// <param name="message">A custom message, set as title of the response object.</param>
+        /// <returns></returns>
         public static CommandResponse BadRequest(ValidationResult validationResult, string message = "One or more validation errors have occured.") => new CommandResponse 
         { 
             Status = 400,
@@ -35,6 +51,12 @@ namespace FleetManagement.BLL.Commands
             Errors = ConvertValidationResultToErrorMessages(validationResult)
         };
 
+        /// <summary>
+        /// The 400 (Bad Request) status code indicates that the server cannot or will not process the request due to something that is perceived to be
+        /// a client error(e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
+        /// </summary>
+        /// <param name="message">A custom message, set as title of the response object.</param>
+        /// <returns></returns>
         public static CommandResponse BadRequest(string message) => new CommandResponse
         {
             Status = 400,
@@ -42,13 +64,18 @@ namespace FleetManagement.BLL.Commands
             Title = message,
         };
 
+        /// <summary>
+        ///  The 204 (No Content) status code indicates that the server has successfully fulfilled the request and that there is no additional
+        ///  content to send in the response payload body.Metadata in the response header fields refer to the target resource and its selected
+        ///  representation after the requested action was applied.
+        /// </summary>
+        /// <returns></returns>
         public static CommandResponse NoContent() => new CommandResponse
         {
             Status = 204,
             Type = "https://tools.ietf.org/html/rfc7231#section-6.3.2",
             Title = "The 204 (No Content) status code indicates that the server has successfully fulfilled the request and that there is no additional content to send in the response payload body."
         };
-
 
         private static IEnumerable<object> ConvertValidationResultToErrorMessages(ValidationResult result)
         {
