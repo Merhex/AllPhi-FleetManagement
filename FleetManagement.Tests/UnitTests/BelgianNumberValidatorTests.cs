@@ -1,8 +1,5 @@
-﻿using FleetManagement.BLL.Helpers;
-using FleetManagement.BLL.Validators;
-using FleetManagement.BLL.Validators.Interfaces;
-using FleetManagement.Models;
-using FluentValidation;
+﻿using FleetManagement.BLL.Shared.Validators;
+using FleetManagement.BLL.Shared.Validators.Interfaces;
 using NUnit.Framework;
 using System;
 

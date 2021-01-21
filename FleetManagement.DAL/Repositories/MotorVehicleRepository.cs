@@ -17,14 +17,10 @@ namespace FleetManagement.DAL.Repositories
 
         public async Task<MotorVehicle> FindByIdAsync(int motorVehicleId, CancellationToken cancellationToken) =>
             await _context.MotorVehicles
-                    .SingleOrDefaultAsync(m => m.Id == motorVehicleId, cancellationToken);
-
-        public async Task<MotorVehicle> FindByIdWithLicensePlatesAsync(int motorVehicleId, CancellationToken cancellationToken) =>
-            await _context.MotorVehicles
                     .Include(motorVehicle => motorVehicle.LicensePlates)
                     .SingleOrDefaultAsync(m => m.Id == motorVehicleId, cancellationToken);
 
-        public async Task<MotorVehicle> FindWithLicensePlateIdAsync(int licensePlateId, CancellationToken cancellationToken) =>
+        public async Task<MotorVehicle> FindByLicensePlateIdAsync(int licensePlateId, CancellationToken cancellationToken) =>
             await _context.MotorVehicles
                     .Include(motorVehicle => motorVehicle.LicensePlates)
                     .Where(motorVehicle => motorVehicle.LicensePlates

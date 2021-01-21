@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.BLL.MotorVehicles.Commands.Handlers
 {
-    public class AttachLicensePlateHandler : IRequestHandler<AttachLicensePlateCommand, ICommandResponse>
+    public class AssignLicensePlateHandler : IRequestHandler<AssignLicensePlateCommand, ICommandResponse>
     {
         private readonly IMotorVehicleComponent _motorVehicleComponent;
 
-        public AttachLicensePlateHandler(IMotorVehicleComponent motorVehicleComponent)
+        public AssignLicensePlateHandler(IMotorVehicleComponent motorVehicleComponent)
         {
             _motorVehicleComponent = motorVehicleComponent;
         }
 
-        public async Task<ICommandResponse> Handle(AttachLicensePlateCommand command, CancellationToken cancellationToken)
+        public async Task<ICommandResponse> Handle(AssignLicensePlateCommand command, CancellationToken cancellationToken)
         {
-            return await _motorVehicleComponent.AttachLicensePlateToMotorVehicleAsync(command, cancellationToken);
+            return await _motorVehicleComponent.AssignLicensePlateToMotorVehicleAsync(command, cancellationToken);
         }
     }
 }

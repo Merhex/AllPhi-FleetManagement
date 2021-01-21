@@ -32,16 +32,16 @@ namespace FleetManagement.API.Write.Controllers
             return StatusCode(response.Status, response);
         }
 
-        [HttpPost("licensePlates/attach")]
-        public async Task<IActionResult> AttachLicensePlate(AttachLicensePlateCommand command)
+        [HttpPost("licensePlates/assign")]
+        public async Task<IActionResult> AssignLicensePlate(AssignLicensePlateCommand command)
         {
             var response = await _mediator.Send(command);
 
             return StatusCode(response.Status, response);
         }
 
-        [HttpPost("licensePlates/detach")]
-        public async Task<IActionResult> DetachLicensePlate(DetachLicensePlaceCommand command)
+        [HttpPost("licensePlates/withdraw")]
+        public async Task<IActionResult> WithdrawLicensePlate(WithdrawLicensePlateCommand command)
         {
             var response = await _mediator.Send(command);
 
@@ -50,6 +50,14 @@ namespace FleetManagement.API.Write.Controllers
 
         [HttpPatch("licensePlates/status")]
         public async Task<IActionResult> ChangeLicensePlateInUse(ChangeLicensePlateInUseStatusCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return StatusCode(response.Status, response);
+        }
+
+        [HttpDelete("licensePlates/delete")]
+        public async Task<IActionResult> DeleteLicensePlate(DeleteLicensePlateCommand command)
         {
             var response = await _mediator.Send(command);
 

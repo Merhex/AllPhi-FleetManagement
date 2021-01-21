@@ -16,14 +16,14 @@ namespace FleetManagement.BLL.MotorVehicles.Components
     {
         private readonly IMotorVehicleRepository _motorVehicleRepository;
         private readonly ILicensePlateRepository _licensePlateRepository;
-        private readonly ILicensePlateSnaphotRepository _licensePlateSnaphotRepository;
+        private readonly ILicensePlateSnapshotRepository _licensePlateSnaphotRepository;
         private readonly LicensePlateValidator _licensePlateValidator;
         private readonly MotorVehicleValidator _motorVehicleValidator;
 
         public MotorVehicleComponent(
             IMotorVehicleRepository motorVehicleRepository,
             ILicensePlateRepository licensePlateRepository,
-            ILicensePlateSnaphotRepository licensePlateSnaphotRepository,
+            ILicensePlateSnapshotRepository licensePlateSnaphotRepository,
             LicensePlateValidator licensePlateValidator,
             MotorVehicleValidator motorVehicleValidator)
         {
@@ -34,20 +34,24 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             _motorVehicleValidator = motorVehicleValidator;
         }
 
-        public async Task<ICommandResponse> AttachLicensePlateToMotorVehicleAsync(AttachLicensePlateCommand command, CancellationToken cancellationToken)
+        public async Task<ICommandResponse> AssignLicensePlateToMotorVehicleAsync(AssignLicensePlateCommand command, CancellationToken cancellationToken)
         {
             var licensePlate = await _licensePlateRepository.FindByIdAsync(command.LicensePlateId, cancellationToken);
-            var motorVehicle = await _motorVehicleRepository.FindByIdWithLicensePlatesAsync(command.MotorVehicleId, cancellationToken);
             if (licensePlate is null)
                 return CommandResponse.BadRequest("Could not find the license plate with given id.");
             if (licensePlate.InUse)
-                return CommandResponse.BadRequest("The given license plate is already in use. Please deactive the license plate before assigning.");
+                return CommandResponse.BadRequest("The given license plate is already in use. Please detach the license plate before assigning.");
+
+            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdAsync(licensePlate.Id, cancellationToken);
+            if (motorVehicle is not null)
+                if (motorVehicle.Id == command.MotorVehicleId)
+                    return CommandResponse.NoContent();
+                else
+                    return CommandResponse.BadRequest($"This license plate already has been assigned. Please withdraw the license plate from the vehicle {motorVehicle.Brand}, {motorVehicle.Model} first.");
+
+            motorVehicle = await _motorVehicleRepository.FindByIdAsync(command.MotorVehicleId, cancellationToken);
             if (motorVehicle is null)
                 return CommandResponse.BadRequest("Could not find the motor vehicle with given id.");
-
-            var alreadyAssigned = await _motorVehicleRepository.FindWithLicensePlateIdAsync(licensePlate.Id, cancellationToken);
-            if (alreadyAssigned is not null)
-                return CommandResponse.BadRequest("The is already a vehicle who has this license plate assigned to. Please remove the plate from this vehicle first.");
 
 
             motorVehicle.LicensePlates.Add(licensePlate);
@@ -70,16 +74,16 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             if (licensePlate.InUse == command.InUse)
                 return CommandResponse.NoContent();
 
-            var motorVehicle = await _motorVehicleRepository.FindWithLicensePlateIdAsync(licensePlate.Id, cancellationToken);
+            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdAsync(licensePlate.Id, cancellationToken);
             if (motorVehicle is null)
-                return CommandResponse.BadRequest("You can not put a plate in use, who is not assigned to a car.");
+                return CommandResponse.BadRequest("You can not put a plate in use, that is not assigned to a car.");
 
             var anyLicensePlateInUse = motorVehicle.LicensePlates
                                         .Where(licensePlate => licensePlate.InUse)
                                         .Any();
 
             if (anyLicensePlateInUse is true && command.InUse is true)
-                return CommandResponse.BadRequest("There is already a plate in use on this motor vehicle. Please deactive this plate first.");
+                return CommandResponse.BadRequest("There is already a plate in use on this motor vehicle. Please detach that plate first.");
 
             var snapshot = new LicensePlateSnapshot 
             { 
@@ -183,10 +187,10 @@ namespace FleetManagement.BLL.MotorVehicles.Components
                 return CommandResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.NoContent();
+            return CommandResponse.Ok();
         }
 
-        public async Task<ICommandResponse> DetachLicensePlateFromMotorVehicleAsync(DetachLicensePlaceCommand command, CancellationToken cancellationToken)
+        public async Task<ICommandResponse> WithdrawLicensePlateFromMotorVehicleAsync(WithdrawLicensePlateCommand command, CancellationToken cancellationToken)
         {
             var licensePlate = await _licensePlateRepository.FindByIdAsync(command.LicensePlateId, cancellationToken);
             if (licensePlate is null)
@@ -194,7 +198,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             if (licensePlate.InUse)
                 return CommandResponse.BadRequest("The given license plate is in use. Please deactive the license plate before removing.");
 
-            var motorVehicle = await _motorVehicleRepository.FindWithLicensePlateIdAsync(licensePlate.Id, cancellationToken);
+            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdAsync(licensePlate.Id, cancellationToken);
             if (motorVehicle is null)
                 return CommandResponse.NoContent();
 

@@ -3,7 +3,7 @@ using FleetManagement.Models;
 
 namespace FleetManagement.DAL.Repositories
 {
-    public class LicensePlateSnapshotRepository : Repository<LicensePlateSnapshot, int>, ILicensePlateSnaphotRepository
+    public class LicensePlateSnapshotRepository : Repository<LicensePlateSnapshot, int>, ILicensePlateSnapshotRepository
     {
         public LicensePlateSnapshotRepository(FleetManagementContext context) : base(context) { }
     }

@@ -8,7 +8,6 @@ namespace FleetManagement.DAL.Repositories.Interfaces
     {
         Task<MotorVehicle> FindByChassisNumber(string chassisNumber, CancellationToken cancellationToken);
         Task<MotorVehicle> FindByIdAsync(int motorVehicleId, CancellationToken cancellationToken);
-        Task<MotorVehicle> FindByIdWithLicensePlatesAsync(int motorVehicleId, CancellationToken cancellationToken);
-        Task<MotorVehicle> FindWithLicensePlateIdAsync(int licensePlateId, CancellationToken cancellationToken);
+        Task<MotorVehicle> FindByLicensePlateIdAsync(int licensePlateId, CancellationToken cancellationToken);
     }
 }

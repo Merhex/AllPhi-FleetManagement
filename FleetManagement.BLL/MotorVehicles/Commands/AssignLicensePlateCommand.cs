@@ -3,8 +3,9 @@ using MediatR;
 
 namespace FleetManagement.BLL.MotorVehicles.Commands
 {
-    public record DetachLicensePlaceCommand : IRequest<ICommandResponse>
+    public record AssignLicensePlateCommand : IRequest<ICommandResponse>
     {
+        public int MotorVehicleId { get; init; }
         public int LicensePlateId { get; set; }
     }
 }
