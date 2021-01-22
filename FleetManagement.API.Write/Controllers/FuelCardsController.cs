@@ -1,7 +1,7 @@
-﻿using FleetManagement.BLL.FuelCards.Commands;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using FleetManagement.API.Write.Commands;
 
 namespace FleetManagement.API.Write.Controllers
 {

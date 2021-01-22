@@ -1,7 +1,7 @@
-﻿using FleetManagement.BLL.Drivers.Commands;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using FleetManagement.API.Write.Commands;
 
 namespace FleetManagement.API.Write.Controllers
 {
@@ -21,7 +21,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return StatusCode(response.Status, command);
         }
 
         [HttpPut("activity")]
@@ -33,7 +33,7 @@ namespace FleetManagement.API.Write.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateDriverInformation(UpdateDriverInformationCommand command)
+        public async Task<IActionResult> UpdateDriverInformation(UpdatePersonInformationCommand command)
         {
             var response = await _mediator.Send(command);
 

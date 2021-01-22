@@ -5,18 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="FluentValidation" Version="9.4.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FleetManagement.DAL\FleetManagement.DAL.csproj" />
-    <ProjectReference Include="..\FleetManagement.Mappings\FleetManagement.Mappings.csproj" />
     <ProjectReference Include="..\FleetManagement.Models\FleetManagement.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Drivers\Queries\Handlers\" />
   </ItemGroup>
 
 </Project>

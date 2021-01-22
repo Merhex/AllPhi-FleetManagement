@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.API.Read", "FleetManagement.API.Read\FleetManagement.API.Read.csproj", "{C2BFF8D4-3234-4989-8778-D8319A0C8617}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.API.Write", "FleetManagement.API.Write\FleetManagement.API.Write.csproj", "{21F4E65B-D873-4A3E-BF43-E83F1997FB4C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.BLL", "FleetManagement.BLL\FleetManagement.BLL.csproj", "{4D3EF13A-575F-4A34-A68E-1D6648C2ED25}"
@@ -15,9 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.Models", "F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.Tests", "FleetManagement.Tests\FleetManagement.Tests.csproj", "{890A8B4A-D386-4757-BA2B-5E42011432B7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.Mappings", "FleetManagement.Mappings\FleetManagement.Mappings.csproj", "{4770876B-D8E8-4019-A508-A84F79EDE481}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManagement.API.Configurations", "FleetManagement.API.Configurations\FleetManagement.API.Configurations.csproj", "{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.API.Configurations", "FleetManagement.API.Configurations\FleetManagement.API.Configurations.csproj", "{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,18 +25,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Debug|x64.Build.0 = Debug|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Debug|x86.Build.0 = Debug|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Release|x64.ActiveCfg = Release|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Release|x64.Build.0 = Release|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Release|x86.ActiveCfg = Release|Any CPU
-		{C2BFF8D4-3234-4989-8778-D8319A0C8617}.Release|x86.Build.0 = Release|Any CPU
 		{21F4E65B-D873-4A3E-BF43-E83F1997FB4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{21F4E65B-D873-4A3E-BF43-E83F1997FB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21F4E65B-D873-4A3E-BF43-E83F1997FB4C}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -101,18 +85,6 @@ Global
 		{890A8B4A-D386-4757-BA2B-5E42011432B7}.Release|x64.Build.0 = Release|Any CPU
 		{890A8B4A-D386-4757-BA2B-5E42011432B7}.Release|x86.ActiveCfg = Release|Any CPU
 		{890A8B4A-D386-4757-BA2B-5E42011432B7}.Release|x86.Build.0 = Release|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Debug|x64.Build.0 = Debug|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Debug|x86.Build.0 = Debug|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Release|x64.ActiveCfg = Release|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Release|x64.Build.0 = Release|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Release|x86.ActiveCfg = Release|Any CPU
-		{4770876B-D8E8-4019-A508-A84F79EDE481}.Release|x86.Build.0 = Release|Any CPU
 		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|x64.ActiveCfg = Debug|Any CPU

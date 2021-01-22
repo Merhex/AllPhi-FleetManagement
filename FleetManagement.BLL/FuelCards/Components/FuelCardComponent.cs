@@ -1,8 +1,7 @@
-﻿using FleetManagement.BLL.FuelCards.Commands;
-using FleetManagement.BLL.FuelCards.Components.Interfaces;
+﻿using FleetManagement.BLL.FuelCards.Components.Interfaces;
+using FleetManagement.BLL.FuelCards.Contracts;
 using FleetManagement.BLL.FuelCards.Validators;
 using FleetManagement.BLL.Shared;
-using FleetManagement.BLL.Shared.Interfaces;
 using FleetManagement.DAL.Repositories.Interfaces;
 using FleetManagement.Models;
 using System.Collections.Generic;
@@ -28,22 +27,22 @@ namespace FleetManagement.BLL.FuelCards.Components
             _fuelCardValidator = fuelCardValidator;
         }
 
-        public async Task<ICommandResponse> AddFuelCardOptionsAsync(AddFuelCardOptionsCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> AddFuelCardOptionsAsync(IAddFuelCardOptionsContract contract, CancellationToken cancellationToken)
         {
-            var fuelCard = await _fuelCardRepository.FindByIdAsync(command.FuelCardId, cancellationToken);
+            var fuelCard = await _fuelCardRepository.FindByIdAsync(contract.FuelCardId, cancellationToken);
             if (fuelCard is null)
-                return CommandResponse.BadRequest("The fuel card with given id does not exist.");
+                return ComponentResponse.BadRequest("The fuel card with given id does not exist.");
 
-            if (command.Options.Any() is not true)
-                return CommandResponse.BadRequest("An empty list of options is not valid.");
+            if (contract.Options.Any() is not true)
+                return ComponentResponse.BadRequest("An empty list of options is not valid.");
 
             var optionListFromCommand = new List<FuelCardOption>();
-            foreach (var option in command.Options)
+            foreach (var option in contract.Options)
             {
                 var match = await _fuelCardOptions.FindByNameAsync(option, cancellationToken);
 
                 if (match is null) 
-                    return CommandResponse.BadRequest($"The option with name {option} is not valid option.");
+                    return ComponentResponse.BadRequest($"The option with name {option} is not valid option.");
                 else 
                     optionListFromCommand.Add(match);
             }
@@ -54,57 +53,57 @@ namespace FleetManagement.BLL.FuelCards.Components
 
             var saved = await _fuelCardRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.Ok();
+            return ComponentResponse.Ok();
         }
 
-        public async Task<ICommandResponse> CreateFuelCardAsync(CreateFuelCardCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> CreateFuelCardAsync(ICreateFuelCardContract contract, CancellationToken cancellationToken)
         {
-            var match = await _fuelCardRepository.FindByCardNumberAsync(command.CardNumber, cancellationToken);
+            var match = await _fuelCardRepository.FindByCardNumberAsync(contract.CardNumber, cancellationToken);
             if (match is not null)
-                return CommandResponse.BadRequest("The fuel card with given card number already exists.");
+                return ComponentResponse.BadRequest("The fuel card with given card number already exists.");
 
             var fuelCard = new FuelCard
             {
-                AuthenticationType = command.AuthenticationType,
+                AuthenticationType = (FuelCardAuthenticationType) contract.AuthenticationType,
+                PropulsionTypes = (MotorVehiclePropulsionType) contract.PropulsionTypes,
                 Blocked = false,
-                CardNumber = command.CardNumber,
-                ExpiryDate = command.ExpiryDate,
+                CardNumber = contract.CardNumber,
+                ExpiryDate = contract.ExpiryDate,
                 Issued = false,
-                PinCode = command.PinCode,
-                PropulsionTypes = command.PropulsionTypes
+                PinCode = contract.PinCode
             };
 
             var validation = await _fuelCardValidator.ValidateAsync(fuelCard, cancellationToken);
             if (validation.IsValid is not true)
-                return CommandResponse.BadRequest(validation);
+                return ComponentResponse.BadRequest(validation);
 
             _fuelCardRepository.Add(fuelCard);
 
             var saved = await _fuelCardRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.Created();
+            return ComponentResponse.Created();
         }
 
-        public async Task<ICommandResponse> DeleteFuelCardAsync(DeleteFuelCardCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> DeleteFuelCardAsync(IDeleteFuelCardContract contract, CancellationToken cancellationToken)
         {
-            var fuelCard = await _fuelCardRepository.FindByIdAsync(command.FuelCardId, cancellationToken);
+            var fuelCard = await _fuelCardRepository.FindByIdAsync(contract.FuelCardId, cancellationToken);
             if (fuelCard is null)
-                return CommandResponse.BadRequest("The fuel card with given id does not exist.");
+                return ComponentResponse.BadRequest("The fuel card with given id does not exist.");
 
              _fuelCardRepository.Remove(fuelCard);
 
             var saved = await _fuelCardRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.NoContent();
+            return ComponentResponse.NoContent();
         }
     }
 }

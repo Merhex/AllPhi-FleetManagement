@@ -1,5 +1,6 @@
-﻿using FleetManagement.BLL.Shared.Validators;
-using FleetManagement.BLL.Shared.Validators.Interfaces;
+﻿using FleetManagement.BLL.Persons.Validators;
+using FleetManagement.BLL.Persons.Validators.Interfaces;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 
@@ -8,56 +9,93 @@ namespace FleetManagement.Tests.UnitTests
     [TestFixture]
     public class BelgianNumberValidatorTests
     {
-        private IBelgianNationalNumberValidator _systemUnderTest;
+        private IBelgianNationalNumberValidator _validator;
 
         [SetUp]
         public void SetUp()
         {
-            _systemUnderTest = new BelgianNationalNumberValidator();
+            _validator = new BelgiumNationalNumberValidator();
         }
 
-        [TestCase("1995-07-14", "95.07.14-489.68")]
-        [TestCase("1993-05-18", "93.05.18-223.61")]
-        public void Validate_ReturnsTrue_WhenSuppliedValidBelgianNationalNumberAndCorrespondingBirthDate(DateTime birthdate, string nationalNumber)
+
+        [TestCase("95.07.14-489.68")]
+        public void ValidateFormat_WithCorrectFormatting_ShouldReturnTrue(string nationalNumber)
         {
-            Assert.That(_systemUnderTest.Validate(birthdate, nationalNumber), Is.True);
+            _validator.ValidateNationalNumberFormatting(nationalNumber).Should().BeTrue();
         }
 
-        [TestCase("2020-01-01", "20.01.01-555.65")]
-        [TestCase("2000-01-01", "00.01.01-223.74")]
-        public void Validate_ReturnsTrue_WhenPersonIsBornAfter2000CheckSumAdds2BeforeCalculation(DateTime birthdate, string nationalNumber)
-        {
-            Assert.That(_systemUnderTest.Validate(birthdate, nationalNumber), Is.True);
-        }
-
-        [TestCase("1995-07-14", "95.27.14-489.14")]
-        [TestCase("1993-05-18", "93.45.18-223.50")]
-        public void Validate_ReturnsTrue_WhenBirthDateMonthHas20And40IncrementCorrespondingToOriginalBirthDate(DateTime birthdate, string nationalNumber)
-        {
-            Assert.That(_systemUnderTest.Validate(birthdate, nationalNumber), Is.True);
-        }
 
         [TestCase("1995-07-14", "1995.07.14-489.68")]
         [TestCase("1995-07-14", "95.07.14.489.68")]
         [TestCase("1995-07-14", "95-07-14.489.68")]
-        [TestCase("1993-05-18", "93051822361")]
-        public void Validate_ReturnsFalse_IncorrectBelgianNationalNumberFormat(DateTime birthdate, string nationalNumber)
+        [TestCase("1995-07-14", "95071448968")]
+        public void ValidateFormat_WithIncorrectFormatting_ShouldReturnFalse(string nationalNumber)
         {
-            Assert.That(_systemUnderTest.Validate(birthdate, nationalNumber), Is.False);
+            _validator.ValidateNationalNumberFormatting(nationalNumber).Should().BeFalse();
         }
 
-        [TestCase("1995-07-14", "80.27.14-489.14")]
-        [TestCase("1993-05-18", "80.45.18-223.50")]
-        public void Validate_ReturnsFalse_NotMatchingBirthDatewithBelgianNationalNumber(DateTime birthdate, string nationalNumber)
+
+        [TestCase("95.07.14-489.68","1995-07-14")]
+        public void ValidateCheckSum_WithCorrectSequence_ShouldReturnTrue(string nationalNumber, DateTime birthDate)
         {
-            Assert.That(_systemUnderTest.Validate(birthdate, nationalNumber), Is.False);
+            _validator.ValidateNationalNumberChecksum(nationalNumber, birthDate).Should().BeTrue();
         }
 
-        [TestCase("1995-07-14", "80.27.14-489.00")]
-        [TestCase("1993-05-18", "80.45.18-223.00")]
-        public void Validate_ReturnsFalse_WhenCheckingNumerIsInvalid(DateTime birthdate, string nationalNumber)
+
+        [TestCase("95.07.14-489.00", "1995-07-14")]
+        public void ValidateCheckSum_WithIncorrectChecksum_ShouldReturnFalse(string nationalNumber, DateTime birthDate)
         {
-            Assert.That(_systemUnderTest.Validate(birthdate, nationalNumber), Is.False);
+            _validator.ValidateNationalNumberChecksum(nationalNumber, birthDate).Should().BeFalse();
+        }
+
+
+        [TestCase("95.07.14-489.68", "2000-01-01")]
+        public void ValidateCheckSum_WithNotMatchingBirthdate_ShouldReturnFalse(string nationalNumber, DateTime birthDate)
+        {
+            _validator.ValidateNationalNumberChecksum(nationalNumber, birthDate).Should().BeFalse();
+        }
+
+
+        [TestCase("95.07.14-000.68", "1995-07-14")]
+        public void ValidateCheckSum_WithIncorrectFollowupNumber_ShouldReturnFalse(string nationalNumber, DateTime birthDate)
+        {
+            _validator.ValidateNationalNumberChecksum(nationalNumber, birthDate).Should().BeFalse();
+        }
+
+
+        [TestCase("20.01.01-555.65", "2020-01-01")]
+        [TestCase("00.01.01-555.33", "2020-01-01")]
+        public void ValidateChecksum_WhenPersonIsBornAfter2000SequenceGetsAddedA2BeforeCalculation_ShouldReturnTrue(string nationalNumber, DateTime birthDate)
+        {
+            _validator.ValidateNationalNumberChecksum(nationalNumber, birthDate).Should().BeTrue();
+        }
+
+
+        [TestCase("95.07.14-489.68", "1995-07-14")]
+        public void ValidateForContainingBirthDate_WithMatchingBirthDate_ShouldReturnTrue(string nationalNumber, DateTime birthDate)
+        {
+            _validator.ValidateNationalNumberForContainingBirthdate(nationalNumber, birthDate).Should().BeTrue();
+        }
+
+
+        [TestCase("95.27.14-489.14", "1995-07-14")]
+        public void ValidateForContainingBirthDate_WhenBirthDateMonthHas20AIncrementCorrespondingToOriginalBirthDate_ShouldReturnTrue(string nationalNumber, DateTime birthDate)
+        {
+            _validator.ValidateNationalNumberForContainingBirthdate(nationalNumber, birthDate).Should().BeTrue();
+        }
+
+
+        [TestCase("93.45.18-223.50", "1993-05-18")]
+        public void ValidateForContainingBirthDate_WhenBirthDateMonthHas40AIncrementCorrespondingToOriginalBirthDate_ShouldReturnTrue(string nationalNumber, DateTime birthDate)
+        {
+            _validator.ValidateNationalNumberForContainingBirthdate(nationalNumber, birthDate).Should().BeTrue();
+        }
+
+
+        [TestCase("95.07.14-489.68", "2000-01-01")]
+        public void ValidateForContainingBirthDate_WithWrongBirthDate_ShouldReturnFalse(string nationalNumber, DateTime birthDate)
+        {
+            _validator.ValidateNationalNumberForContainingBirthdate(nationalNumber, birthDate).Should().BeFalse();
         }
     }
 }

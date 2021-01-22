@@ -1,8 +1,6 @@
-﻿using FleetManagement.BLL.Drivers.Commands;
-using FleetManagement.BLL.Drivers.Components.Interfaces;
+﻿using FleetManagement.BLL.Drivers.Components.Interfaces;
+using FleetManagement.BLL.Drivers.Contracts;
 using FleetManagement.BLL.Shared;
-using FleetManagement.BLL.Shared.Interfaces;
-using FleetManagement.BLL.Shared.Validators;
 using FleetManagement.DAL.Repositories.Interfaces;
 using FleetManagement.Models;
 using System.Threading;
@@ -16,87 +14,59 @@ namespace FleetManagement.BLL.Drivers.Components
         private readonly PersonValidator _personValidator;
 
         public DriverComponent(
-            IDriverRepository driverRepository, 
+            IDriverRepository driverRepository,
             PersonValidator validator)
         {
             _driverRepository = driverRepository;
             _personValidator = validator;
         }
 
-        public async Task<ICommandResponse> ChangeDriverActitvityAsync(ChangeDriverActivityStatusCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> ChangeDriverActivityAsync(IChangeDriverActivityStatusContract contract, CancellationToken cancellationToken)
         {
-            var driver = await _driverRepository.FindByIdAsync(command.DriverId, cancellationToken);
-            if (driver is null) 
-                return CommandResponse.BadRequest("The driver with given national number does not exist.");
+            var driver = await _driverRepository.FindByIdAsync(contract.DriverId, cancellationToken);
+            if (driver is null)
+                return ComponentResponse.BadRequest("The driver with given national number does not exist.");
 
-            driver.Active = command.Active;
+            driver.Active = contract.Active;
 
             var saved = await _driverRepository.SaveAsync();
-            if (saved is not true) 
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+            if (saved is not true)
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.Ok();
+            return ComponentResponse.Ok();
         }
 
-        public async Task<ICommandResponse> CreateDriverAsync(CreateDriverCommand command, CancellationToken cancellationToken) 
+        public async Task<IComponentResponse> CreateDriverAsync(ICreateDriverContract contract, CancellationToken cancellationToken)
         {
-            var match = await _driverRepository.FindDriverByNationalNumberAsync(command.NationalNumber, cancellationToken);
-            if (match is not null) 
-                return CommandResponse.BadRequest("The driver already exists.");
-                
+            var match = await _driverRepository.FindDriverByNationalNumberAsync(contract.NationalNumber, cancellationToken);
+            if (match is not null)
+                return ComponentResponse.BadRequest("The driver already exists.");
+
             var driver = new Driver
             {
                 Active = true,
-                DateOfBirth = command.DateOfBirth,
-                DriverLicense = command.DriverLicense,
-                FirstName = command.FirstName,
-                LastName = command.LastName,
-                NationalNumber = command.NationalNumber,
-                City = command.City,
-                AddressLine = command.AddressLine,
-                ZipCode = command.ZipCode
+                DateOfBirth = contract.DateOfBirth,
+                FirstName = contract.FirstName,
+                LastName = contract.LastName,
+                NationalNumber = contract.NationalNumber,
+                City = contract.City,
+                AddressLine = contract.AddressLine,
+                ZipCode = contract.ZipCode
             };
 
             var validation = await _personValidator.ValidateAsync(driver, cancellationToken);
             if (validation.IsValid is not true)
-                return CommandResponse.BadRequest(validation);
+                return ComponentResponse.BadRequest(validation);
 
             _driverRepository.Add(driver);
 
             var saved = await _driverRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.Created();
-        }
-
-        public async Task<ICommandResponse> UpdateDriverAsync(UpdateDriverInformationCommand command, CancellationToken cancellationToken)
-        {
-            var driver = await _driverRepository.FindByIdAsync(command.DriverId, cancellationToken);
-            if (driver is null)
-                return CommandResponse.BadRequest("The driver with given id does not exists.");
-
-            driver.DateOfBirth = command.DateOfBirth;
-            driver.DriverLicense = command.DriverLicense;
-            driver.FirstName = command.FirstName;
-            driver.LastName = command.LastName;
-            driver.NationalNumber = command.NationalNumber;
-            driver.City = command.City;
-            driver.AddressLine = command.AddressLine;
-            driver.ZipCode = command.ZipCode;
-
-            var validation = await _personValidator.ValidateAsync(driver, cancellationToken);
-            if (validation.IsValid is not true)
-                return CommandResponse.BadRequest(validation);
-
-            var saved = await _driverRepository.SaveAsync();
-            if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
-
-
-            return CommandResponse.Ok();
+            return ComponentResponse.Created();
         }
     }
 }

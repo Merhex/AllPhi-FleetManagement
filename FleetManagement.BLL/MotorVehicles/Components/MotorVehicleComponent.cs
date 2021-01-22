@@ -1,8 +1,7 @@
-﻿using FleetManagement.BLL.MotorVehicles.Commands;
-using FleetManagement.BLL.MotorVehicles.Components.Interfaces;
+﻿using FleetManagement.BLL.MotorVehicles.Components.Interfaces;
+using FleetManagement.BLL.MotorVehicles.Contracts;
 using FleetManagement.BLL.MotorVehicles.Validators;
 using FleetManagement.BLL.Shared;
-using FleetManagement.BLL.Shared.Interfaces;
 using FleetManagement.DAL.Repositories.Interfaces;
 using FleetManagement.Models;
 using System;
@@ -34,24 +33,24 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             _motorVehicleValidator = motorVehicleValidator;
         }
 
-        public async Task<ICommandResponse> AssignLicensePlateToMotorVehicleAsync(AssignLicensePlateCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> AssignLicensePlateToMotorVehicleAsync(IAssignLicensePlateContract contract, CancellationToken cancellationToken)
         {
-            var licensePlate = await _licensePlateRepository.FindByIdAsync(command.LicensePlateId, cancellationToken);
+            var licensePlate = await _licensePlateRepository.FindByIdAsync(contract.LicensePlateId, cancellationToken);
             if (licensePlate is null)
-                return CommandResponse.BadRequest("Could not find the license plate with given id.");
+                return ComponentResponse.BadRequest("Could not find the license plate with given id.");
             if (licensePlate.InUse)
-                return CommandResponse.BadRequest("The given license plate is already in use. Please detach the license plate before assigning.");
+                return ComponentResponse.BadRequest("The given license plate is already in use. Please detach the license plate before assigning.");
 
             var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdAsync(licensePlate.Id, cancellationToken);
             if (motorVehicle is not null)
-                if (motorVehicle.Id == command.MotorVehicleId)
-                    return CommandResponse.NoContent();
+                if (motorVehicle.Id == contract.MotorVehicleId)
+                    return ComponentResponse.NoContent();
                 else
-                    return CommandResponse.BadRequest($"This license plate already has been assigned. Please withdraw the license plate from the vehicle {motorVehicle.Brand}, {motorVehicle.Model} first.");
+                    return ComponentResponse.BadRequest($"This license plate already has been assigned. Please withdraw the license plate from the vehicle {motorVehicle.Brand}, {motorVehicle.Model} first.");
 
-            motorVehicle = await _motorVehicleRepository.FindByIdAsync(command.MotorVehicleId, cancellationToken);
+            motorVehicle = await _motorVehicleRepository.FindByIdAsync(contract.MotorVehicleId, cancellationToken);
             if (motorVehicle is null)
-                return CommandResponse.BadRequest("Could not find the motor vehicle with given id.");
+                return ComponentResponse.BadRequest("Could not find the motor vehicle with given id.");
 
 
             motorVehicle.LicensePlates.Add(licensePlate);
@@ -59,157 +58,157 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             var saved = await _motorVehicleRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving the database.");
 
 
-            return CommandResponse.Ok();
+            return ComponentResponse.Ok();
         }
 
-        public async Task<ICommandResponse> ChangeLicensePlateInUseStatusAsync(ChangeLicensePlateInUseStatusCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> ChangeLicensePlateInUseStatusAsync(IChangeLicensePlateInUseStatusContract contract, CancellationToken cancellationToken)
         {
-            var licensePlate = await _licensePlateRepository.FindByIdAsync(command.LicensePlateId, cancellationToken);
+            var licensePlate = await _licensePlateRepository.FindByIdAsync(contract.LicensePlateId, cancellationToken);
             if (licensePlate is null)
-                return CommandResponse.BadRequest("Could not find the license plate with given id.");
+                return ComponentResponse.BadRequest("Could not find the license plate with given id.");
 
-            if (licensePlate.InUse == command.InUse)
-                return CommandResponse.NoContent();
+            if (licensePlate.InUse == contract.InUse)
+                return ComponentResponse.NoContent();
 
             var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdAsync(licensePlate.Id, cancellationToken);
             if (motorVehicle is null)
-                return CommandResponse.BadRequest("You can not put a plate in use, that is not assigned to a car.");
+                return ComponentResponse.BadRequest("You can not put a plate in use, that is not assigned to a car.");
 
             var anyLicensePlateInUse = motorVehicle.LicensePlates
                                         .Where(licensePlate => licensePlate.InUse)
                                         .Any();
 
-            if (anyLicensePlateInUse is true && command.InUse is true)
-                return CommandResponse.BadRequest("There is already a plate in use on this motor vehicle. Please detach that plate first.");
+            if (anyLicensePlateInUse is true && contract.InUse is true)
+                return ComponentResponse.BadRequest("There is already a plate in use on this motor vehicle. Please detach that plate first.");
 
             var snapshot = new LicensePlateSnapshot 
             { 
-                InUse = command.InUse,
+                InUse = contract.InUse,
                 LicensePlate = licensePlate,
                 MotorVehicle = motorVehicle,
                 SnapshotDate = DateTime.Now 
             };
 
              _licensePlateSnaphotRepository.Add(snapshot);
-            licensePlate.InUse = command.InUse;
+            licensePlate.InUse = contract.InUse;
 
             var saved = await _licensePlateRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving the database.");
 
 
-            return CommandResponse.Ok();
+            return ComponentResponse.Ok();
         }
 
-        public async Task<ICommandResponse> ChangeMotorVehicleOperationalStatusAsync(ChangeMotorVehicleOperationalStatusCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> ChangeMotorVehicleOperationalStatusAsync(IChangeMotorVehicleOperationalStatusContract contract, CancellationToken cancellationToken)
         {
-            var motorVehicle = await _motorVehicleRepository.FindByIdAsync(command.MotorVehicleId, cancellationToken);
+            var motorVehicle = await _motorVehicleRepository.FindByIdAsync(contract.MotorVehicleId, cancellationToken);
             if (motorVehicle is null)
-                return CommandResponse.BadRequest("Could not find a motor vehicle with given id.");
+                return ComponentResponse.BadRequest("Could not find a motor vehicle with given id.");
 
-            motorVehicle.Operational = command.Operational;
+            motorVehicle.Operational = contract.Operational;
 
             var saved = await _motorVehicleRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.Ok();
+            return ComponentResponse.Ok();
         }
 
-        public async Task<ICommandResponse> CreateLicensePlateAsync(CreateLicensePlateCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken cancellationToken)
         {
-            var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(command.Identifier, cancellationToken);
+            var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
             if (licensePlate is not null)
-                return CommandResponse.BadRequest("The license plate with given identifier already exists.");
+                return ComponentResponse.BadRequest("The license plate with given identifier already exists.");
 
-            licensePlate = new LicensePlate { Identifier = command.Identifier };
+            licensePlate = new LicensePlate { Identifier = contract.Identifier };
 
             var validation = await _licensePlateValidator.ValidateAsync(licensePlate, cancellationToken);
             if (validation.IsValid is not true)
-                return CommandResponse.BadRequest(validation);
+                return ComponentResponse.BadRequest(validation);
 
             _licensePlateRepository.Add(licensePlate);
 
             var saved = await _licensePlateRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.Created();
+            return ComponentResponse.Created();
         }
 
-        public async Task<ICommandResponse> CreateMotorVehicleAsync(CreateMotorVehicleCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> CreateMotorVehicleAsync(ICreateMotorVehicleContract contract, CancellationToken cancellationToken)
         {
-            var motorVehicle = await _motorVehicleRepository.FindByChassisNumber(command.ChassisNumber, cancellationToken);
+            var motorVehicle = await _motorVehicleRepository.FindByChassisNumber(contract.ChassisNumber, cancellationToken);
             if (motorVehicle is not null) 
-                return CommandResponse.BadRequest("The given vehicle already exists");
+                return ComponentResponse.BadRequest("The given vehicle already exists");
 
             motorVehicle = new MotorVehicle
             {
-                 Brand = command.Brand,
-                 Model = command.Model,
-                 BodyType = command.BodyType,
-                 ChassisNumber = command.ChassisNumber,
-                 Operational = command.Operational,
-                 PropulsionType = command.PropulsionType
+                 PropulsionType = (MotorVehiclePropulsionType) contract.PropulsionType,
+                 BodyType = (MotorVehicleBodyType) contract.BodyType,
+                 Brand = contract.Brand,
+                 Model = contract.Model,
+                 ChassisNumber = contract.ChassisNumber,
+                 Operational = contract.Operational
             };
 
             var validation = await _motorVehicleValidator.ValidateAsync(motorVehicle, cancellationToken);
             if (validation.IsValid is not true)
-                return CommandResponse.BadRequest(validation);
+                return ComponentResponse.BadRequest(validation);
 
             _motorVehicleRepository.Add(motorVehicle);
 
             var saved = await _motorVehicleRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.Created();
+            return ComponentResponse.Created();
         }
 
-        public async Task<ICommandResponse> DeleteLicensePlateAsync(DeleteLicensePlateCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> DeleteLicensePlateAsync(IDeleteLicensePlateContract contract, CancellationToken cancellationToken)
         {
-            var licensePlate = await _licensePlateRepository.FindByIdAsync(command.LicensePlateId, cancellationToken);
+            var licensePlate = await _licensePlateRepository.FindByIdAsync(contract.LicensePlateId, cancellationToken);
             if (licensePlate is null)
-                return CommandResponse.BadRequest("Could not find the license plate with given id.");
+                return ComponentResponse.BadRequest("Could not find the license plate with given id.");
             if (licensePlate.InUse)
-                return CommandResponse.BadRequest("The given license plate is in use. Please deactive the license plate before removing.");
+                return ComponentResponse.BadRequest("The given license plate is in use. Please deactive the license plate before removing.");
 
             _licensePlateRepository.Remove(licensePlate);
 
             var saved = await _licensePlateRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.Ok();
+            return ComponentResponse.Ok();
         }
 
-        public async Task<ICommandResponse> WithdrawLicensePlateFromMotorVehicleAsync(WithdrawLicensePlateCommand command, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> WithdrawLicensePlateFromMotorVehicleAsync(IWithdrawLicensePlateContract contract, CancellationToken cancellationToken)
         {
-            var licensePlate = await _licensePlateRepository.FindByIdAsync(command.LicensePlateId, cancellationToken);
+            var licensePlate = await _licensePlateRepository.FindByIdAsync(contract.LicensePlateId, cancellationToken);
             if (licensePlate is null)
-                return CommandResponse.BadRequest("Could not find the license plate with given id.");
+                return ComponentResponse.BadRequest("Could not find the license plate with given id.");
             if (licensePlate.InUse)
-                return CommandResponse.BadRequest("The given license plate is in use. Please deactive the license plate before removing.");
+                return ComponentResponse.BadRequest("The given license plate is in use. Please deactive the license plate before removing.");
 
             var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdAsync(licensePlate.Id, cancellationToken);
             if (motorVehicle is null)
-                return CommandResponse.NoContent();
+                return ComponentResponse.NoContent();
 
             motorVehicle.LicensePlates.Remove(licensePlate);
 
             var saved = await _motorVehicleRepository.SaveAsync();
             if (saved is not true)
-                return CommandResponse.BadRequest("Something went wrong saving to the database.");
+                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
 
 
-            return CommandResponse.Ok();
+            return ComponentResponse.Ok();
         }
     }
 }
