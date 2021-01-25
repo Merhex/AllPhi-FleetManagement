@@ -65,7 +65,7 @@ namespace FleetManagement.Tests.UnitTests
 
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByIdAsync(_motorVehicle.Id, _cancellationToken))
+                .FindByIdIncludeLicensePlatesAsync(_motorVehicle.Id, _cancellationToken))
                 .ReturnsAsync(_motorVehicle);
             _motorVehicleRepository
                 .Setup(x => x
@@ -210,7 +210,7 @@ namespace FleetManagement.Tests.UnitTests
             //Arrange
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByIdAsync(_motorVehicle.Id, _cancellationToken))
+                .FindByIdIncludeLicensePlatesAsync(_motorVehicle.Id, _cancellationToken))
                 .ReturnsAsync(() => null);
 
             //Act

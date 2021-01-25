@@ -9,6 +9,7 @@ namespace FleetManagement.Models
 
         [MaxLength(9)]
         [Required]
+        [Key]
         public string Identifier { get; set; }
 
         [Required]

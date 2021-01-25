@@ -11,20 +11,21 @@ namespace FleetManagement.DAL.Repositories
     {
         public MotorVehicleRepository(FleetManagementContext context) : base(context) { }
 
-        public async Task<MotorVehicle> FindByChassisNumber(string chassisNumber, CancellationToken cancellationToken) =>
+        public async Task<MotorVehicle> FindByChassisNumberIncludeLicensePlatesAsync(string chassisNumber, CancellationToken cancellationToken) =>
             await _context.MotorVehicles
+                    .Include(motorVehicle => motorVehicle.LicensePlates)
                     .SingleOrDefaultAsync(m => m.ChassisNumber == chassisNumber, cancellationToken);
 
-        public async Task<MotorVehicle> FindByIdAsync(int motorVehicleId, CancellationToken cancellationToken) =>
+        public async Task<MotorVehicle> FindByIdIncludeLicensePlatesAsync(int motorVehicleId, CancellationToken cancellationToken) =>
             await _context.MotorVehicles
                     .Include(motorVehicle => motorVehicle.LicensePlates)
                     .SingleOrDefaultAsync(m => m.Id == motorVehicleId, cancellationToken);
 
-        public async Task<MotorVehicle> FindByLicensePlateIdAsync(int licensePlateId, CancellationToken cancellationToken) =>
+        public async Task<MotorVehicle> FindByLicensePlateIdentifierIncludeLicensePlatesAsync(string licensePlateIdentifier, CancellationToken cancellationToken) =>
             await _context.MotorVehicles
                     .Include(motorVehicle => motorVehicle.LicensePlates)
                     .Where(motorVehicle => motorVehicle.LicensePlates
-                    .Any(licensePlate => licensePlate.Id == licensePlateId))
-                    .SingleOrDefaultAsync(cancellationToken);    
+                    .Any(licensePlate => licensePlate.Identifier == licensePlateIdentifier))
+                    .SingleOrDefaultAsync(cancellationToken);
     }
 }

@@ -6,6 +6,6 @@ namespace FleetManagement.API.Write.Commands
 {
     public record DeleteFuelCardCommand : IRequest<IComponentResponse>, IDeleteFuelCardContract
     {
-        public int FuelCardId { get; set; }
+        public string CardNumber { get; set; }
     }
 }

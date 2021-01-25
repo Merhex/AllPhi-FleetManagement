@@ -2,7 +2,7 @@
 {
     public interface IChangeMotorVehicleOperationalStatusContract
     {
-        public int MotorVehicleId { get; init; }
+        public string ChassisNumber { get; init; }
         public bool Operational { get; init; }
     }
 }

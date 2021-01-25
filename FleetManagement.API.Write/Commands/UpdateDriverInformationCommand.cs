@@ -1,11 +1,11 @@
-﻿using System;
-using FleetManagement.BLL;
-using FleetManagement.BLL.Persons.Contracts;
+﻿using FleetManagement.BLL;
+using FleetManagement.BLL.Drivers.Contracts;
 using MediatR;
+using System;
 
 namespace FleetManagement.API.Write.Commands
 {
-    public record UpdatePersonInformationCommand : IRequest<IComponentResponse>, IUpdatePersonInformationContract
+    public record UpdateDriverInformationCommand : IRequest<IComponentResponse>, IUpdateDriverInformationContract
     {
         public string FirstName { get; init; }
         public string LastName { get; init; }

@@ -6,8 +6,8 @@ namespace FleetManagement.DAL.Repositories.Interfaces
 {
     public interface IMotorVehicleRepository : IRepository<MotorVehicle, int>
     {
-        Task<MotorVehicle> FindByChassisNumber(string chassisNumber, CancellationToken cancellationToken);
-        Task<MotorVehicle> FindByIdAsync(int motorVehicleId, CancellationToken cancellationToken);
-        Task<MotorVehicle> FindByLicensePlateIdAsync(int licensePlateId, CancellationToken cancellationToken);
+        Task<MotorVehicle> FindByChassisNumberIncludeLicensePlatesAsync(string chassisNumber, CancellationToken cancellationToken);
+        Task<MotorVehicle> FindByIdIncludeLicensePlatesAsync(int motorVehicleId, CancellationToken cancellationToken);
+        Task<MotorVehicle> FindByLicensePlateIdentifierIncludeLicensePlatesAsync(string licensePlateIdentifier, CancellationToken cancellationToken);
     }
 }

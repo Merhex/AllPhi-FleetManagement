@@ -8,7 +8,7 @@ namespace FleetManagement.BLL.MotorVehicles.Contracts
 {
     public interface IAssignLicensePlateContract
     {
-        public int MotorVehicleId { get; init; }
-        public int LicensePlateId { get; set; }
+        public string ChassisNumber { get; init; }
+        public string LicensePlateIdentifier { get; set; }
     }
 }

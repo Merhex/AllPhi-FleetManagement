@@ -1,7 +1,6 @@
 ﻿using FleetManagement.BLL.FuelCards.Components.Interfaces;
 using FleetManagement.BLL.FuelCards.Contracts;
 using FleetManagement.BLL.FuelCards.Validators;
-using FleetManagement.BLL.Shared;
 using FleetManagement.DAL.Repositories.Interfaces;
 using FleetManagement.Models;
 using System.Collections.Generic;
@@ -27,48 +26,63 @@ namespace FleetManagement.BLL.FuelCards.Components
             _fuelCardValidator = fuelCardValidator;
         }
 
-        public async Task<IComponentResponse> AddFuelCardOptionsAsync(IAddFuelCardOptionsContract contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> AddFuelCardOptionsAsync(IAddFuelCardOptionsContract contract, CancellationToken token)
         {
-            var fuelCard = await _fuelCardRepository.FindByIdAsync(contract.FuelCardId, cancellationToken);
-            if (fuelCard is null)
-                return ComponentResponse.BadRequest("The fuel card with given id does not exist.");
+            var response = new ComponentResponse();
 
-            if (contract.Options.Any() is not true)
-                return ComponentResponse.BadRequest("An empty list of options is not valid.");
+            var fuelCard = await GetUniqueFuelCard(contract.CardNumber, response, token);
 
-            var optionListFromCommand = new List<FuelCardOption>();
-            foreach (var option in contract.Options)
-            {
-                var match = await _fuelCardOptions.FindByNameAsync(option, cancellationToken);
+            var options = await FuelCardOptionsValidation(contract, response, token);
 
-                if (match is null) 
-                    return ComponentResponse.BadRequest($"The option with name {option} is not valid option.");
-                else 
-                    optionListFromCommand.Add(match);
-            }
+            AddFuelCardOptions(fuelCard, options);
 
-            fuelCard.Options = fuelCard.Options
-                                .Union(optionListFromCommand)
-                                .ToList();
+            await Persistance(response);
 
-            var saved = await _fuelCardRepository.SaveAsync();
-            if (saved is not true)
-                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
-
-
-            return ComponentResponse.Ok();
+            return response;
         }
 
-        public async Task<IComponentResponse> CreateFuelCardAsync(ICreateFuelCardContract contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> CreateFuelCardAsync(ICreateFuelCardContract contract, CancellationToken token)
         {
-            var match = await _fuelCardRepository.FindByCardNumberAsync(contract.CardNumber, cancellationToken);
-            if (match is not null)
-                return ComponentResponse.BadRequest("The fuel card with given card number already exists.");
+            var response = new ComponentResponse();
 
+            await CheckIfFuelCardExists(contract.CardNumber, response, token);
+
+            var fuelCard = CreateFuelCard(contract);
+
+            await FuelCardValidation(fuelCard, response, token);
+
+            await Persistance(fuelCard, response);
+
+            return response;
+        }
+
+        public async Task<IComponentResponse> DeleteFuelCardAsync(IDeleteFuelCardContract contract, CancellationToken cancellationToken)
+        {
+            var response = new ComponentResponse();
+
+            var fuelCard = await GetUniqueFuelCard(contract.CardNumber, response, cancellationToken);
+
+            DeleteFuelCard(fuelCard);
+
+            await Persistance(response);
+
+            return response;
+        }
+
+        #region PRIVATE
+        private void DeleteFuelCard(FuelCard fuelCard)
+        {
+            if (fuelCard is null) return;
+
+            _fuelCardRepository.Remove(fuelCard);
+        }
+
+        private static FuelCard CreateFuelCard(ICreateFuelCardContract contract)
+        {
             var fuelCard = new FuelCard
             {
-                AuthenticationType = (FuelCardAuthenticationType) contract.AuthenticationType,
-                PropulsionTypes = (MotorVehiclePropulsionType) contract.PropulsionTypes,
+                AuthenticationType = (FuelCardAuthenticationType)contract.AuthenticationType,
+                PropulsionTypes = (MotorVehiclePropulsionType)contract.PropulsionTypes,
                 Blocked = false,
                 CardNumber = contract.CardNumber,
                 ExpiryDate = contract.ExpiryDate,
@@ -76,34 +90,91 @@ namespace FleetManagement.BLL.FuelCards.Components
                 PinCode = contract.PinCode
             };
 
-            var validation = await _fuelCardValidator.ValidateAsync(fuelCard, cancellationToken);
+            return fuelCard;
+        }
+
+        private async Task FuelCardValidation(FuelCard fuelCard, ComponentResponse response, CancellationToken token)
+        {
+            var validation = await _fuelCardValidator.ValidateAsync(fuelCard, token);
             if (validation.IsValid is not true)
-                return ComponentResponse.BadRequest(validation);
+                response.ValidationFailure(validation);
+            else response.Ok();
+        }
+
+        private async Task<FuelCard> GetUniqueFuelCard(string cardNumber, ComponentResponse response, CancellationToken token)
+        {
+            var fuelCard = await _fuelCardRepository.FindByCardNumberAsync(cardNumber, token);
+            if (fuelCard is null)
+                response.NotFound();
+            else 
+                response.Ok();
+
+            return fuelCard;
+        }
+
+        private async Task CheckIfFuelCardExists(string cardNumber, ComponentResponse response, CancellationToken token)
+        {
+            var fuelCard = await _fuelCardRepository.FindByCardNumberAsync(cardNumber, token);
+            if (fuelCard is not null)
+                response.AlreadyExists();
+            else
+                response.Ok();
+        }
+
+        private async Task<List<FuelCardOption>> FuelCardOptionsValidation(IAddFuelCardOptionsContract contract, ComponentResponse response, CancellationToken token)
+        {
+            if (contract.Options.Any() is not true) 
+                response.BadRequest().AddErrorMessage("There are no fuel card options given in your request.");
+
+            var optionListFromCommand = new List<FuelCardOption>();
+            foreach (var option in contract.Options)
+            {
+                var match = await _fuelCardOptions.FindByNameAsync(option, token);
+
+                if (match is null) 
+                    response.AddErrorMessage($"The option with name {option} is not valid option.");
+                else
+                    optionListFromCommand.Add(match);
+            }
+
+            return optionListFromCommand;
+        }
+
+        private static void AddFuelCardOptions(FuelCard fuelCard, List<FuelCardOption> options)
+        {
+            if (fuelCard is null) return;
+            if (options.Count is 0) return;
+
+            fuelCard.Options = fuelCard.Options
+                    .Union(options)
+                    .ToList();
+        }
+
+        private async Task<bool> Persistance(ComponentResponse response)
+        {
+            if (response.Valid is not true) return false;
+
+            var saved = await _fuelCardRepository.SaveAsync();
+            if (saved is not true)
+            {
+                response.PersistanceFailure();
+                return false;
+            }
+
+            response.Ok();
+            return true;
+        }
+
+        private async Task Persistance(FuelCard fuelCard, ComponentResponse response)
+        {
+            if (fuelCard is null) return;
 
             _fuelCardRepository.Add(fuelCard);
 
-            var saved = await _fuelCardRepository.SaveAsync();
-            if (saved is not true)
-                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
+            await Persistance(response);
 
-
-            return ComponentResponse.Created();
+            response.Created();
         }
-
-        public async Task<IComponentResponse> DeleteFuelCardAsync(IDeleteFuelCardContract contract, CancellationToken cancellationToken)
-        {
-            var fuelCard = await _fuelCardRepository.FindByIdAsync(contract.FuelCardId, cancellationToken);
-            if (fuelCard is null)
-                return ComponentResponse.BadRequest("The fuel card with given id does not exist.");
-
-             _fuelCardRepository.Remove(fuelCard);
-
-            var saved = await _fuelCardRepository.SaveAsync();
-            if (saved is not true)
-                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
-
-
-            return ComponentResponse.NoContent();
-        }
+        #endregion
     }
 }

@@ -6,7 +6,7 @@ namespace FleetManagement.API.Write.Commands
 {
     public record AssignLicensePlateCommand : IRequest<IComponentResponse>, IAssignLicensePlateContract
     {
-        public int MotorVehicleId { get; init; }
-        public int LicensePlateId { get; set; }
+        public string ChassisNumber { get; init; }
+        public string LicensePlateIdentifier { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace FleetManagement.Models
 
         [MaxLength(20)]
         [Required]
+        [Key]
         public string CardNumber { get; set; }
 
         [Range(0, 999999)]

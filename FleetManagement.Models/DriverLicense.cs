@@ -15,6 +15,7 @@ namespace FleetManagement.Models
         public string NameHolderLastName { get; set; }
 
         [Required]
+        [Key]
         public string Identifier { get; set; }
 
         [Required]

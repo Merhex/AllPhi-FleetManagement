@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FleetManagement.BLL.Persons.Contracts
 {
     public interface IUpdatePersonInformationContract
     {
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public DateTime DateOfBirth { get; init; }
+        public string NationalNumber { get; init; }
+        public string AddressLine { get; init; }
+        public string City { get; init; }
+        public int ZipCode { get; init; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using FleetManagement.BLL.MotorVehicles.Components.Interfaces;
 using FleetManagement.BLL.MotorVehicles.Contracts;
 using FleetManagement.BLL.MotorVehicles.Validators;
-using FleetManagement.BLL.Shared;
 using FleetManagement.DAL.Repositories.Interfaces;
 using FleetManagement.Models;
 using System;
@@ -33,117 +32,73 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             _motorVehicleValidator = motorVehicleValidator;
         }
 
-        public async Task<IComponentResponse> AssignLicensePlateToMotorVehicleAsync(IAssignLicensePlateContract contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> AssignLicensePlateToMotorVehicleAsync(IAssignLicensePlateContract contract, CancellationToken token)
         {
-            var licensePlate = await _licensePlateRepository.FindByIdAsync(contract.LicensePlateId, cancellationToken);
-            if (licensePlate is null)
-                return ComponentResponse.BadRequest("Could not find the license plate with given id.");
-            if (licensePlate.InUse)
-                return ComponentResponse.BadRequest("The given license plate is already in use. Please detach the license plate before assigning.");
+            var response = new ComponentResponse();
 
-            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdAsync(licensePlate.Id, cancellationToken);
-            if (motorVehicle is not null)
-                if (motorVehicle.Id == contract.MotorVehicleId)
-                    return ComponentResponse.NoContent();
-                else
-                    return ComponentResponse.BadRequest($"This license plate already has been assigned. Please withdraw the license plate from the vehicle {motorVehicle.Brand}, {motorVehicle.Model} first.");
+            var licensePlate = await GetUniqueLicensePlate(contract.LicensePlateIdentifier, response, token);
 
-            motorVehicle = await _motorVehicleRepository.FindByIdAsync(contract.MotorVehicleId, cancellationToken);
-            if (motorVehicle is null)
-                return ComponentResponse.BadRequest("Could not find the motor vehicle with given id.");
+            var motorVehicle = await GetUniqueMotorVehicle(contract.ChassisNumber, response, token);
 
+            LicensePlatePlateMustNotBeInUse(licensePlate, response);
 
-            motorVehicle.LicensePlates.Add(licensePlate);
+            await LicensePlateMustNotBeAssignedToAnotherMotorVehicle(contract, response, token);
 
+            AssignLicensePlateToMotorVehicle(motorVehicle, licensePlate);
 
-            var saved = await _motorVehicleRepository.SaveAsync();
-            if (saved is not true)
-                return ComponentResponse.BadRequest("Something went wrong saving the database.");
+            await Persistance(response);
 
-
-            return ComponentResponse.Ok();
+            return response;
         }
 
-        public async Task<IComponentResponse> ChangeLicensePlateInUseStatusAsync(IChangeLicensePlateInUseStatusContract contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> ChangeLicensePlateInUseStatusAsync(IChangeLicensePlateInUseStatusContract contract, CancellationToken token)
         {
-            var licensePlate = await _licensePlateRepository.FindByIdAsync(contract.LicensePlateId, cancellationToken);
-            if (licensePlate is null)
-                return ComponentResponse.BadRequest("Could not find the license plate with given id.");
+            var response = new ComponentResponse();
 
-            if (licensePlate.InUse == contract.InUse)
-                return ComponentResponse.NoContent();
+            var licensePlate = await GetUniqueLicensePlate(contract.Identifier, response, token);
 
-            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdAsync(licensePlate.Id, cancellationToken);
-            if (motorVehicle is null)
-                return ComponentResponse.BadRequest("You can not put a plate in use, that is not assigned to a car.");
+            var motorVehicle = await GetMotorVehicleByLicensePlate(licensePlate.Identifier, response, token);
 
-            var anyLicensePlateInUse = motorVehicle.LicensePlates
-                                        .Where(licensePlate => licensePlate.InUse)
-                                        .Any();
+            ChangeLicensePlateUseCase(licensePlate, motorVehicle, contract.Status, response);
 
-            if (anyLicensePlateInUse is true && contract.InUse is true)
-                return ComponentResponse.BadRequest("There is already a plate in use on this motor vehicle. Please detach that plate first.");
+            CreateLicensePlateHistorySnapshot(licensePlate, motorVehicle, response);
 
-            var snapshot = new LicensePlateSnapshot 
-            { 
-                InUse = contract.InUse,
-                LicensePlate = licensePlate,
-                MotorVehicle = motorVehicle,
-                SnapshotDate = DateTime.Now 
-            };
+            await Persistance(response);
 
-             _licensePlateSnaphotRepository.Add(snapshot);
-            licensePlate.InUse = contract.InUse;
-
-            var saved = await _licensePlateRepository.SaveAsync();
-            if (saved is not true)
-                return ComponentResponse.BadRequest("Something went wrong saving the database.");
-
-
-            return ComponentResponse.Ok();
+            return response;
         }
 
-        public async Task<IComponentResponse> ChangeMotorVehicleOperationalStatusAsync(IChangeMotorVehicleOperationalStatusContract contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> ChangeMotorVehicleOperationalStatusAsync(IChangeMotorVehicleOperationalStatusContract contract, CancellationToken token)
         {
-            var motorVehicle = await _motorVehicleRepository.FindByIdAsync(contract.MotorVehicleId, cancellationToken);
-            if (motorVehicle is null)
-                return ComponentResponse.BadRequest("Could not find a motor vehicle with given id.");
+            var response = new ComponentResponse();
 
-            motorVehicle.Operational = contract.Operational;
+            var motorVehicle = await GetUniqueMotorVehicle(contract.ChassisNumber, response, token);
 
-            var saved = await _motorVehicleRepository.SaveAsync();
-            if (saved is not true)
-                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
+            ChangeMotorVehicleOperationalStatus(motorVehicle, contract.Operational);
 
+            await Persistance(response);
 
-            return ComponentResponse.Ok();
+            return response;
         }
 
-        public async Task<IComponentResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken token)
         {
-            var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
-            if (licensePlate is not null)
-                return ComponentResponse.BadRequest("The license plate with given identifier already exists.");
+            var response = new ComponentResponse();
 
-            licensePlate = new LicensePlate { Identifier = contract.Identifier };
+            await LicensePlateMustNotExist(contract.Identifier, response, token);
 
-            var validation = await _licensePlateValidator.ValidateAsync(licensePlate, cancellationToken);
-            if (validation.IsValid is not true)
-                return ComponentResponse.BadRequest(validation);
+            var licensePlate = CreateLicensePlate(contract);
 
-            _licensePlateRepository.Add(licensePlate);
+            await LicensePlateValidation(licensePlate, response, token);
 
-            var saved = await _licensePlateRepository.SaveAsync();
-            if (saved is not true)
-                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
+            await Persistance(licensePlate, response);
 
-
-            return ComponentResponse.Created();
+            return response;
         }
 
         public async Task<IComponentResponse> CreateMotorVehicleAsync(ICreateMotorVehicleContract contract, CancellationToken cancellationToken)
         {
-            var motorVehicle = await _motorVehicleRepository.FindByChassisNumber(contract.ChassisNumber, cancellationToken);
+            var motorVehicle = await _motorVehicleRepository.FindByChassisNumberIncludeLicensePlatesAsync(contract.ChassisNumber, cancellationToken);
             if (motorVehicle is not null) 
                 return ComponentResponse.BadRequest("The given vehicle already exists");
 
@@ -210,5 +165,164 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             return ComponentResponse.Ok();
         }
+
+        #region PRIVATE
+        private async Task LicensePlateValidation(LicensePlate licensePlate, ComponentResponse response, CancellationToken token)
+        {
+            var validation = await _licensePlateValidator.ValidateAsync(licensePlate, token);
+            if (validation.IsValid is not true)
+                response.ValidationFailure(validation);
+            else
+                response.Ok();
+        }
+
+        private static void ChangeMotorVehicleOperationalStatus(MotorVehicle motorVehicle, bool status)
+        {
+            motorVehicle.Operational = status;
+        }
+
+        private async Task LicensePlateMustBeAssigned(string identifier, ComponentResponse response, CancellationToken token)
+        {
+            var motorVehicle = await GetMotorVehicleByLicensePlate(identifier, response, token);
+
+            if (motorVehicle is null)
+                response.Ok();
+            else
+                response.BadRequest().WithTitle("The license plate is already assigned to another vehicle. Please withdraw the plate first.");
+        }
+
+        private void CreateLicensePlateHistorySnapshot(LicensePlate licensePlate, MotorVehicle motorVehicle, ComponentResponse response)
+        {
+            if (response.Valid is not true) return;
+
+            var snapshot = new LicensePlateSnapshot
+            {
+                InUse = licensePlate.InUse,
+                LicensePlate = licensePlate,
+                MotorVehicle = motorVehicle,
+                SnapshotDate = DateTime.Now
+            };
+
+            _licensePlateSnaphotRepository.Add(snapshot);
+        }
+
+        private static void AssignLicensePlateToMotorVehicle(MotorVehicle motorVehicle, LicensePlate licensePlate)
+        {
+            if (motorVehicle is null) return;
+            if (licensePlate is null) return;
+
+            motorVehicle.LicensePlates.Add(licensePlate);
+        }
+
+        private async Task<MotorVehicle> GetUniqueMotorVehicle(string chassisNumber, ComponentResponse response, CancellationToken token) 
+        {
+            var motorVehicle = await _motorVehicleRepository.FindByChassisNumberIncludeLicensePlatesAsync(chassisNumber, token);
+
+            if (motorVehicle is null)
+                response.NotFound();
+            else
+                response.Ok();
+
+            return motorVehicle;
+        }
+
+        private async Task<LicensePlate> GetUniqueLicensePlate(string identifier, ComponentResponse response, CancellationToken token)
+        {
+            var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(identifier, token);
+            if (licensePlate is null)
+                response.NotFound();
+            else
+                response.Ok();
+
+            return licensePlate;
+        }
+
+        private LicensePlate CreateLicensePlate(ICreateLicensePlateContract contract)
+        {
+            var licensePlate = new LicensePlate
+            {
+                Identifier = contract.Identifier,
+                InUse = false
+            };
+
+            return licensePlate;
+        }
+
+        private async Task LicensePlateMustNotExist(string identifier, ComponentResponse response, CancellationToken token)
+        {
+            var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(identifier, token);
+            if (licensePlate is not null)
+                response.AlreadyExists();
+            else
+                response.Ok();
+        }
+
+        private async Task<MotorVehicle> GetMotorVehicleByLicensePlate(string identifier, ComponentResponse response, CancellationToken token)
+        {
+            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdentifierIncludeLicensePlatesAsync(identifier, token);
+            if (motorVehicle is null)
+                response.NotFound();
+            else
+                response.Ok();
+
+            return motorVehicle;
+        }
+
+        private async Task LicensePlateMustNotBeAssignedToAnotherMotorVehicle(IAssignLicensePlateContract contract, ComponentResponse response, CancellationToken token)
+        {
+            var motorVehicle = await GetMotorVehicleByLicensePlate(contract.LicensePlateIdentifier, response, token);
+
+            if (motorVehicle.ChassisNumber == contract.ChassisNumber)
+                response.Ok();
+            else
+                response.BadRequest().AddErrorMessage("The license plate is already assigned to another vehicle. Please withdraw the place first.");
+        }
+
+        private static void LicensePlatePlateMustNotBeInUse(LicensePlate licensePlate, ComponentResponse response)
+        {
+            if (licensePlate.InUse)
+                response.BadRequest().AddErrorMessage("The license plate is in use, please put the license plate out of use first.");
+            else
+                response.Ok();
+        }
+
+        private static void ChangeLicensePlateUseCase(LicensePlate licensePlate, MotorVehicle motorVehicle, bool status, ComponentResponse response)
+        {
+            if (licensePlate is null) return;
+            if (motorVehicle is null) return;
+
+            var anyLicensePlateInUse = motorVehicle.LicensePlates
+                             .Where(licensePlate => licensePlate.InUse)
+                             .Any();
+
+            if (anyLicensePlateInUse is true && status is true)
+                response.BadRequest().AddErrorMessage("There is currently another license plate already in use.");
+            else
+                response.Ok();
+
+            licensePlate.InUse = status;
+        }
+
+        private async Task<bool> Persistance(ComponentResponse response)
+        {
+            var saved = await _motorVehicleRepository.SaveAsync();
+            if (saved is not true)
+            {
+                response.PersistanceFailure();
+                return false;
+            }
+            response.Ok();
+            return true;
+        }
+
+        private async Task Persistance(LicensePlate licensePlate, ComponentResponse response)
+        {
+            if (licensePlate is null) return;
+
+            _licensePlateRepository.Add(licensePlate);
+
+            await Persistance(response);
+        }
+        #endregion
     }
 }

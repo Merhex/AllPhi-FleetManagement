@@ -7,7 +7,7 @@ namespace FleetManagement.API.Write.Commands
 {
     public record AddFuelCardOptionsCommand : IRequest<IComponentResponse>, IAddFuelCardOptionsContract
     {
-        public int FuelCardId { get; set; }
+        public string CardNumber { get; set; }
         public IEnumerable<string> Options { get; init; }
     }
 }

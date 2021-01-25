@@ -6,7 +6,7 @@ namespace FleetManagement.API.Write.Commands
 {
     public record ChangeLicensePlateInUseStatusCommand : IRequest<IComponentResponse>, IChangeLicensePlateInUseStatusContract
     {
-        public int LicensePlateId { get; set; }
-        public bool InUse { get; set; }
+        public string Identifier { get; set; }
+        public bool Status { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace FleetManagement.Models
 
         [RegularExpression("[A-HJ-NPR-Z0-9]{17}")]
         [Required]
+        [Key]
         public string ChassisNumber { get; set; }
 
         [MaxLength(50)]

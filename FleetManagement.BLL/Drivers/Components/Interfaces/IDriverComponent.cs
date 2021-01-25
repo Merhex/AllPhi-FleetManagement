@@ -6,7 +6,7 @@ namespace FleetManagement.BLL.Drivers.Components.Interfaces
 {
     public interface IDriverComponent
     {
-        Task<IComponentResponse> CreateDriverAsync(ICreateDriverContract contract, CancellationToken token);
-        Task<IComponentResponse> ChangeDriverActivityAsync(IChangeDriverActivityStatusContract contract, CancellationToken token);
+        Task<IComponentResponse> CreateDriverAsync(ICreateDriverContract contract, CancellationToken cancellationToken);
+        Task<IComponentResponse> ChangeDriverActivityAsync(IChangeDriverActivityStatusContract contract, CancellationToken cancellationToken);
     }
 }

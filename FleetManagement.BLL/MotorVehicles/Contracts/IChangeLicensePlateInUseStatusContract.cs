@@ -2,7 +2,7 @@
 {
     public interface IChangeLicensePlateInUseStatusContract
     {
-        public int LicensePlateId { get; set; }
-        public bool InUse { get; set; }
+        public string Identifier { get; set; }
+        public bool Status { get; set; }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IDeleteFuelCardContract
     {
-        public int FuelCardId { get; set; }
+        public string CardNumber { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using FleetManagement.BLL.Drivers.Components.Interfaces;
 using FleetManagement.BLL.Drivers.Contracts;
-using FleetManagement.BLL.Shared;
+using FleetManagement.BLL.Persons.Validators;
 using FleetManagement.DAL.Repositories.Interfaces;
 using FleetManagement.Models;
 using System.Threading;
@@ -21,28 +21,57 @@ namespace FleetManagement.BLL.Drivers.Components
             _personValidator = validator;
         }
 
-        public async Task<IComponentResponse> ChangeDriverActivityAsync(IChangeDriverActivityStatusContract contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> ChangeDriverActivityAsync(IChangeDriverActivityStatusContract contract, CancellationToken token)
         {
-            var driver = await _driverRepository.FindByIdAsync(contract.DriverId, cancellationToken);
-            if (driver is null)
-                return ComponentResponse.BadRequest("The driver with given national number does not exist.");
+            var response = new ComponentResponse();
+
+            var driver = await GetUniqueDriver(contract.NationalNumber, response, token);
 
             driver.Active = contract.Active;
 
-            var saved = await _driverRepository.SaveAsync();
-            if (saved is not true)
-                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
+            await Persistance(response);
 
-
-            return ComponentResponse.Ok();
+            return response;
         }
 
-        public async Task<IComponentResponse> CreateDriverAsync(ICreateDriverContract contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> CreateDriverAsync(ICreateDriverContract contract, CancellationToken token)
         {
-            var match = await _driverRepository.FindDriverByNationalNumberAsync(contract.NationalNumber, cancellationToken);
-            if (match is not null)
-                return ComponentResponse.BadRequest("The driver already exists.");
+            var response = new ComponentResponse();
 
+            await CheckIfDriverExists(contract, response, token);
+
+            var driver = CreateAndActivateDriver(contract);
+
+            await DriverValidation(driver, response, token);
+
+            await Persistance(driver, response);
+
+            return response;
+        }
+
+
+        #region PRIVATE
+        private async Task CheckIfDriverExists(ICreateDriverContract contract, ComponentResponse response, CancellationToken cancellationToken)
+        {
+            var driver = await _driverRepository.FindDriverByNationalNumberAsync(contract.NationalNumber, cancellationToken);
+            if (driver is not null)
+                response.BadRequest().WithTitle("The driver with given national number already exists.");
+            else response.Ok();
+        }
+
+        private async Task<Driver> GetUniqueDriver(string nationalNumber, ComponentResponse response, CancellationToken cancellationToken) 
+        {
+            var driver = await _driverRepository.FindDriverByNationalNumberAsync(nationalNumber, cancellationToken);
+            if (driver is null)
+                response.NotFound();
+            else
+                response.Ok();
+
+            return driver;
+        }
+
+        private static Driver CreateAndActivateDriver(ICreateDriverContract contract)
+        {
             var driver = new Driver
             {
                 Active = true,
@@ -55,18 +84,43 @@ namespace FleetManagement.BLL.Drivers.Components
                 ZipCode = contract.ZipCode
             };
 
+            return driver;
+        }
+
+        private async Task DriverValidation(Driver driver, ComponentResponse response, CancellationToken cancellationToken)
+        {
             var validation = await _personValidator.ValidateAsync(driver, cancellationToken);
             if (validation.IsValid is not true)
-                return ComponentResponse.BadRequest(validation);
+                response.ValidationFailure(validation);
+            else response.Ok();
+        }
 
-            _driverRepository.Add(driver);
+        private async Task<bool> Persistance(ComponentResponse response)
+        {
+            if (response.Valid is not true) return false;
 
             var saved = await _driverRepository.SaveAsync();
             if (saved is not true)
-                return ComponentResponse.BadRequest("Something went wrong saving to the database.");
+            {
+                response.PersistanceFailure();
+                return false;
+            }
 
-
-            return ComponentResponse.Created();
+            response.Ok();
+            return true;
         }
+
+        private async Task Persistance(Driver driver, ComponentResponse response)
+        {
+            if (driver is null) return;
+
+            _driverRepository.Add(driver);
+
+            var success = await Persistance(response);
+            if (success) response.Created();
+
+            return;
+        }
+        #endregion
     }
 }

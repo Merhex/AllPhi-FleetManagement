@@ -14,9 +14,6 @@ namespace FleetManagement.DAL.Repositories.Interfaces
         void AddRange(IEnumerable<T> entities);
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entities);
-        //Task<T> FindAsync(TKey key);
-        //Task<T> FindAsync(Expression<Func<T, bool>> predicate);
-        //Task<IEnumerable<T>> FindRangeAsync(Expression<Func<T, bool>> predicate);
         Task<bool> SaveAsync();
     }
 }

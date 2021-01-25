@@ -25,6 +25,7 @@ namespace FleetManagement.Models
 
         [RegularExpression("^[0-9]{2}[.]{1}[0-9]{2}[.]{1}[0-9]{2}[-]{1}[0-9]{3}[.]{1}[0-9]{2}$")]
         [Required]
+        [Key]
         public string NationalNumber { get; set; }
 
         [MaxLength(100)]

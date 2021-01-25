@@ -3,6 +3,6 @@
     public interface IChangeDriverActivityStatusContract
     {
         public bool Active { get; init; }
-        public int DriverId { get; init; }
+        public string NationalNumber { get; init; }
     }
 }
