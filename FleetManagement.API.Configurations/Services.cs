@@ -4,8 +4,8 @@ using FleetManagement.BLL.FuelCards.Components;
 using FleetManagement.BLL.FuelCards.Components.Interfaces;
 using FleetManagement.BLL.MotorVehicles.Components;
 using FleetManagement.BLL.MotorVehicles.Components.Interfaces;
-using FleetManagement.BLL.Shared.Validators;
-using FleetManagement.BLL.Shared.Validators.Interfaces;
+using FleetManagement.BLL.Persons.Validators;
+using FleetManagement.BLL.Persons.Validators.Interfaces;
 using FleetManagement.DAL.Repositories;
 using FleetManagement.DAL.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +27,7 @@ namespace FleetManagement.API.Configurations
             services.AddTransient<IMotorVehicleComponent, MotorVehicleComponent>();
             services.AddTransient<IFuelCardComponent, FuelCardComponent>();
 
-            services.AddTransient<IBelgianNationalNumberValidator, BelgianNationalNumberChecker>();
+            services.AddTransient<IBelgianNationalNumberValidator, BelgiumNationalNumberValidator>();
 
             return services;
         }

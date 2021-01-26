@@ -1,4 +1,4 @@
-﻿using FleetManagement.BLL.MotorVehicles.Commands;
+﻿using FleetManagement.API.Write.Commands;
 using FleetManagement.BLL.MotorVehicles.Components;
 using FleetManagement.BLL.MotorVehicles.Components.Interfaces;
 using FleetManagement.BLL.MotorVehicles.Validators;
@@ -7,6 +7,7 @@ using FleetManagement.Models;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,8 +27,8 @@ namespace FleetManagement.Tests.UnitTests
     {
         private IMotorVehicleComponent _systemUnderTest;
 
-        private LicensePlateValidator _licensePlateValidator = new LicensePlateValidator();
-        private MotorVehicleValidator _motorVehicleValidator = new MotorVehicleValidator();
+        private readonly LicensePlateValidator _licensePlateValidator = new LicensePlateValidator();
+        private readonly MotorVehicleValidator _motorVehicleValidator = new MotorVehicleValidator();
         private Mock<ILicensePlateRepository> _licensePlateRepository;
         private Mock<ILicensePlateSnapshotRepository> _licensePlateSnapshotRepository;
         private Mock<IMotorVehicleRepository> _motorVehicleRepository;
@@ -45,13 +46,13 @@ namespace FleetManagement.Tests.UnitTests
 
 
             _licensePlate = new LicensePlate { Id = 1, Identifier = "1", InUse = false };
-            _motorVehicle = new MotorVehicle { Id = 1, LicensePlates = new List<LicensePlate>() };
+            _motorVehicle = new MotorVehicle { Id = 1, ChassisNumber = "1", LicensePlates = new List<LicensePlate>() };
             _cancellationToken = new CancellationToken();
 
 
             _licensePlateRepository
                 .Setup(x => x
-                .FindByIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByIdentifierAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(_licensePlate);
             _licensePlateRepository
                 .Setup(x => x
@@ -65,7 +66,7 @@ namespace FleetManagement.Tests.UnitTests
 
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByIdIncludeLicensePlatesAsync(_motorVehicle.Id, _cancellationToken))
+                .FindByChassisNumberIncludeLicensePlatesAsync(_motorVehicle.ChassisNumber, _cancellationToken))
                 .ReturnsAsync(_motorVehicle);
             _motorVehicleRepository
                 .Setup(x => x
@@ -92,101 +93,100 @@ namespace FleetManagement.Tests.UnitTests
         }
         
         [Test]
-        public async Task AssignLicensePlateToMotorVehicleAsync_WhenCalled_ShoulddReturn200OkResponseAndAssignLicensePlate()
+        public async Task AssignLicensePlateToMotorVehicleAsync_WhenCalled_ShouldAssignLicensePlate()
         {
             //Act
-            var result = await _systemUnderTest
+            await _systemUnderTest
                 .AssignLicensePlateToMotorVehicleAsync(
                     new AssignLicensePlateCommand 
-                    { 
-                        LicensePlateId = _licensePlate.Id, 
-                        MotorVehicleId = _motorVehicle.Id 
+                    {
+                        ChassisNumber = _motorVehicle.ChassisNumber,
+                        LicensePlateIdentifier = _licensePlate.Identifier
                     }, 
                     _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(200));
             Assert.That(_motorVehicle.LicensePlates.Contains(_licensePlate));
         }
 
         [Test]
-        public async Task AssignLicensePlateToMotorVehicleAsync_LicensePlateAlreadyAssignedOnSameVehicle_ShouldReturn204NoContentResponseAndHaveAssignedLicensePlate()
+        public async Task AssignLicensePlateToMotorVehicleAsync_LicensePlateAlreadyAssignedOnSameVehicle_ShouldDoNothing()
         {
             //Arrange
             _motorVehicle.LicensePlates.Add(_licensePlate);
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByLicensePlateIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByLicensePlateIdentifierIncludeLicensePlatesAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(_motorVehicle);
 
             //Act
             var result = await _systemUnderTest
                 .AssignLicensePlateToMotorVehicleAsync(
-                new AssignLicensePlateCommand 
-                { 
-                    LicensePlateId = _licensePlate.Id,
-                    MotorVehicleId = _motorVehicle.Id
-                }, 
+                new AssignLicensePlateCommand
+                {
+                    ChassisNumber = _motorVehicle.ChassisNumber,
+                    LicensePlateIdentifier = _licensePlate.Identifier
+                },
                 _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(204));
-            Assert.That(_motorVehicle.LicensePlates.Contains(_licensePlate));
+            Assert.That(_motorVehicle.LicensePlates
+                .Where(x => x.Identifier == _licensePlate.Identifier)
+                .Count(), 
+                Is.EqualTo(1));
         }
 
         [Test]
-        public async Task AssignLicensePlateToMotorVehicleAsync_LicensePlateAlreadyAssignedOnAnotherVehicle_ShouldReturnA400BadRequestResponse()
+        public async Task AssignLicensePlateToMotorVehicleAsync_LicensePlateAlreadyAssignedOnAnotherVehicle_ShouldNotContainAssignedLicensePlate()
         {
             //Arrange
-            var anotherMotorVehicle = new MotorVehicle { Id = 2 };
+            var anotherMotorVehicle = new MotorVehicle { ChassisNumber = "2" };
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByLicensePlateIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByLicensePlateIdentifierIncludeLicensePlatesAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(anotherMotorVehicle);
 
             //Act
             var result = await _systemUnderTest
                 .AssignLicensePlateToMotorVehicleAsync(
-                    new AssignLicensePlateCommand 
-                    { 
-                        LicensePlateId = _licensePlate.Id, 
-                        MotorVehicleId = _motorVehicle.Id 
+                    new AssignLicensePlateCommand
+                    {
+                        LicensePlateIdentifier = _licensePlate.Identifier,
+                        ChassisNumber = _motorVehicle.ChassisNumber
                     },
                     _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(400));
             Assert.That(_motorVehicle.LicensePlates.Contains(_licensePlate), Is.False);
         }
 
         [Test]
-        public async Task AssignLicensePlateToMotorVehicleAsync_LicensePlateIsInUse_ShouldReturnA400BadRequestResponse()
+        public async Task AssignLicensePlateToMotorVehicleAsync_LicensePlateIsInUse_ShouldNotContainLicensePlate()
         {
             //Arrange
             _licensePlate.InUse = true;
 
             //Act
-            var result = await _systemUnderTest
-                .AssignLicensePlateToMotorVehicleAsync(
-                    new AssignLicensePlateCommand
-                    {
-                        LicensePlateId = _licensePlate.Id,
-                        MotorVehicleId = _motorVehicle.Id
-                    },
-                    _cancellationToken);
+            await _systemUnderTest
+            .AssignLicensePlateToMotorVehicleAsync(
+                new AssignLicensePlateCommand
+                {
+                    ChassisNumber = _motorVehicle.ChassisNumber,
+                    LicensePlateIdentifier = _licensePlate.Identifier
+                },
+                _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(400));
             Assert.That(_motorVehicle.LicensePlates.Contains(_licensePlate), Is.False);
         }
 
         [Test]
-        public async Task AssignLicensePlateToMotorVehicleAsync_LicensePlateDoesNotExist_ShouldReturnA400BadRequestResponse()
+        public async Task AssignLicensePlateToMotorVehicleAsync_LicensePlateDoesNotExist_ShouldNotContainAnyLicensePlate()
         {
             //Arrange
             _licensePlateRepository
                 .Setup(x => x
-                .FindByIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByIdentifierAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(() => null);
 
             //Act
@@ -194,23 +194,22 @@ namespace FleetManagement.Tests.UnitTests
                 .AssignLicensePlateToMotorVehicleAsync(
                     new AssignLicensePlateCommand
                     {
-                        LicensePlateId = _licensePlate.Id,
-                        MotorVehicleId = _motorVehicle.Id
+                        ChassisNumber = _motorVehicle.ChassisNumber,
+                        LicensePlateIdentifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(400));
             Assert.That(_motorVehicle.LicensePlates.Contains(_licensePlate), Is.False);
         }
 
         [Test]
-        public async Task AssignLicensePlateToMotorVehicleAsync_MotorVehicleDoesNotExist_ShouldReturnA400BadRequestResponse()
+        public async Task AssignLicensePlateToMotorVehicleAsync_MotorVehicleDoesNotExist_ShouldNotContainLicensePlate()
         {
             //Arrange
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByIdIncludeLicensePlatesAsync(_motorVehicle.Id, _cancellationToken))
+                .FindByChassisNumberIncludeLicensePlatesAsync(_motorVehicle.ChassisNumber, _cancellationToken))
                 .ReturnsAsync(() => null);
 
             //Act
@@ -218,24 +217,23 @@ namespace FleetManagement.Tests.UnitTests
                 .AssignLicensePlateToMotorVehicleAsync(
                     new AssignLicensePlateCommand
                     {
-                        LicensePlateId = _licensePlate.Id,
-                        MotorVehicleId = _motorVehicle.Id
+                        ChassisNumber = _motorVehicle.ChassisNumber,
+                        LicensePlateIdentifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(400));
             Assert.That(_motorVehicle.LicensePlates.Contains(_licensePlate), Is.False);
         }
 
         [Test]
-        public async Task WithdrawLicensePlateFromMotorVehicleAsync_WhenCalled_ShouldWithdrawLicensePlateFromVehicleAndReturn200OkResponse()
+        public async Task WithdrawLicensePlateFromMotorVehicleAsync_WhenCalled_ShouldWithdrawLicensePlateFromVehicle()
         {
             //Arrange
             _motorVehicle.LicensePlates.Add(_licensePlate);
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByLicensePlateIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByLicensePlateIdentifierIncludeLicensePlatesAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(_motorVehicle);
 
             //Act
@@ -243,22 +241,22 @@ namespace FleetManagement.Tests.UnitTests
                 .WithdrawLicensePlateFromMotorVehicleAsync(
                     new WithdrawLicensePlateCommand
                     {
-                        LicensePlateId = _licensePlate.Id
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(200));
             Assert.That(_motorVehicle.LicensePlates.Contains(_licensePlate), Is.False);
         }
 
         [Test]
-        public async Task WithdrawLicensePlateFromMotorVehicleAsync_LicensePlateDoesNotExist_ShouldReturn400BadRequest()
+        public async Task WithdrawLicensePlateFromMotorVehicleAsync_LicensePlateDoesNotExist_ShouldNotRemoveLicensePlate()
         {
             //Arrange
+            _motorVehicle.LicensePlates.Add(_licensePlate);
             _licensePlateRepository
                 .Setup(x => x
-                .FindByIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByIdentifierAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(() => null);
 
             //Act
@@ -266,58 +264,56 @@ namespace FleetManagement.Tests.UnitTests
                 .WithdrawLicensePlateFromMotorVehicleAsync(
                     new WithdrawLicensePlateCommand
                     {
-                        LicensePlateId = _licensePlate.Id
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(400));
+            Assert.That(_motorVehicle.LicensePlates.Contains(_licensePlate), Is.True);
         }
 
         [Test]
-        public async Task WithdrawLicensePlateFromMotorVehicleAsync_LicensePlateIsInUse_ShouldReturn400BadRequest()
+        public async Task WithdrawLicensePlateFromMotorVehicleAsync_LicensePlateIsInUse_ShouldNotWithdrawLicensePlate()
         {
             //Arrange
             _licensePlate.InUse = true;
             _motorVehicle.LicensePlates.Add(_licensePlate);
 
             //Act
-            var result = await _systemUnderTest
+            await _systemUnderTest
                 .WithdrawLicensePlateFromMotorVehicleAsync(
                     new WithdrawLicensePlateCommand
                     {
-                        LicensePlateId = _licensePlate.Id
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(400));
             Assert.That(_motorVehicle.LicensePlates.Contains(_licensePlate), Is.True);
         }
 
 
         [Test]
-        public async Task DeleteLicensePlateAsync_WhenCalled_ShouldRemoveLicensePlateAndReturn200Ok()
+        public async Task DeleteLicensePlateAsync_WhenCalled_ShouldRemoveLicensePlate()
         {
             // Act
             var result = await _systemUnderTest
                 .DeleteLicensePlateAsync(
                     new DeleteLicensePlateCommand
                     {
-                        LicensePlateId = _licensePlate.Id
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
-            // Assert 
-            Assert.That(result.Status, Is.EqualTo(200));
+            // Assert
             _licensePlateRepository
                 .Verify(x => x
-                .Remove(It.Is<LicensePlate>(with => with.Id == _licensePlate.Id)), 
+                .Remove(It.Is<LicensePlate>(with => with.Identifier == _licensePlate.Identifier)),
                 Times.Once());
         }
 
         [Test]
-        public async Task DeleteLicensePlateAsync_LicensePlateInUse_ShouldReturn400BadRequest()
+        public async Task DeleteLicensePlateAsync_LicensePlateInUse_ShouldNotRemoveLicensePlate()
         {
             //Arrange
             _licensePlate.InUse = true;
@@ -327,12 +323,15 @@ namespace FleetManagement.Tests.UnitTests
                 .DeleteLicensePlateAsync(
                     new DeleteLicensePlateCommand
                     {
-                        LicensePlateId = _licensePlate.Id
-                    }, 
+                        Identifier = _licensePlate.Identifier
+                    },
                     _cancellationToken);
 
             //Assert
-            Assert.That(result.Status, Is.EqualTo(400));
+            _licensePlateRepository
+                .Verify(x => x
+                .Remove(It.Is<LicensePlate>(with => with.Identifier == _licensePlate.Identifier)),
+                Times.Never());
         }
 
         /// <summary>
@@ -344,7 +343,7 @@ namespace FleetManagement.Tests.UnitTests
         [TestCase(null)]
         [TestCase(" ")]
         [TestCase("")]
-        public async Task CreateLicensePlateAsync_IdentifierViolatesValidationRules_ShouldReturn400BadRequest(string identifier)
+        public async Task CreateLicensePlateAsync_IdentifierViolatesValidationRules_ShouldNotCreateLicensePlate(string identifier)
         {
             //Act
             var result = await _systemUnderTest
@@ -361,12 +360,12 @@ namespace FleetManagement.Tests.UnitTests
 
 
         [Test]
-        public async Task ChangeLicensePlateInUseStatusAsync_WhenCalled_ShouldChangeInUseStatusAndReturn200OkResponse()
+        public async Task ChangeLicensePlateInUseStatusAsync_WhenCalled_ShouldChangeInUseStatus()
         {
             //Arrange
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByLicensePlateIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByLicensePlateIdentifierIncludeLicensePlatesAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(_motorVehicle);
 
             // Act
@@ -374,37 +373,12 @@ namespace FleetManagement.Tests.UnitTests
                 .ChangeLicensePlateInUseStatusAsync(
                     new ChangeLicensePlateInUseStatusCommand
                     {
-                        InUse = true,
-                        LicensePlateId = _licensePlate.Id
+                        Status = true,
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
-            // Assert 
-            Assert.That(result.Status, Is.EqualTo(200));
-            Assert.That(_licensePlate.InUse, Is.True);
-        }
-
-        [Test]
-        public async Task ChangeLicensePlateInUseStatusAsync_WhenCalled_ShouldReturn200OkResponseAndBeInUse()
-        {
-            //Arrange
-            _motorVehicleRepository
-                .Setup(x => x
-                .FindByLicensePlateIdAsync(_licensePlate.Id, _cancellationToken))
-                .ReturnsAsync(_motorVehicle);
-
-            // Act
-            var result = await _systemUnderTest
-                .ChangeLicensePlateInUseStatusAsync(
-                    new ChangeLicensePlateInUseStatusCommand
-                    {
-                        InUse = true,
-                        LicensePlateId = _licensePlate.Id
-                    },
-                    _cancellationToken);
-
-            // Assert 
-            Assert.That(result.Status, Is.EqualTo(200));
+            // Assert
             Assert.That(_licensePlate.InUse, Is.True);
         }
 
@@ -414,7 +388,7 @@ namespace FleetManagement.Tests.UnitTests
             //Arrange
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByLicensePlateIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByLicensePlateIdentifierIncludeLicensePlatesAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(_motorVehicle);
 
             // Act
@@ -422,26 +396,26 @@ namespace FleetManagement.Tests.UnitTests
                 .ChangeLicensePlateInUseStatusAsync(
                     new ChangeLicensePlateInUseStatusCommand
                     {
-                        InUse = true,
-                        LicensePlateId = _licensePlate.Id
+                        Status = true,
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
-            // Assert 
+            // Assert
             _licensePlateSnapshotRepository
                 .Verify(x => x
-                .Add(It.Is<LicensePlateSnapshot>(with => with.LicensePlate.Id == _licensePlate.Id)),
+                .Add(It.Is<LicensePlateSnapshot>(with => with.LicensePlate.Identifier == _licensePlate.Identifier)), 
                 Times.Once());
         }
 
 
         [Test]
-        public async Task ChangeLicensePlateInUseStatusAsync_InUseIsSameValue_ShouldReturn204NoContentResponse()
+        public async Task ChangeLicensePlateInUseStatusAsync_InUseIsSameValue_ShouldDoNothing()
         {
             //Arrange
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByLicensePlateIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByLicensePlateIdentifierIncludeLicensePlatesAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(_motorVehicle);
 
             // Act
@@ -449,13 +423,13 @@ namespace FleetManagement.Tests.UnitTests
                 .ChangeLicensePlateInUseStatusAsync(
                     new ChangeLicensePlateInUseStatusCommand
                     {
-                        InUse = _licensePlate.InUse,
-                        LicensePlateId = _licensePlate.Id
+                        Status = _licensePlate.InUse,
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
             // Assert 
-            Assert.That(result.Status, Is.EqualTo(204));
+            Assert.That(_licensePlate.InUse, Is.EqualTo(_licensePlate.InUse));
         }
 
         [Test]
@@ -464,7 +438,7 @@ namespace FleetManagement.Tests.UnitTests
             //Arrange
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByLicensePlateIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByLicensePlateIdentifierIncludeLicensePlatesAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(_motorVehicle);
 
             // Act
@@ -472,26 +446,26 @@ namespace FleetManagement.Tests.UnitTests
                 .ChangeLicensePlateInUseStatusAsync(
                     new ChangeLicensePlateInUseStatusCommand
                     {
-                        InUse = _licensePlate.InUse,
-                        LicensePlateId = _licensePlate.Id
+                        Status = _licensePlate.InUse,
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
             // Assert 
             _licensePlateSnapshotRepository
                 .Verify(x => x
-                .Add(It.Is<LicensePlateSnapshot>(with => with.LicensePlate.Id == _licensePlate.Id)),
+                .Add(It.Is<LicensePlateSnapshot>(with => with.LicensePlate.Identifier == _licensePlate.Identifier)),
                 Times.Never());
         }
 
 
         [Test]
-        public async Task ChangeLicensePlateInUseStatus_LicensePlateIsNotAssignedToMotorVehicle_ShouldReturn400BadRequest()
+        public async Task ChangeLicensePlateInUseStatus_LicensePlateIsNotAssignedToMotorVehicle_LicensePlateShouldNotBeInUse()
         {
             // Arrange 
             _motorVehicleRepository
                 .Setup(x => x
-                .FindByLicensePlateIdAsync(_licensePlate.Id, _cancellationToken))
+                .FindByLicensePlateIdentifierIncludeLicensePlatesAsync(_licensePlate.Identifier, _cancellationToken))
                 .ReturnsAsync(() => null);
 
             // Act
@@ -499,13 +473,13 @@ namespace FleetManagement.Tests.UnitTests
                 .ChangeLicensePlateInUseStatusAsync(
                     new ChangeLicensePlateInUseStatusCommand
                     {
-                        InUse = true,
-                        LicensePlateId = _licensePlate.Id
+                        Status = true,
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
             // Assert 
-            Assert.That(result.Status, Is.EqualTo(400));
+            Assert.That(_licensePlate.InUse, Is.False);
         }
     }
 }

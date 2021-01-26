@@ -2,6 +2,6 @@
 {
     public interface IWithdrawLicensePlateContract
     {
-        public int LicensePlateId { get; set; }
+        public string Identifier { get; set; }
     }
 }

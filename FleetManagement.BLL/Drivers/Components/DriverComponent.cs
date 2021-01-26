@@ -68,7 +68,7 @@ namespace FleetManagement.BLL.Drivers.Components
         {
             var driver = await _driverRepository.FindDriverByNationalNumberAsync(nationalNumber, cancellationToken);
             if (driver is null)
-                response.NotFound();
+                response.NotFound(nationalNumber);
             else
                 response.Ok();
 

@@ -5,22 +5,47 @@ namespace FleetManagement.BLL
 {
     public class ComponentResponse : IComponentResponse
     {
-        public string Reference { get; private set; }
-        public int Status { get; private set; }
         public string Title { get; private set; }
         public IList<IErrorResponseModel> Errors { get; private set; }
         public bool Valid { get; private set; }
 
+        private readonly Dictionary<int, string> _referenceDictionary;
+
+        private int _status;
+        public int Status
+        {
+            get { return _status; }
+            private set
+            {
+                if (value > _status) _status = value;
+                _reference = _referenceDictionary[_status];
+            }
+        }
+
+        private string _reference;
+        public string Reference { get { return _reference; } }
+
+
+
         public ComponentResponse()
         {
             Errors = new List<IErrorResponseModel>();
+
+            _referenceDictionary = new Dictionary<int, string>
+            {
+                { 200, "https://tools.ietf.org/html/rfc7231#section-6.3.1" },
+                { 201, "https://tools.ietf.org/html/rfc7231#section-6.3.2" },
+                { 400, "https://tools.ietf.org/html/rfc7231#section-6.5.1" },
+                { 404, "https://tools.ietf.org/html/rfc7231#section-6.5.4" },
+                { 500, "https://tools.ietf.org/html/rfc7231#section-6.6.1" }
+            };
         }
 
         public ComponentResponse Ok()
         {
+            if (Status is not 0) return this;
+
             Status = 200;
-            Reference = "https://tools.ietf.org/html/rfc7231#section-6.3.1";
-            Title = "The 200 (OK) status code indicates that the request has succeeded";
             Valid = true;
 
             return this;
@@ -29,8 +54,6 @@ namespace FleetManagement.BLL
         public ComponentResponse BadRequest()
         {
             Status = 400;
-            Reference = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
-            Title = "The 400 (Bad Request) status code indicates that the server cannot or will not process the request due to something that is perceived to be a client error(e.g., malformed request syntax, invalid request message framing, or deceptive request routing).";
             Valid = false;
             
             return this;
@@ -39,8 +62,6 @@ namespace FleetManagement.BLL
         public ComponentResponse Created()
         {
             Status = 201;
-            Reference = "https://tools.ietf.org/html/rfc7231#section-6.3.2";
-            Title = "The 201 (Created) status code indicates that the request has been fulfilled and has resulted in one or more new resources being created.";
             Valid = true;
 
             return this;
@@ -49,19 +70,17 @@ namespace FleetManagement.BLL
         public ComponentResponse InternalServerError()
         {
             Status = 500;
-            Reference = "https://tools.ietf.org/html/rfc7231#section-6.6.1";
-            Title = "The 500 (Internal Server Error) status code indicates that the server encountered an unexpected condition that prevented it from fulfilling the request.";
             Valid = false;
 
             return this;
         }
 
-        public ComponentResponse NotFound()
+        public ComponentResponse NotFound(object entity)
         {
             Status = 404;
-            Reference = "https://tools.ietf.org/html/rfc7231#section-6.5.4";
-            Title = "The 404 (Not Found) status code indicates that the origin server did not find a current representation for the target resource or is not willing to disclose that one exists.";
             Valid = false;
+
+            AddErrorMessage($"The entity {entity}, could not be found.");
 
             return this;
         }
@@ -86,9 +105,9 @@ namespace FleetManagement.BLL
             return this;
         }
 
-        public ComponentResponse AlreadyExists()
+        public ComponentResponse AlreadyExists(object entity)
         {
-            BadRequest().WithTitle("The given entity already exists.");
+            BadRequest().AddErrorMessage($"The given entity: {entity}, already exists.");
 
             return this;
         }

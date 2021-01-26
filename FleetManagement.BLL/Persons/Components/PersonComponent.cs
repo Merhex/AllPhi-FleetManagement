@@ -41,7 +41,7 @@ namespace FleetManagement.BLL.Persons.Components
         {
             var person = await _personRepository.FindByNationalNumberAsync(contract.NationalNumber, cancellationToken);
             if (person is null) 
-                response.NotFound();
+                response.NotFound(contract.NationalNumber);
             else 
                 response.Ok();
 

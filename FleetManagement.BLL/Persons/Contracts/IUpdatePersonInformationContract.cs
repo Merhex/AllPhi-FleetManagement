@@ -2,7 +2,7 @@
 
 namespace FleetManagement.BLL.Persons.Contracts
 {
-    public interface IUpdatePersonInformationContract
+    public interface IUpdatePersonInformationContract : IContract
     {
         public string FirstName { get; init; }
         public string LastName { get; init; }

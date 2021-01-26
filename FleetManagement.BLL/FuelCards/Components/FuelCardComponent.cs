@@ -105,7 +105,7 @@ namespace FleetManagement.BLL.FuelCards.Components
         {
             var fuelCard = await _fuelCardRepository.FindByCardNumberAsync(cardNumber, token);
             if (fuelCard is null)
-                response.NotFound();
+                response.NotFound(cardNumber);
             else 
                 response.Ok();
 
@@ -116,7 +116,7 @@ namespace FleetManagement.BLL.FuelCards.Components
         {
             var fuelCard = await _fuelCardRepository.FindByCardNumberAsync(cardNumber, token);
             if (fuelCard is not null)
-                response.AlreadyExists();
+                response.AlreadyExists(fuelCard.CardNumber);
             else
                 response.Ok();
         }

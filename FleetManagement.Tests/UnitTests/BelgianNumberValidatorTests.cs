@@ -25,10 +25,10 @@ namespace FleetManagement.Tests.UnitTests
         }
 
 
-        [TestCase("1995-07-14", "1995.07.14-489.68")]
-        [TestCase("1995-07-14", "95.07.14.489.68")]
-        [TestCase("1995-07-14", "95-07-14.489.68")]
-        [TestCase("1995-07-14", "95071448968")]
+        [TestCase("1995.07.14-489.68")]
+        [TestCase("95.07.14.489.68")]
+        [TestCase("95-07-14.489.68")]
+        [TestCase("95071448968")]
         public void ValidateFormat_WithIncorrectFormatting_ShouldReturnFalse(string nationalNumber)
         {
             _validator.ValidateNationalNumberFormatting(nationalNumber).Should().BeFalse();

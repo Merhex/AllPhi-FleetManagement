@@ -44,7 +44,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             await LicensePlateMustNotBeAssignedToAnotherMotorVehicle(contract, response, token);
 
-            AssignLicensePlateToMotorVehicle(motorVehicle, licensePlate);
+            AssignLicensePlateToMotorVehicle(motorVehicle, licensePlate, response);
 
             await Persistance(response);
 
@@ -63,7 +63,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             AnotherLicensePlateMustNotBeInUseOnMotorVehicle(motorVehicle, contract.Status, response);
 
-            ChangeLicensePlateUseCase(licensePlate, contract.Status);
+            ChangeLicensePlateUseCase(licensePlate, contract.Status, response);
 
             CreateLicensePlateHistorySnapshot(licensePlate, motorVehicle, response);
 
@@ -204,7 +204,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             if (motorVehicle is not null)
                 response.Ok();
             else
-                response.BadRequest().WithTitle("The license plate is already assigned to another vehicle. Please withdraw the plate first.");
+                response.BadRequest().AddErrorMessage("The license plate is not assigned to a vehicle. Please assign the plate first.");
         }
         
         private async Task MotorVehicleMustNotExist(string chassisNumber, ComponentResponse response, CancellationToken token)
@@ -212,7 +212,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             var motorVehicle = await _motorVehicleRepository.FindByChassisNumberIncludeLicensePlatesAsync(chassisNumber, token);
 
             if (motorVehicle is not null)
-                response.AlreadyExists();
+                response.AlreadyExists(motorVehicle.ChassisNumber);
             else
                 response.Ok();
         }
@@ -232,10 +232,12 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             _licensePlateSnaphotRepository.Add(snapshot);
         }
 
-        private static void AssignLicensePlateToMotorVehicle(MotorVehicle motorVehicle, LicensePlate licensePlate)
+        private static void AssignLicensePlateToMotorVehicle(MotorVehicle motorVehicle, LicensePlate licensePlate, ComponentResponse response)
         {
+            if (response.Valid is not true) return;
             if (motorVehicle is null) return;
             if (licensePlate is null) return;
+            if (motorVehicle.LicensePlates.Contains(licensePlate)) return;
 
             motorVehicle.LicensePlates.Add(licensePlate);
         }
@@ -245,7 +247,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             var motorVehicle = await _motorVehicleRepository.FindByChassisNumberIncludeLicensePlatesAsync(chassisNumber, token);
 
             if (motorVehicle is null)
-                response.NotFound();
+                response.NotFound(chassisNumber);
             else
                 response.Ok();
 
@@ -256,7 +258,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         {
             var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(identifier, token);
             if (licensePlate is null)
-                response.NotFound();
+                response.NotFound(identifier);
             else
                 response.Ok();
 
@@ -278,7 +280,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         {
             var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(identifier, token);
             if (licensePlate is not null)
-                response.AlreadyExists();
+                response.AlreadyExists(licensePlate.Identifier);
             else
                 response.Ok();
         }
@@ -287,7 +289,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         {
             var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdentifierIncludeLicensePlatesAsync(identifier, token);
             if (motorVehicle is null)
-                response.NotFound();
+                response.NotFound(identifier);
             else
                 response.Ok();
 
@@ -296,7 +298,8 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
         private async Task LicensePlateMustNotBeAssignedToAnotherMotorVehicle(IAssignLicensePlateContract contract, ComponentResponse response, CancellationToken token)
         {
-            var motorVehicle = await GetMotorVehicleByLicensePlate(contract.LicensePlateIdentifier, response, token);
+            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdentifierIncludeLicensePlatesAsync(contract.LicensePlateIdentifier, token);
+            if (motorVehicle is null) return;
 
             if (motorVehicle.ChassisNumber == contract.ChassisNumber)
                 response.Ok();
@@ -306,30 +309,33 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
         private static void LicensePlateMustNotBeInUse(LicensePlate licensePlate, ComponentResponse response)
         {
+            if (licensePlate is null) return;
+
             if (licensePlate.InUse)
                 response.BadRequest().AddErrorMessage("The license plate is in use, please put the license plate out of use first.");
             else
                 response.Ok();
         }
 
-        private static void AnotherLicensePlateMustNotBeInUseOnMotorVehicle(MotorVehicle motorVehicle, bool status, ComponentResponse response)
+        private static void AnotherLicensePlateMustNotBeInUseOnMotorVehicle(MotorVehicle motorVehicle, bool inUse, ComponentResponse response)
         {
             if (motorVehicle is null) return;
 
-            var anyLicensePlateInUse = motorVehicle.LicensePlates
+            var licensePlateInUse = motorVehicle.LicensePlates
                              .Where(licensePlate => licensePlate.InUse)
                              .Any();
 
-            if (anyLicensePlateInUse is true && status is true)
+            if (licensePlateInUse && inUse is true)
                 response.BadRequest().AddErrorMessage("There is currently another license plate already in use.");
             else
                 response.Ok();
 
         }
 
-        private static void ChangeLicensePlateUseCase(LicensePlate licensePlate, bool status)
+        private static void ChangeLicensePlateUseCase(LicensePlate licensePlate, bool status, ComponentResponse response)
         {
             if (licensePlate is null) return;
+            if (response.Valid is not true) return;
 
             licensePlate.InUse = status;
         }
