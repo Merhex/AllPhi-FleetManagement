@@ -2,6 +2,6 @@
 {
     public interface IDeleteLicensePlateContract
     {
-        public int LicensePlateId { get; set; }
+        public string Identifier { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace FleetManagement.BLL.Drivers.Components
 
             var driver = await GetUniqueDriver(contract.NationalNumber, response, token);
 
-            driver.Active = contract.Active;
+            ChangeDriverActivity(driver, contract.Active);
 
             await Persistance(response);
 
@@ -38,7 +38,7 @@ namespace FleetManagement.BLL.Drivers.Components
         {
             var response = new ComponentResponse();
 
-            await CheckIfDriverExists(contract, response, token);
+            await DriverMustNotExist(contract, response, token);
 
             var driver = CreateAndActivateDriver(contract);
 
@@ -51,7 +51,12 @@ namespace FleetManagement.BLL.Drivers.Components
 
 
         #region PRIVATE
-        private async Task CheckIfDriverExists(ICreateDriverContract contract, ComponentResponse response, CancellationToken cancellationToken)
+        private static void ChangeDriverActivity(Driver driver, bool activity)
+        {
+            driver.Active = activity;
+        }
+
+        private async Task DriverMustNotExist(ICreateDriverContract contract, ComponentResponse response, CancellationToken cancellationToken)
         {
             var driver = await _driverRepository.FindDriverByNationalNumberAsync(contract.NationalNumber, cancellationToken);
             if (driver is not null)
@@ -95,19 +100,15 @@ namespace FleetManagement.BLL.Drivers.Components
             else response.Ok();
         }
 
-        private async Task<bool> Persistance(ComponentResponse response)
+        private async Task Persistance(ComponentResponse response)
         {
-            if (response.Valid is not true) return false;
+            if (response.Valid is not true) return;
 
             var saved = await _driverRepository.SaveAsync();
             if (saved is not true)
-            {
                 response.PersistanceFailure();
-                return false;
-            }
-
-            response.Ok();
-            return true;
+            else
+                response.Ok();
         }
 
         private async Task Persistance(Driver driver, ComponentResponse response)
@@ -116,10 +117,7 @@ namespace FleetManagement.BLL.Drivers.Components
 
             _driverRepository.Add(driver);
 
-            var success = await Persistance(response);
-            if (success) response.Created();
-
-            return;
+            await Persistance(response);
         }
         #endregion
     }

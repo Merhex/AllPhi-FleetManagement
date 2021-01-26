@@ -150,19 +150,15 @@ namespace FleetManagement.BLL.FuelCards.Components
                     .ToList();
         }
 
-        private async Task<bool> Persistance(ComponentResponse response)
+        private async Task Persistance(ComponentResponse response)
         {
-            if (response.Valid is not true) return false;
+            if (response.Valid is not true) return;
 
             var saved = await _fuelCardRepository.SaveAsync();
             if (saved is not true)
-            {
                 response.PersistanceFailure();
-                return false;
-            }
-
-            response.Ok();
-            return true;
+            else
+                response.Ok();
         }
 
         private async Task Persistance(FuelCard fuelCard, ComponentResponse response)
@@ -172,8 +168,6 @@ namespace FleetManagement.BLL.FuelCards.Components
             _fuelCardRepository.Add(fuelCard);
 
             await Persistance(response);
-
-            response.Created();
         }
         #endregion
     }
