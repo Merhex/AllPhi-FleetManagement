@@ -87,17 +87,19 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
         public async Task<IComponentResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken token)
         {
-            var response = new ComponentResponse();
+            //var response = new ComponentResponse();
 
-            await LicensePlateMustNotExist(contract.Identifier, response, token);
+            //await LicensePlateMustNotExist(contract.Identifier, response, token);
 
-            var licensePlate = CreateLicensePlate(contract);
+            //var licensePlate = CreateLicensePlate(contract);
 
-            await LicensePlateValidation(licensePlate, response, token);
+            //await LicensePlateValidation(licensePlate, response, token);
 
-            await Persistance(licensePlate, response);
+            //await Persistance(licensePlate, response);
 
-            return response;
+            //return response;
+
+            var businessRuleHandlerBuilder = new BusinessRuleHandlerBuilder<ICreateLicensePlateContract>();
         }
 
         public async Task<IComponentResponse> CreateMotorVehicleAsync(ICreateMotorVehicleContract contract, CancellationToken token)

@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FleetManagement\FleetManagement.BLL\FleetManagement.BLL.csproj" />
     <ProjectReference Include="..\FleetManagement.API.Write\FleetManagement.API.Write.csproj" />
+    <ProjectReference Include="..\FleetManagement.BLL\FleetManagement.BLL.csproj" />
   </ItemGroup>
 
 </Project>
