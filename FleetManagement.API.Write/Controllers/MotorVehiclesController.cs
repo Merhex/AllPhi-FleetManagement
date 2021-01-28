@@ -29,7 +29,10 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return response.Success ?  
+                Ok() 
+                : 
+                BadRequest(response);
         }
 
         [HttpPost("licensePlates/assign")]

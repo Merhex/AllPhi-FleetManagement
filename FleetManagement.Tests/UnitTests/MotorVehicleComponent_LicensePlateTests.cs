@@ -339,24 +339,24 @@ namespace FleetManagement.Tests.UnitTests
         /// </summary>
         /// <param name="identifier"></param>
         /// <returns></returns>
-        [TestCase("1234567890")]
-        [TestCase(null)]
-        [TestCase(" ")]
-        [TestCase("")]
-        public async Task CreateLicensePlateAsync_IdentifierViolatesValidationRules_ShouldNotCreateLicensePlate(string identifier)
-        {
-            //Act
-            var result = await _systemUnderTest
-                .CreateLicensePlateAsync(
-                    new CreateLicensePlateCommand
-                    {
-                        Identifier = identifier
-                    },
-                    _cancellationToken);
+        //[TestCase("1234567890")]
+        //[TestCase(null)]
+        //[TestCase(" ")]
+        //[TestCase("")]
+        //public async Task CreateLicensePlateAsync_IdentifierViolatesValidationRules_ShouldNotCreateLicensePlate(string identifier)
+        //{
+        //    //Act
+        //    var result = await _systemUnderTest
+        //        .CreateLicensePlateAsync(
+        //            new CreateLicensePlateCommand
+        //            {
+        //                Identifier = identifier
+        //            },
+        //            _cancellationToken);
 
-            //Assert
-            Assert.That(result.Status, Is.EqualTo(400));
-        }
+        //    //Assert
+        //    Assert.That(result.Status, Is.EqualTo(400));
+        //}
 
 
         [Test]

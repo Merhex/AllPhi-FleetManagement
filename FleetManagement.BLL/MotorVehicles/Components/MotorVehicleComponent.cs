@@ -85,21 +85,31 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             return response;
         }
 
-        public async Task<IComponentResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken token)
+        public async Task<IBusinessRuleHandlerResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken cancellationToken)
         {
-            //var response = new ComponentResponse();
+            var handler = new BusinessRuleHandler<ICreateLicensePlateContract>(contract);
 
-            //await LicensePlateMustNotExist(contract.Identifier, response, token);
+            var listenerResponse = await handler.ValidateBusinessRules(cancellationToken);
 
-            //var licensePlate = CreateLicensePlate(contract);
+            if (listenerResponse.Success)
+            {
+                await handler.Handle(CreateNewLicensePlateBasedOn(contract));
 
-            //await LicensePlateValidation(licensePlate, response, token);
+                return BusinessRuleHandlerResponse.Empty;
+            }
+            else
+            {
+                return new BusinessRuleHandlerResponse { Failures = listenerResponse.Failures };
+            }
+        }
 
-            //await Persistance(licensePlate, response);
+        private async Task CreateNewLicensePlateBasedOn(ICreateLicensePlateContract contract)
+        {
+            var licensePlate = new LicensePlate { Identifier = contract.Identifier };
 
-            //return response;
+            _licensePlateRepository.Add(licensePlate);
 
-            var businessRuleHandlerBuilder = new BusinessRuleHandlerBuilder<ICreateLicensePlateContract>();
+            await _licensePlateRepository.SaveAsync();
         }
 
         public async Task<IComponentResponse> CreateMotorVehicleAsync(ICreateMotorVehicleContract contract, CancellationToken token)
@@ -150,6 +160,8 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         }
 
         #region PRIVATE
+        private static bool Success(IBusinessRuleListenerResponse response) => response.Failures.Errors.Count is 0;
+
         private static void WithdrawLicensePlateFromMotorVehicle(MotorVehicle motorVehicle, LicensePlate licensePlate)
         {
             if (motorVehicle is null) return;

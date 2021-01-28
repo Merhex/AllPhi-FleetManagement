@@ -47,7 +47,7 @@ namespace FleetManagement.API.Write
 
             services.AddRequiredDependenciesInContainer();
 
-            services.AddMediatR(typeof(BusinessLogicLayer).Assembly);
+            services.AddMediatR(typeof(Startup).Assembly);
 
             services.AddDbContext<FleetManagementContext>();
 

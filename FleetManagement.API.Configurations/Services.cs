@@ -4,6 +4,8 @@ using FleetManagement.BLL.FuelCards.Components;
 using FleetManagement.BLL.FuelCards.Components.Interfaces;
 using FleetManagement.BLL.MotorVehicles.Components;
 using FleetManagement.BLL.MotorVehicles.Components.Interfaces;
+using FleetManagement.BLL.Persons.Components;
+using FleetManagement.BLL.Persons.Components.Interfaces;
 using FleetManagement.BLL.Persons.Validators;
 using FleetManagement.BLL.Persons.Validators.Interfaces;
 using FleetManagement.DAL.Repositories;
@@ -22,10 +24,12 @@ namespace FleetManagement.API.Configurations
             services.AddTransient<IFuelCardRepository, FuelCardRepository>();
             services.AddTransient<IFuelCardOptionRepository, FuelCardOptionRepository>();
             services.AddTransient<ILicensePlateSnapshotRepository, LicensePlateSnapshotRepository>();
+            services.AddTransient<IPersonRepository, PersonRepository>();
 
             services.AddTransient<IDriverComponent, DriverComponent>();
             services.AddTransient<IMotorVehicleComponent, MotorVehicleComponent>();
             services.AddTransient<IFuelCardComponent, FuelCardComponent>();
+            services.AddTransient<IPersonComponent, PersonComponent>();
 
             services.AddTransient<IBelgianNationalNumberValidator, BelgiumNationalNumberValidator>();
 
