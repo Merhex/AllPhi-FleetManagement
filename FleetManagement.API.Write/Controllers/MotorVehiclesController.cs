@@ -7,7 +7,7 @@ namespace FleetManagement.API.Write.Controllers
 {
     [Route("api/write/[controller]")]
     [ApiController]
-    public class MotorVehiclesController : ControllerBase
+    public class MotorVehiclesController : WriteControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -21,7 +21,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
         [HttpPost("licensePlates/create")]
@@ -29,10 +29,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return response.Success ?  
-                Ok() 
-                : 
-                BadRequest(response);
+            return WriteApiResponse(response);
         }
 
         [HttpPost("licensePlates/assign")]
@@ -40,7 +37,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
         [HttpPost("licensePlates/withdraw")]
@@ -48,7 +45,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
         [HttpPatch("licensePlates/status")]
@@ -56,7 +53,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
         [HttpDelete("licensePlates/delete")]
@@ -64,7 +61,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
         [HttpPatch("operational")]
@@ -72,7 +69,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
     }
 }

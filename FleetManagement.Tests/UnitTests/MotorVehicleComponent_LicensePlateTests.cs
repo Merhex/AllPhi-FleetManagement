@@ -1,4 +1,5 @@
 ﻿using FleetManagement.API.Write.Commands;
+using FleetManagement.BLL;
 using FleetManagement.BLL.MotorVehicles.Components;
 using FleetManagement.BLL.MotorVehicles.Components.Interfaces;
 using FleetManagement.BLL.MotorVehicles.Validators;
@@ -27,8 +28,8 @@ namespace FleetManagement.Tests.UnitTests
     {
         private IMotorVehicleComponent _systemUnderTest;
 
-        private readonly LicensePlateValidator _licensePlateValidator = new LicensePlateValidator();
-        private readonly MotorVehicleValidator _motorVehicleValidator = new MotorVehicleValidator();
+        private readonly LicensePlateDataValidator _licensePlateValidator = new LicensePlateDataValidator();
+        private readonly MotorVehicleDataValidator _motorVehicleValidator = new MotorVehicleDataValidator();
         private Mock<ILicensePlateRepository> _licensePlateRepository;
         private Mock<ILicensePlateSnapshotRepository> _licensePlateSnapshotRepository;
         private Mock<IMotorVehicleRepository> _motorVehicleRepository;
@@ -43,6 +44,7 @@ namespace FleetManagement.Tests.UnitTests
             _licensePlateRepository = new Mock<ILicensePlateRepository>();
             _licensePlateSnapshotRepository = new Mock<ILicensePlateSnapshotRepository>();
             _motorVehicleRepository = new Mock<IMotorVehicleRepository>();
+            _businessRuleValidator = new BusinessRuleValidator();
 
 
             _licensePlate = new LicensePlate { Id = 1, Identifier = "1", InUse = false };
@@ -87,9 +89,7 @@ namespace FleetManagement.Tests.UnitTests
             _systemUnderTest = new MotorVehicleComponent(
                 licensePlateRepository: _licensePlateRepository.Object,
                 motorVehicleRepository: _motorVehicleRepository.Object,
-                licensePlateSnaphotRepository: _licensePlateSnapshotRepository.Object,
-                licensePlateValidator: _licensePlateValidator,
-                motorVehicleValidator: _motorVehicleValidator);
+                licensePlateSnaphotRepository: _licensePlateSnapshotRepository.Object);
         }
         
         [Test]
@@ -101,7 +101,7 @@ namespace FleetManagement.Tests.UnitTests
                     new AssignLicensePlateCommand 
                     {
                         ChassisNumber = _motorVehicle.ChassisNumber,
-                        LicensePlateIdentifier = _licensePlate.Identifier
+                        Identifier = _licensePlate.Identifier
                     }, 
                     _cancellationToken);
 
@@ -125,7 +125,7 @@ namespace FleetManagement.Tests.UnitTests
                 new AssignLicensePlateCommand
                 {
                     ChassisNumber = _motorVehicle.ChassisNumber,
-                    LicensePlateIdentifier = _licensePlate.Identifier
+                    Identifier = _licensePlate.Identifier
                 },
                 _cancellationToken);
 
@@ -151,7 +151,7 @@ namespace FleetManagement.Tests.UnitTests
                 .AssignLicensePlateToMotorVehicleAsync(
                     new AssignLicensePlateCommand
                     {
-                        LicensePlateIdentifier = _licensePlate.Identifier,
+                        Identifier = _licensePlate.Identifier,
                         ChassisNumber = _motorVehicle.ChassisNumber
                     },
                     _cancellationToken);
@@ -172,7 +172,7 @@ namespace FleetManagement.Tests.UnitTests
                 new AssignLicensePlateCommand
                 {
                     ChassisNumber = _motorVehicle.ChassisNumber,
-                    LicensePlateIdentifier = _licensePlate.Identifier
+                    Identifier = _licensePlate.Identifier
                 },
                 _cancellationToken);
 
@@ -195,7 +195,7 @@ namespace FleetManagement.Tests.UnitTests
                     new AssignLicensePlateCommand
                     {
                         ChassisNumber = _motorVehicle.ChassisNumber,
-                        LicensePlateIdentifier = _licensePlate.Identifier
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 
@@ -218,7 +218,7 @@ namespace FleetManagement.Tests.UnitTests
                     new AssignLicensePlateCommand
                     {
                         ChassisNumber = _motorVehicle.ChassisNumber,
-                        LicensePlateIdentifier = _licensePlate.Identifier
+                        Identifier = _licensePlate.Identifier
                     },
                     _cancellationToken);
 

@@ -1,8 +1,7 @@
 ﻿namespace FleetManagement.BLL.MotorVehicles.Contracts
 {
-    public interface ICreateMotorVehicleContract
+    public interface ICreateMotorVehicleContract : IMotorVehicleContract
     {
-        public string ChassisNumber { get; init; }
         public string Brand { get; init; }
         public string Model { get; init; }
         public bool Operational { get; init; }

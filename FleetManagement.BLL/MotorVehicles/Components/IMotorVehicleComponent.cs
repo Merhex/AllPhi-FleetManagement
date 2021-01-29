@@ -10,7 +10,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components.Interfaces
         Task<IComponentResponse> WithdrawLicensePlateFromMotorVehicleAsync(IWithdrawLicensePlateContract contract, CancellationToken cancellationToken);
         Task<IComponentResponse> DeleteLicensePlateAsync(IDeleteLicensePlateContract contract, CancellationToken cancellationToken);
         Task<IComponentResponse> CreateMotorVehicleAsync(ICreateMotorVehicleContract contract, CancellationToken cancellationToken);
-        Task<IBusinessRuleValidatorResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken cancellationToken);
+        Task<IComponentResponse> CreateLicensePlateAsync(ILicensePlateContract contract, CancellationToken cancellationToken);
         Task<IComponentResponse> ChangeLicensePlateInUseStatusAsync(IChangeLicensePlateInUseStatusContract contract, CancellationToken cancellationToken);
         Task<IComponentResponse> ChangeMotorVehicleOperationalStatusAsync(IChangeMotorVehicleOperationalStatusContract contract, CancellationToken cancellationToken);
     }

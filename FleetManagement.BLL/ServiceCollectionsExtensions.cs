@@ -14,7 +14,7 @@ namespace FleetManagement.BLL
 {
     public static class ServiceCollectionsExtensions
     {
-        public static IServiceCollection AddBusinessRuleHandlers(this IServiceCollection collection)
+        public static IServiceCollection AddBusinessRuleValidators(this IServiceCollection collection)
         {
             collection.AddTransient<IBusinessRuleValidator, BusinessRuleValidator>();
 
@@ -38,7 +38,7 @@ namespace FleetManagement.BLL
             return collection;
         }
 
-        public static IServiceCollection AddBusinessValidators(this IServiceCollection collection)
+        public static IServiceCollection AddBusinessDataValidators(this IServiceCollection collection)
         {
             collection.AddTransient<IBelgianNationalNumberValidator, BelgiumNationalNumberValidator>();
 
@@ -47,9 +47,9 @@ namespace FleetManagement.BLL
 
         public static IServiceCollection AddBusinessLogicDependencies(this IServiceCollection collection)
         {
-            collection.AddBusinessRuleHandlers();
+            collection.AddBusinessRuleValidators();
 
-            collection.AddBusinessValidators();
+            collection.AddBusinessDataValidators();
 
             collection.AddBusinessComponents();
 

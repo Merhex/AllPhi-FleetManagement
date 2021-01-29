@@ -1,4 +1,3 @@
-using FleetManagement.API.Configurations;
 using FleetManagement.BLL;
 using FleetManagement.DAL;
 using FluentValidation.AspNetCore;
@@ -48,9 +47,7 @@ namespace FleetManagement.API.Write
             services.AddDbContext<FleetManagementContext>();
             services.AddRepositories();
 
-            services.AddBusinessComponents();
-            services.AddBusinessRuleHandlers();
-            services.AddBusinessValidators();
+            services.AddBusinessLogicDependencies();
 
             services.AddMediatR(typeof(Startup).Assembly);
 

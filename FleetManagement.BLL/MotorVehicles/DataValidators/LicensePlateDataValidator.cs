@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace FleetManagement.BLL.MotorVehicles.Validators
 {
-    public class LicensePlateValidator : AbstractValidator<LicensePlate>
+    public class LicensePlateDataValidator : AbstractValidator<LicensePlate>
     {
-        public LicensePlateValidator()
+        public LicensePlateDataValidator()
         {
             RuleFor(licensePlate => licensePlate.Identifier)
                 .MaximumLength(9)
