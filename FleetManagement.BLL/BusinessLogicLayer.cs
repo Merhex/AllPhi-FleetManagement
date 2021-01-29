@@ -19,91 +19,85 @@ namespace FleetManagement.BLL
     public class BusinessLogicLayer { }
 
 
-    public interface IBusinessRuleHandler<T> where T : IContract
-    {
-        Task<IBusinessRuleListenerResponse> ValidateBusinessRules(CancellationToken token = default);
-    }
 
+    #region RESPONSES
     public interface IBusinessRuleListenerResponse
     {
-        public IBusinessRuleFailureResponse Failures { get; }
+        public IList<IBusinessRuleFailure> Failures { get; set; }
         public bool Success { get; }
     }
 
     public class BusinessRuleListenerResponse : IBusinessRuleListenerResponse
     {
-        public bool Success => Failures.Errors.Count is 0;
-        public IBusinessRuleFailureResponse Failures { get; set; } = new BusinessRuleFailureResponse();
-    }
-
-    public class BusinessRuleFailureResponse : IBusinessRuleFailureResponse
-    {
-        public IList<IBusinessRuleFailure> Errors { get; set; } = new List<IBusinessRuleFailure>();
-    }
-
-    public interface IBusinessRuleFailureResponse
-    {
-        public IList<IBusinessRuleFailure> Errors { get; }
+        public bool Success => Failures.Count is 0;
+        public IList<IBusinessRuleFailure> Failures { get; set; } = new List<IBusinessRuleFailure>();
     }
 
     public class BusinessRuleFailure : IBusinessRuleFailure
     {
         public string Rule { get; set; }
-        public string Error { get; set; }
+        public string ErrorMessage { get; set; }
     }
 
     public interface IBusinessRuleFailure
     {
         public string Rule { get; set; }
-        public string Error { get; set; }
+        public string ErrorMessage { get; set; }
     }
 
-    public interface IBusinessRuleHandlerResponse
+    public interface IBusinessRuleValidatorResponse
     {
         public bool Success { get; }
-        public IBusinessRuleFailureResponse Failures { get; }
+        public IBusinessRuleListenerResponse Responses { get; }
     }
 
-    public class BusinessRuleHandlerResponse : IBusinessRuleHandlerResponse
+    public class BusinessRuleValidatorResponse : IBusinessRuleValidatorResponse
     {
-        public IBusinessRuleFailureResponse Failures { get; init; } = new BusinessRuleFailureResponse();
+        public IBusinessRuleListenerResponse Responses { get; init; } = new BusinessRuleListenerResponse();
 
-        public static BusinessRuleHandlerResponse Empty => new BusinessRuleHandlerResponse { };
+        public static BusinessRuleValidatorResponse Empty => new BusinessRuleValidatorResponse { };
 
-        public bool Success => Failures.Errors.Count is 0;
+        public bool Success => Responses.Failures.Count is 0;
+    }
+    #endregion
+
+    public interface IBusinessRuleValidator
+    {
+        Task<IBusinessRuleListenerResponse> Validate<T>(T contract, CancellationToken token = default) where T : IContract;
     }
 
-    public class BusinessRuleHandlerProvider
+    public class BusinessRuleValidator : IBusinessRuleValidator
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public BusinessRuleValidator(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
+        public async Task<IBusinessRuleListenerResponse> Validate<T>(T contract, CancellationToken token = default) where T : IContract
+        {
+            var businessRuleHandler = _serviceProvider.GetService<IBusinessRuleValidator<T>>();
+
+            return await businessRuleHandler.ValidateBusinessRules(contract, token);
+        }
+    }
+
+    public interface IBusinessRuleValidator<T> where T : IContract
+    {
+        Task<IBusinessRuleListenerResponse> ValidateBusinessRules(T contract, CancellationToken token = default);
+    }
+
+    public class BusinessRuleValidator<T> : IBusinessRuleValidator<T> where T : IContract
+    {
+        private readonly List<IBusinessRule<T>> _businessRules = new List<IBusinessRule<T>>();
+        private readonly IBusinessRuleListener<T> _businessRuleListener;
         private readonly IServiceProvider _provider;
 
-        public BusinessRuleHandlerProvider(IServiceProvider provider)
+        public BusinessRuleValidator(IServiceProvider provider)
         {
             _provider = provider;
-        }
-
-        public IBusinessRuleHandler<IContract> GetBusinessRuleHandler()
-        {
-            return _provider.GetService<IBusinessRuleHandler<IContract>>();
-        }
-    }
-
-    public interface IBusinessRuleHandler
-    {
-        Task<IBusinessRuleListenerResponse> ValidateBusinessRules(CancellationToken token = default);
-    }
-
-    public class BusinessRuleHandler<T> : IBusinessRuleHandler<T> where T : IContract
-    {
-        private readonly List<BusinessRule<T>> _businessRules = new List<BusinessRule<T>>();
-        private readonly BusinessRuleListener<T> _businessRuleListener;
-        private readonly T _contract;
-
-        public BusinessRuleHandler(T contract)
-        {
-            _contract = contract;
-
-            GetBusinessRulesBasedOnContract();
+            _businessRules = GetBusinessRulesBasedOnContract().ToList();
 
             if (_businessRules.Any())
                 _businessRuleListener = new BusinessRuleListener<T>(_businessRules.ToArray());
@@ -111,10 +105,10 @@ namespace FleetManagement.BLL
                 throw new Exception("The are no business rules defined.");
         }
 
-        public async Task<IBusinessRuleListenerResponse> ValidateBusinessRules(CancellationToken token = default)
+        public async Task<IBusinessRuleListenerResponse> ValidateBusinessRules(T contract, CancellationToken token = default)
         {
             foreach (var rule in _businessRules)
-                await rule.Handle(_contract, token);
+                await rule.Handle(contract, token);
 
             return _businessRuleListener.Speak();
         }
@@ -125,26 +119,21 @@ namespace FleetManagement.BLL
                 await successFunction?.Invoke();
         }
 
-        public async Task Handle(Task successTask)
-        {
-            if (_businessRuleListener.Success)
-                await successTask;
-        }
-
         #region PRIVATE
-        private void GetBusinessRulesBasedOnContract()
+        private IEnumerable<IBusinessRule<T>> GetBusinessRulesBasedOnContract()
         {
-            var businessRules = GetBusinessRules(Assembly.GetExecutingAssembly());
+            var businessRules = LocateBusinessRules(Assembly.GetExecutingAssembly());
 
-            foreach (var rule in businessRules)
-            {
-                var businessRule = ActivatorUtilities.CreateInstance(_serviceProvider, rule) as BusinessRule<T>;
-
-                _businessRules.Add(businessRule);
-            }
+            return CreateBusinessRuleInstances(businessRules);
         }
 
-        private static IEnumerable<Type> GetBusinessRules(Assembly assembly)
+        private IEnumerable<IBusinessRule<T>> CreateBusinessRuleInstances(IEnumerable<Type> businessRules)
+        {
+            foreach (var rule in businessRules)
+                yield return ActivatorUtilities.CreateInstance(_provider, rule) as IBusinessRule<T>;
+        }
+
+        private static IEnumerable<Type> LocateBusinessRules(Assembly assembly)
         {
             var loadableTypes = new List<Type>();
 
@@ -167,17 +156,23 @@ namespace FleetManagement.BLL
         #endregion
     }
 
-    public class BusinessRuleListener<T> where T : IContract
+    public interface IBusinessRuleListener<T> where T : IContract
     {
-        private readonly IDictionary<BusinessRule<T>, List<string>> _failures;
-        private readonly List<BusinessRule<T>> _businessRules;
+        public bool Success { get; }
+        public IBusinessRuleListenerResponse Speak();
+    }
+
+    public class BusinessRuleListener<T> : IBusinessRuleListener<T> where T : IContract
+    {
+        private readonly IDictionary<IBusinessRule<T>, List<string>> _failures;
+        private readonly List<IBusinessRule<T>> _businessRules;
 
         public bool Success => _failures.Count is 0;
 
-        public BusinessRuleListener(params BusinessRule<T>[] businessRules)
+        public BusinessRuleListener(params IBusinessRule<T>[] businessRules)
         {
-            _failures = new Dictionary<BusinessRule<T>, List<string>>();
-            _businessRules = new List<BusinessRule<T>>();
+            _failures = new Dictionary<IBusinessRule<T>, List<string>>();
+            _businessRules = new List<IBusinessRule<T>>();
 
             if (businessRules.Any())
             {
@@ -191,77 +186,84 @@ namespace FleetManagement.BLL
         public IBusinessRuleListenerResponse Speak()
         {
             var response = new BusinessRuleListenerResponse();
+            if (_failures.Any() is false) return response;
 
-            if (_failures.Any())
+            response.Failures = new List<IBusinessRuleFailure>();
+            foreach (var failure in _failures)
             {
-                response.Failures = new BusinessRuleFailureResponse();
+                var businessRule = failure.Key;
 
-                foreach (var failure in _failures)
+                foreach (var failureMessage in _failures[businessRule])
                 {
-                    var businessRule = failure.Key;
-
-                    foreach (var failureMessage in _failures[businessRule])
+                    var businessRuleFailure = new BusinessRuleFailure()
                     {
-                        var businessRuleFailure = new BusinessRuleFailure()
-                        {
-                            Error = failureMessage,
-                            Rule = _failures[businessRule].GetType().Name
-                        };
+                        ErrorMessage = failureMessage,
+                        Rule  = businessRule.GetType().Name
+                    };
 
-                        response.Failures.Errors.Add(businessRuleFailure);
-                    }
+                    response.Failures.Add(businessRuleFailure);
                 }
             }
+
 
             return response;
         }
 
         #region PRIVATE
-        private void SubscribeToFailureEvent(BusinessRule<T> rule)
+        private void SubscribeToFailureEvent(IBusinessRule<T> rule)
         {
-            rule.Failure += OnFailureEventHandler;
+            rule.OnFailure += OnFailureEventHandler;
         }
 
-        private void OnFailureEventHandler(BusinessRule<T> source, BusinessRuleFailureEventArgs arguments)
+        protected virtual void OnFailureEventHandler(IBusinessRule<T> source, BusinessRuleFailureEventArgs arguments)
         {
             _failures.Add(source, arguments.Messages);
         }
         #endregion
     }
 
-    public class LicensePlateExists : BusinessRule<ICreateLicensePlateContract>
+    public class LicensePlateCheckIfExists : IBusinessRule<ICreateLicensePlateContract>
     {
+        public event BusinessRuleFailureEventHandler<ICreateLicensePlateContract> OnFailure;
+
         private readonly ILicensePlateRepository _licensePlateRepository;
 
-        public LicensePlateExists(ILicensePlateRepository licensePlateRepository)
+        public LicensePlateCheckIfExists(ILicensePlateRepository licensePlateRepository)
         {
             _licensePlateRepository = licensePlateRepository;
         }
 
-        public async override Task Handle(ICreateLicensePlateContract contract, CancellationToken token = default)
+        public async Task Handle(ICreateLicensePlateContract contract, CancellationToken token = default)
         {
             var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, token);
 
-            if (licensePlate is null)
+            if (licensePlate is not null)
             {
-                OnFailure(new BusinessRuleFailureEventArgs
+                RaiseOnFailureEvent(new BusinessRuleFailureEventArgs
                 {
-                    Messages = { $"The license plate with given identifier {contract.Identifier} could not be found." }
+                    Messages = { $"The license plate with given identifier {contract.Identifier} already exists." }
                 });
             }
         }
+
+        private void RaiseOnFailureEvent(BusinessRuleFailureEventArgs args)
+        {
+            OnFailure?.Invoke(this, args);
+        }
     }
 
-    public class LicensePlateValidation : BusinessRule<ICreateLicensePlateContract>
+    public class LicensePlateValidation : IBusinessRule<ICreateLicensePlateContract>
     {
+        public event BusinessRuleFailureEventHandler<ICreateLicensePlateContract> OnFailure;
+        
         private readonly LicensePlateValidator _validator;
-
+        
         public LicensePlateValidation(LicensePlateValidator validator)
         {
             _validator = validator;
         }
 
-        public override async Task Handle(ICreateLicensePlateContract contract, CancellationToken token = default)
+        public async Task Handle(ICreateLicensePlateContract contract, CancellationToken token = default)
         {
             var licensePlate = new LicensePlate { Identifier = contract.Identifier };
 
@@ -274,27 +276,22 @@ namespace FleetManagement.BLL
                 foreach (var error in validation.Errors)
                     arguments.Messages.Add(error.ErrorMessage);
 
-                OnFailure(arguments);
+                RaiseOnFailureEvent(arguments);
             }
         }
-    }
 
-    public abstract class BusinessRule<T> : IBusinessRule<T> where T : IContract
-    {
-        public delegate void FailureEventHandler(BusinessRule<T> source, BusinessRuleFailureEventArgs arguments);
-        public event FailureEventHandler Failure;
-
-        public abstract Task Handle(T contract, CancellationToken token = default);
-
-        protected virtual void OnFailure(BusinessRuleFailureEventArgs arguments = default)
+        private void RaiseOnFailureEvent(BusinessRuleFailureEventArgs args)
         {
-            Failure?.Invoke(this, arguments);
+            OnFailure?.Invoke(this, args);
         }
     }
+
+    public delegate void BusinessRuleFailureEventHandler<T>(IBusinessRule<T> source, BusinessRuleFailureEventArgs args) where T : IContract;
 
     public interface IBusinessRule<T> where T : IContract
     {
-
+        event BusinessRuleFailureEventHandler<T> OnFailure;
+        Task Handle(T contract, CancellationToken token = default);
     }
 
     public interface IContract

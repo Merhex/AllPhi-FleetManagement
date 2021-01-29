@@ -6,7 +6,7 @@ using MediatR;
 
 namespace FleetManagement.API.Write.Commands.Handlers
 {
-    public class CreateLicensePlateHandler : IRequestHandler<CreateLicensePlateCommand, IBusinessRuleHandlerResponse>
+    public class CreateLicensePlateHandler : IRequestHandler<CreateLicensePlateCommand, IBusinessRuleValidatorResponse>
     {
         private readonly IMotorVehicleComponent _motorVehicleComponent;
 
@@ -15,7 +15,7 @@ namespace FleetManagement.API.Write.Commands.Handlers
             _motorVehicleComponent = motorVehicleComponent;
         }
 
-        public async Task<IBusinessRuleHandlerResponse> Handle(CreateLicensePlateCommand command, CancellationToken cancellationToken)
+        public async Task<IBusinessRuleValidatorResponse> Handle(CreateLicensePlateCommand command, CancellationToken cancellationToken)
         {
             return await _motorVehicleComponent.CreateLicensePlateAsync(command, cancellationToken);
         }

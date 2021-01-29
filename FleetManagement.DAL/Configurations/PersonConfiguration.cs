@@ -9,6 +9,9 @@ namespace FleetManagement.DAL.Configurations
         public void Configure(EntityTypeBuilder<Person> builder)
         {
             builder
+                .HasKey(person => person.Id);
+
+            builder
                 .Property(u => u.FirstName)
                 .HasMaxLength(50); 
             
@@ -27,6 +30,7 @@ namespace FleetManagement.DAL.Configurations
             builder
                 .Property(u => u.NationalNumber)
                 .HasMaxLength(15)
+                .IsRequired()
                 .IsFixedLength();
         }
     }

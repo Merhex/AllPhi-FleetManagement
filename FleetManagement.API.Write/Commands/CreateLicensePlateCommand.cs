@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FleetManagement.API.Write.Commands
 {
-    public record CreateLicensePlateCommand : IRequest<IBusinessRuleHandlerResponse>, ICreateLicensePlateContract
+    public record CreateLicensePlateCommand : IRequest<IBusinessRuleValidatorResponse>, ICreateLicensePlateContract
     {
         public string Identifier { get; init; }
     }

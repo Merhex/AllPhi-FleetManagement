@@ -13,7 +13,11 @@ namespace FleetManagement.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Driver> builder)
         {
-
+            builder
+                .HasOne(driver => driver.MotorVehicle)
+                .WithOne(motorVehicle => motorVehicle.Driver)
+                .HasForeignKey<MotorVehicle>(motorVehicle => motorVehicle.DriverId)
+                .HasPrincipalKey<Driver>(driver => driver.Id);
         }
     }
 }

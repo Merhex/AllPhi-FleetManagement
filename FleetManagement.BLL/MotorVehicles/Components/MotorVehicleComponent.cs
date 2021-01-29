@@ -17,19 +17,22 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         private readonly ILicensePlateSnapshotRepository _licensePlateSnaphotRepository;
         private readonly LicensePlateValidator _licensePlateValidator;
         private readonly MotorVehicleValidator _motorVehicleValidator;
+        private readonly IBusinessRuleValidator _businessRuleValidator;
 
         public MotorVehicleComponent(
             IMotorVehicleRepository motorVehicleRepository,
             ILicensePlateRepository licensePlateRepository,
             ILicensePlateSnapshotRepository licensePlateSnaphotRepository,
             LicensePlateValidator licensePlateValidator,
-            MotorVehicleValidator motorVehicleValidator)
+            MotorVehicleValidator motorVehicleValidator,
+            IBusinessRuleValidator businessRuleHandler)
         {
             _motorVehicleRepository = motorVehicleRepository;
             _licensePlateRepository = licensePlateRepository;
             _licensePlateSnaphotRepository = licensePlateSnaphotRepository;
             _licensePlateValidator = licensePlateValidator;
             _motorVehicleValidator = motorVehicleValidator;
+            _businessRuleValidator = businessRuleHandler;
         }
 
         public async Task<IComponentResponse> AssignLicensePlateToMotorVehicleAsync(IAssignLicensePlateContract contract, CancellationToken token)
@@ -85,21 +88,19 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             return response;
         }
 
-        public async Task<IBusinessRuleHandlerResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken cancellationToken)
+        public async Task<IBusinessRuleValidatorResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken cancellationToken)
         {
-            var handler = new BusinessRuleHandler<ICreateLicensePlateContract>(contract);
-
-            var listenerResponse = await handler.ValidateBusinessRules(cancellationToken);
+            var listenerResponse = await _businessRuleValidator.Validate(contract, cancellationToken);
 
             if (listenerResponse.Success)
             {
-                await handler.Handle(CreateNewLicensePlateBasedOn(contract));
-
-                return BusinessRuleHandlerResponse.Empty;
+                await CreateNewLicensePlateBasedOn(contract);
+                 
+                return BusinessRuleValidatorResponse.Empty;
             }
             else
             {
-                return new BusinessRuleHandlerResponse { Failures = listenerResponse.Failures };
+                return new BusinessRuleValidatorResponse { Responses = listenerResponse };
             }
         }
 
@@ -160,8 +161,6 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         }
 
         #region PRIVATE
-        private static bool Success(IBusinessRuleListenerResponse response) => response.Failures.Errors.Count is 0;
-
         private static void WithdrawLicensePlateFromMotorVehicle(MotorVehicle motorVehicle, LicensePlate licensePlate)
         {
             if (motorVehicle is null) return;

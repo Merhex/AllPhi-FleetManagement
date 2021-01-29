@@ -45,11 +45,15 @@ namespace FleetManagement.API.Write
                 .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(BusinessLogicLayer).Assembly))
                 .AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
 
-            services.AddRequiredDependenciesInContainer();
+            services.AddDbContext<FleetManagementContext>();
+            services.AddRepositories();
+
+            services.AddBusinessComponents();
+            services.AddBusinessRuleHandlers();
+            services.AddBusinessValidators();
 
             services.AddMediatR(typeof(Startup).Assembly);
 
-            services.AddDbContext<FleetManagementContext>();
 
         }
 

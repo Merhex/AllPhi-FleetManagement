@@ -9,6 +9,9 @@ namespace FleetManagement.DAL.Configurations
         public void Configure(EntityTypeBuilder<DriverLicense> builder)
         {
             builder
+                .HasKey(driverLicense => driverLicense.Id);
+
+            builder
                 .Property(dl => dl.NameHolderFirstName)
                 .HasMaxLength(20); 
             builder
@@ -17,6 +20,7 @@ namespace FleetManagement.DAL.Configurations
 
             builder
                 .Property(dl => dl.Identifier)
+                .IsRequired()
                 .HasMaxLength(20);
         }
     }

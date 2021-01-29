@@ -18,20 +18,11 @@ namespace FleetManagement.API.Configurations
     {
         public static IServiceCollection AddRequiredDependenciesInContainer(this IServiceCollection services)
         {
-            services.AddTransient<IDriverRepository, DriverRepository>();
-            services.AddTransient<ILicensePlateRepository, LicensePlateRepository>();
-            services.AddTransient<IMotorVehicleRepository, MotorVehicleRepository>();
-            services.AddTransient<IFuelCardRepository, FuelCardRepository>();
-            services.AddTransient<IFuelCardOptionRepository, FuelCardOptionRepository>();
-            services.AddTransient<ILicensePlateSnapshotRepository, LicensePlateSnapshotRepository>();
-            services.AddTransient<IPersonRepository, PersonRepository>();
-
             services.AddTransient<IDriverComponent, DriverComponent>();
             services.AddTransient<IMotorVehicleComponent, MotorVehicleComponent>();
             services.AddTransient<IFuelCardComponent, FuelCardComponent>();
             services.AddTransient<IPersonComponent, PersonComponent>();
 
-            services.AddTransient<IBelgianNationalNumberValidator, BelgiumNationalNumberValidator>();
 
             return services;
         }
