@@ -31,5 +31,11 @@ namespace FleetManagement.DAL.Repositories
                     .Where(motorVehicle => motorVehicle.LicensePlates
                     .Any(licensePlate => licensePlate.Identifier == licensePlateIdentifier))
                     .SingleOrDefaultAsync(cancellationToken);
+
+        public async Task<MotorVehicle> FindByLicensePlateIdentifierAsync(string licensePlateIdentifier, CancellationToken cancellationToken) =>
+            await _context.MotorVehicles
+                    .Where(motorVehicle => motorVehicle.LicensePlates
+                    .Any(licensePlate => licensePlate.Identifier == licensePlateIdentifier))
+                    .SingleOrDefaultAsync(cancellationToken);
     }
 }

@@ -1,50 +1,32 @@
-﻿using FleetManagement.BLL.MotorVehicles.Contracts;
-using FleetManagement.BLL.MotorVehicles.Validators;
+﻿using FleetManagement.BLL.MotorVehicles.Validators;
 using FleetManagement.Models;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.BLL
 {
-    public class MotorVehicleDataValidation : IBusinessRule<ICreateMotorVehicleContract>
+    public class MotorVehicleDataValidation : IBusinessRule
     {
         private readonly MotorVehicleDataValidator _validator;
+        private readonly MotorVehicle _motorVehicle;
 
-        public event BusinessRuleFailureEventHandler<ICreateMotorVehicleContract> Failure;
-
-        public MotorVehicleDataValidation(MotorVehicleDataValidator validator)
+        public MotorVehicleDataValidation(MotorVehicleDataValidator validator, MotorVehicle motorVehicle)
         {
             _validator = validator;
+            _motorVehicle = motorVehicle;
         }
 
-        public async Task Handle(ICreateMotorVehicleContract contract, CancellationToken token = default)
+        public async Task<IBusinessRuleResponse> Validate(CancellationToken cancellationToken = default)
         {
-            var motorVehicle = new MotorVehicle
+            var result = await _validator.ValidateAsync(_motorVehicle, cancellationToken);
+
+            if (result.IsValid is false)
             {
-                BodyType       = (MotorVehicleBodyType) contract.BodyType,
-                Brand          = contract.Brand,
-                ChassisNumber  = contract.ChassisNumber,
-                Model          = contract.Model,
-                Operational    = contract.Operational,
-                PropulsionType = (MotorVehiclePropulsionType) contract.PropulsionType
-            };
-
-            var validation = await _validator.ValidateAsync(motorVehicle, token);
-
-            if (validation.IsValid is false)
-            {
-                var arguments = new BusinessRuleFailureEventArgs();
-
-                foreach (var error in validation.Errors)
-                    arguments.Messages.Add(error.ErrorMessage);
-
-                OnFailure(arguments);
+                return new BusinessRuleResponse()
+                    .ConvertValidationResult(result);
             }
-        }
 
-        protected virtual void OnFailure(BusinessRuleFailureEventArgs args)
-        {
-            Failure?.Invoke(this, args);
+            return BusinessRuleResponse.Success;
         }
     }
 }

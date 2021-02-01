@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.BLL.MotorVehicles.Contracts
 {
-    public interface IAssignLicensePlateContract : IMotorVehicleContract, ILicensePlateContract
+    public interface IAssignLicensePlateContract : IContract
     {
-
+        public string Identifier { get; init; }
+        public string ChassisNumber { get; init; }
     }
 }

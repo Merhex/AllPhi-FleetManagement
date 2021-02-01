@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.BLL
 {
-    public class LicensePlateExists : IBusinessRule
+    public class LicensePlateNotInUse : IBusinessRule
     {
         private readonly ILicensePlateRepository _repository;
         private readonly string _identifier;
 
-        public LicensePlateExists(ILicensePlateRepository repository, string identifier)
+        public LicensePlateNotInUse(ILicensePlateRepository licensePlateRepository, string identifier)
         {
-            _repository = repository;
+            _repository = licensePlateRepository;
             _identifier = identifier;
         }
 
@@ -19,11 +19,10 @@ namespace FleetManagement.BLL
         {
             var licensePlate = await _repository.FindByIdentifierAsync(_identifier, cancellationToken);
 
-            if (licensePlate is not null)
+            if (licensePlate.InUse)
                 return new BusinessRuleResponse 
                 { 
-                    Name = GetType().Name,
-                    Messages = { $"The license plate with given identifier: {_identifier}, already exists." } 
+                    Messages = { $"The license plate with identifier {_identifier} is in use. Please deattach the plate from the vehicle first." } 
                 };
 
             return BusinessRuleResponse.Success;

@@ -1,41 +1,28 @@
-﻿using FleetManagement.BLL.MotorVehicles.Contracts;
-using FleetManagement.BLL.MotorVehicles.Validators;
-using FleetManagement.DAL.Repositories.Interfaces;
-using FleetManagement.Models;
-using System;
-using System.Collections.Generic;
+﻿using FleetManagement.DAL.Repositories.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.BLL
 {
-    public class MotorVehicleExists : IBusinessRule<IMotorVehicleContract>
+    public class MotorVehicleExists : IBusinessRule
     {
         private readonly IMotorVehicleRepository _motorVehicleRepository;
+        private readonly string _chassisNumber;
 
-        public event BusinessRuleFailureEventHandler<IMotorVehicleContract> Failure;
-
-        public MotorVehicleExists(IMotorVehicleRepository motorVehicleRepository)
+        public MotorVehicleExists(IMotorVehicleRepository motorVehicleRepository, string chassisNumber)
         {
             _motorVehicleRepository = motorVehicleRepository;
+            _chassisNumber = chassisNumber;
         }
 
-        public async Task Handle(IMotorVehicleContract contract, CancellationToken token = default)
+        public async Task<IBusinessRuleResponse> Validate(CancellationToken cancellationToken = default)
         {
-            var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(contract.ChassisNumber, token);
+            var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(_chassisNumber, cancellationToken);
 
             if (motorVehicle is not null)
-            {
-                OnFailure(new BusinessRuleFailureEventArgs
-                {
-                    Messages = { $"The motorvehicle with chassisnumber: {contract.ChassisNumber} already exists." }
-                });
-            }
-        }
+                return new BusinessRuleResponse { Messages = { $"The motor vehicle with given chassis number: {_chassisNumber}, already exists." } };
 
-        protected virtual void OnFailure(BusinessRuleFailureEventArgs args)
-        {
-            Failure?.Invoke(this, args);
+            return BusinessRuleResponse.Success;
         }
     }
 }

@@ -1,42 +1,32 @@
-﻿using FleetManagement.BLL.MotorVehicles.Contracts;
-using FleetManagement.BLL.MotorVehicles.Validators;
+﻿using FleetManagement.BLL.MotorVehicles.Validators;
 using FleetManagement.Models;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.BLL
 {
-    public class LicensePlateDataValidation : IBusinessRule<ILicensePlateContract>
+    public class LicensePlateDataValidation : IBusinessRule
     {
-        public event BusinessRuleFailureEventHandler<ILicensePlateContract> Failure;
-        
         private readonly LicensePlateDataValidator _validator;
-        
-        public LicensePlateDataValidation(LicensePlateDataValidator validator)
+        private readonly LicensePlate _licensePlate;
+
+        public LicensePlateDataValidation(LicensePlateDataValidator validator, LicensePlate licensePlate)
         {
             _validator = validator;
+            _licensePlate = licensePlate;
         }
 
-        public async Task Handle(ILicensePlateContract contract, CancellationToken token = default)
+        public async Task<IBusinessRuleResponse> Validate(CancellationToken cancellationToken = default)
         {
-            var licensePlate = new LicensePlate { Identifier = contract.Identifier };
+            var result = await _validator.ValidateAsync(_licensePlate, cancellationToken);
 
-            var validation = await _validator.ValidateAsync(licensePlate, token);
-
-            if (validation.IsValid is false)
+            if (result.IsValid is false)
             {
-                var arguments = new BusinessRuleFailureEventArgs();
-
-                foreach (var error in validation.Errors)
-                    arguments.Messages.Add(error.ErrorMessage);
-
-                OnFailure(arguments);
+                return new BusinessRuleResponse()
+                    .ConvertValidationResult(result);
             }
-        }
 
-        private void OnFailure(BusinessRuleFailureEventArgs args)
-        {
-            Failure?.Invoke(this, args);
+            return BusinessRuleResponse.Success;
         }
     }
 }

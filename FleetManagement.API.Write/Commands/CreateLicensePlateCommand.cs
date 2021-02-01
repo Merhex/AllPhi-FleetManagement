@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FleetManagement.API.Write.Commands
 {
-    public record CreateLicensePlateCommand : IRequest<IComponentResponse>, ILicensePlateContract
+    public record CreateLicensePlateCommand : IRequest<IComponentResponse>, ICreateLicensePlateContract
     {
         public string Identifier { get; init; }
     }

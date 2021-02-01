@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,15 +16,10 @@ namespace FleetManagement.BLL
             _requirements = _serviceProvider.GetRequiredService<IBusinessRequirements<T>>();
         }
 
-        public IBusinessHandler<T> Read(T contract)
+        public async Task<IBusinessHandlerResponse> Validate(T contract, CancellationToken cancellationToken = default)
         {
             _requirements.Read(contract);
 
-            return this;
-        }
-
-        public async Task<IBusinessHandlerResponse> Validate(CancellationToken cancellationToken = default)
-        {
             if (_requirements.BusinessRules.Count is 0) 
                 throw new Exception("There are no business rules defined in the requirement.");
 

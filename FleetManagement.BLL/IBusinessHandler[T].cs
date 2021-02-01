@@ -5,7 +5,6 @@ namespace FleetManagement.BLL
 {
     public interface IBusinessHandler<T> where T : IContract
     {
-        IBusinessHandler<T> Read(T contract);
-        Task<IBusinessHandlerResponse> Validate(CancellationToken cancellationToken = default);
+        Task<IBusinessHandlerResponse> Validate(T contract, CancellationToken cancellationToken = default);
     }
 }

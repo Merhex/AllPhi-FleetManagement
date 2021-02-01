@@ -15,17 +15,11 @@ namespace FleetManagement.BLL
 {
     public static class ServiceCollectionsExtensions
     {
-        public static IServiceCollection AddBusinessRuleValidators(this IServiceCollection collection)
+        public static IServiceCollection AddBusinessHandlers(this IServiceCollection collection)
         {
-            collection.AddTransient<IBusinessRuleValidator, BusinessRuleValidator>();
-
             collection.AddTransient<IBusinessHandler, BusinessHandler>();
 
             collection.AddTransient(typeof(IBusinessHandler<>), typeof(BusinessHandler<>));
-
-            collection.AddTransient(typeof(IBusinessRuleValidator<>), typeof(BusinessRuleValidator<>));
-
-            collection.AddTransient(typeof(IBusinessRuleListener<>), typeof(BusinessRuleListener<>));
 
             return collection;
         }
@@ -33,6 +27,8 @@ namespace FleetManagement.BLL
         public static IServiceCollection AddBusinessRequirements(this IServiceCollection collection)
         {
             collection.AddTransient<IBusinessRequirements<ICreateMotorVehicleContract>, CreateMotorVehicleRequirements>();
+            collection.AddTransient<IBusinessRequirements<ICreateLicensePlateContract>, CreateLicensePlateRequirements>();
+            collection.AddTransient<IBusinessRequirements<IAssignLicensePlateContract>, AssignLicensePlateToMotorVehicleRequirements>();
 
             return collection;
         }
@@ -59,7 +55,7 @@ namespace FleetManagement.BLL
 
         public static IServiceCollection AddBusinessLogicDependencies(this IServiceCollection collection)
         {
-            collection.AddBusinessRuleValidators();
+            collection.AddBusinessHandlers();
 
             collection.AddBusinessRequirements();
 

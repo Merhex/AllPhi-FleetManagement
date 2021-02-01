@@ -21,7 +21,20 @@ namespace FleetManagement.BLL
 
         public void Read(ICreateMotorVehicleContract contract)
         {
-            var motorVehicle = new MotorVehicle
+            var motorVehicle = CreateMotorVehicleFromContract(contract);
+
+            BusinessRules.Add(
+                new MotorVehicleExists(
+                    _serviceProvider.GetRequiredService<IMotorVehicleRepository>(), contract.ChassisNumber));
+            BusinessRules.Add(
+                new MotorVehicleDataValidation(
+                    _serviceProvider.GetRequiredService<MotorVehicleDataValidator>(), motorVehicle));
+        }
+
+        #region PRIVATE
+        private static MotorVehicle CreateMotorVehicleFromContract(ICreateMotorVehicleContract contract)
+        {
+            return new MotorVehicle
             {
                 BodyType = (MotorVehicleBodyType)contract.BodyType,
                 Brand = contract.Brand,
@@ -31,12 +44,7 @@ namespace FleetManagement.BLL
                 PropulsionType = (MotorVehiclePropulsionType)contract.PropulsionType
             };
 
-            BusinessRules.Add(
-                new CheckMotorVehicleExists(
-                    _serviceProvider.GetRequiredService<IMotorVehicleRepository>(), contract.ChassisNumber));
-            BusinessRules.Add(
-                new CheckMotorVehicleData(
-                    _serviceProvider.GetRequiredService<MotorVehicleDataValidator>(), motorVehicle));
         }
+        #endregion
     }
 }
