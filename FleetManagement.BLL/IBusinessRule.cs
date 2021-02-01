@@ -3,9 +3,8 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.BLL
 {
-    public interface IBusinessRule<T> where T : IContract
+    public interface IBusinessRule
     {
-        event BusinessRuleFailureEventHandler<T> Failure;
-        Task Handle(T contract, CancellationToken token = default);
+        Task<IBusinessRuleResponse> Validate(CancellationToken cancellationToken = default);
     }
 }

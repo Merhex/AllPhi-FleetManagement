@@ -4,6 +4,7 @@ using FleetManagement.BLL.FuelCards.Components;
 using FleetManagement.BLL.FuelCards.Components.Interfaces;
 using FleetManagement.BLL.MotorVehicles.Components;
 using FleetManagement.BLL.MotorVehicles.Components.Interfaces;
+using FleetManagement.BLL.MotorVehicles.Contracts;
 using FleetManagement.BLL.Persons.Components;
 using FleetManagement.BLL.Persons.Components.Interfaces;
 using FleetManagement.BLL.Persons.Validators;
@@ -18,9 +19,20 @@ namespace FleetManagement.BLL
         {
             collection.AddTransient<IBusinessRuleValidator, BusinessRuleValidator>();
 
+            collection.AddTransient<IBusinessHandler, BusinessHandler>();
+
+            collection.AddTransient(typeof(IBusinessHandler<>), typeof(BusinessHandler<>));
+
             collection.AddTransient(typeof(IBusinessRuleValidator<>), typeof(BusinessRuleValidator<>));
 
             collection.AddTransient(typeof(IBusinessRuleListener<>), typeof(BusinessRuleListener<>));
+
+            return collection;
+        }
+
+        public static IServiceCollection AddBusinessRequirements(this IServiceCollection collection)
+        {
+            collection.AddTransient<IBusinessRequirements<ICreateMotorVehicleContract>, CreateMotorVehicleRequirements>();
 
             return collection;
         }
@@ -48,6 +60,8 @@ namespace FleetManagement.BLL
         public static IServiceCollection AddBusinessLogicDependencies(this IServiceCollection collection)
         {
             collection.AddBusinessRuleValidators();
+
+            collection.AddBusinessRequirements();
 
             collection.AddBusinessDataValidators();
 

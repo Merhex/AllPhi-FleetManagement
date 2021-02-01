@@ -25,6 +25,17 @@ namespace FleetManagement.BLL
                 throw new Exception("The are no business rules defined.");
         }
 
+        public BusinessRuleValidator(IServiceProvider provider, IEnumerable<Type> businessRuleTypes)
+            : this (provider)
+        {
+            _businessRules = CreateBusinessRuleInstances(businessRuleTypes).ToList();
+
+            if (_businessRules.Any())
+                _businessRuleListener = new BusinessRuleListener<T>(_businessRules.ToArray());
+            else
+                throw new Exception("The are no business rules defined.");
+        }
+
         public async Task<IBusinessRuleListenerResponse> Validate(T contract, CancellationToken token = default)
         {
             foreach (var rule in _businessRules)
@@ -67,20 +78,6 @@ namespace FleetManagement.BLL
             }
 
             var businessRuleType = typeof(IBusinessRule<T>);
-            var contractType = typeof(IContract);
-
-            var interfaces = typeof(T)
-                                .GetInterfaces();
-
-            foreach (var type in interfaces)
-            {
-                var x = loadableTypes
-                    .Where(type.IsAssignableFrom)
-                    .Where(type => type.IsInterface is false);
-
-            }
-
-            //TODO Find all parent interfaces, make list, find all classes who implement each interface in that list and instantiate as businessrule.
 
             return loadableTypes
                 .Where(businessRuleType.IsAssignableFrom)

@@ -15,17 +15,20 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         private readonly ILicensePlateRepository _licensePlateRepository;
         private readonly ILicensePlateSnapshotRepository _licensePlateSnaphotRepository;
         private readonly IBusinessRuleValidator _businessRuleValidator;
+        private readonly IBusinessHandler _businessHandler;
 
         public MotorVehicleComponent(
             IMotorVehicleRepository motorVehicleRepository,
             ILicensePlateRepository licensePlateRepository,
             ILicensePlateSnapshotRepository licensePlateSnaphotRepository,
-            IBusinessRuleValidator businessRuleValidator)
+            IBusinessRuleValidator businessRuleValidator,
+            IBusinessHandler businessHandler)
         {
             _motorVehicleRepository = motorVehicleRepository;
             _licensePlateRepository = licensePlateRepository;
             _licensePlateSnaphotRepository = licensePlateSnaphotRepository;
             _businessRuleValidator = businessRuleValidator;
+            _businessHandler = businessHandler;
         }
 
         //public async Task<IComponentResponse> AssignLicensePlateToMotorVehicleAsync(IAssignLicensePlateContract contract, CancellationToken token)
@@ -100,9 +103,9 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
         public async Task<IComponentResponse> CreateMotorVehicleAsync(ICreateMotorVehicleContract contract, CancellationToken cancellationToken)
         {
-            var listenerResponse = await _businessRuleValidator.Validate(contract, cancellationToken);
+            var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
 
-            if (listenerResponse.Success)
+            if (handlerResponse.Success)
             {
                 await CreateMotorVehicleBasedOn(contract);
 
@@ -111,8 +114,21 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             else
             {
                 return new ComponentResponse()
-                    .WithResponse(listenerResponse);
+                    .WithResponse(handlerResponse);
             }
+            //var listenerResponse = await _businessRuleValidator.Validate(contract, cancellationToken);
+
+            //if (listenerResponse.Success)
+            //{
+            //    await CreateMotorVehicleBasedOn(contract);
+
+            //    return ComponentResponse.Success;
+            //}
+            //else
+            //{
+            //    return new ComponentResponse()
+            //        .WithResponse(listenerResponse);
+            //}
         }
 
         public Task<IComponentResponse> AssignLicensePlateToMotorVehicleAsync(IAssignLicensePlateContract contract, CancellationToken cancellationToken)

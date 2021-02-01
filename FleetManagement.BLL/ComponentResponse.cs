@@ -26,5 +26,27 @@ namespace FleetManagement.BLL
 
             return this;
         }
+
+        public ComponentResponse WithResponse(IBusinessHandlerResponse businessHandlerResponse)
+        {
+            var responseDictionary = new Dictionary<string, ICollection<string>>();
+
+            foreach (var response in businessHandlerResponse.Responses)
+            {
+                var key = response.Name;
+
+                foreach (var message in response.Messages)
+                {
+                    if (responseDictionary.ContainsKey(key))
+                        responseDictionary[key].Add(message);
+                    else
+                        responseDictionary.Add(key, new List<string> { message });
+                }
+            }
+
+            Failures = responseDictionary;
+
+            return this;
+        }
     }
 }

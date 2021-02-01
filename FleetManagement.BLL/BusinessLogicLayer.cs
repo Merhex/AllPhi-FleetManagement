@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FleetManagement.BLL
 {
@@ -6,5 +7,4 @@ namespace FleetManagement.BLL
     /// The BLL assembly handle, for the registrations in the service container.
     /// </summary>
     public class BusinessLogicLayer { }
-
 }
