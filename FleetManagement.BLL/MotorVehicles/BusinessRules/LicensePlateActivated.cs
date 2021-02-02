@@ -22,7 +22,7 @@ namespace FleetManagement.BLL
             if (licensePlate is not null)
                 if (licensePlate.InUse is false)
                     return new BusinessRuleResponse()
-                        .Failure(this, $"The license plate with identifier {_identifier} is not active. Please attach the plate on a vehicle first.");
+                        .Failure(this, $"The license plate with identifier {_identifier} is not active. Please activate/attach the plate on a vehicle first.");
 
             return BusinessRuleResponse.Success;
         }

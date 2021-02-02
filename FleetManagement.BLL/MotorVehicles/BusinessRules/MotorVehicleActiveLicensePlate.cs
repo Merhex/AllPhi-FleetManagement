@@ -21,10 +21,15 @@ namespace FleetManagement.BLL
             var motorVehicle = await _repository.FindByLicensePlateIdentifierIncludeLicensePlatesAsync(_identifier, cancellationToken);
 
             if (motorVehicle is not null)
-                if (motorVehicle.LicensePlates.Any(licensePlate => licensePlate.InUse) is false)
-                    return new BusinessRuleResponse()
-                        .Failure(this, $"The motor vehicle with chassis number: {motorVehicle.ChassisNumber}, has not a license plate with identifier: {_identifier} attached.");
+            {
+                var licensePlateInUse = motorVehicle.LicensePlates.SingleOrDefault(licensePlate => licensePlate.InUse);
 
+                if (licensePlateInUse is not null)
+                    if (licensePlateInUse.Identifier.Equals(_identifier) is not true)
+                        return new BusinessRuleResponse()
+                            .Failure(this, $"The motor vehicle with chassis number: {motorVehicle.ChassisNumber}, has not a license plate with identifier: {_identifier} active.");
+            }
+                
             return BusinessRuleResponse.Success;
         }
     }

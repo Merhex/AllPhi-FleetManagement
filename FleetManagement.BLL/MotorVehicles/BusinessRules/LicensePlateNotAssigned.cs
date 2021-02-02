@@ -21,7 +21,7 @@ namespace FleetManagement.BLL
 
             if (motorVehicle is not null)
                 return new BusinessRuleResponse()
-                    .Failure(this, $"The license plate with identifier: {_licensePlateIdentifier}, is already assigned. Please withdraw the plate first.");
+                    .Failure(this, $"The license plate with identifier: {_licensePlateIdentifier}, is assigned. Please withdraw the plate first.");
 
             return BusinessRuleResponse.Success;
         }
