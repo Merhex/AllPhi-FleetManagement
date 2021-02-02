@@ -6,6 +6,6 @@ namespace FleetManagement.API.Write.Commands
 {
     public record DeleteLicensePlateCommand : IRequest<IComponentResponse>, IDeleteLicensePlateContract
     {
-        public string Identifier { get; set; }
+        public string Identifier { get; init; }
     }
 }

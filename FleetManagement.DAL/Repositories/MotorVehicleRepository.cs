@@ -11,6 +11,10 @@ namespace FleetManagement.DAL.Repositories
     {
         public MotorVehicleRepository(FleetManagementContext context) : base(context) { }
 
+        public async Task<MotorVehicle> FindByChassisNumberAsync(string chassisNumber, CancellationToken cancellationToken) =>
+            await _context.MotorVehicles
+                    .SingleOrDefaultAsync(m => m.ChassisNumber == chassisNumber, cancellationToken);
+
         public async Task<MotorVehicle> FindByChassisNumberIncludeLicensePlatesAsync(string chassisNumber, CancellationToken cancellationToken) =>
             await _context.MotorVehicles
                     .Include(motorVehicle => motorVehicle.LicensePlates)
@@ -24,6 +28,12 @@ namespace FleetManagement.DAL.Repositories
         public async Task<MotorVehicle> FindByLicensePlateIdentifierIncludeLicensePlatesAsync(string licensePlateIdentifier, CancellationToken cancellationToken) =>
             await _context.MotorVehicles
                     .Include(motorVehicle => motorVehicle.LicensePlates)
+                    .Where(motorVehicle => motorVehicle.LicensePlates
+                    .Any(licensePlate => licensePlate.Identifier == licensePlateIdentifier))
+                    .SingleOrDefaultAsync(cancellationToken);
+
+        public async Task<MotorVehicle> FindByLicensePlateIdentifierAsync(string licensePlateIdentifier, CancellationToken cancellationToken) =>
+            await _context.MotorVehicles
                     .Where(motorVehicle => motorVehicle.LicensePlates
                     .Any(licensePlate => licensePlate.Identifier == licensePlateIdentifier))
                     .SingleOrDefaultAsync(cancellationToken);

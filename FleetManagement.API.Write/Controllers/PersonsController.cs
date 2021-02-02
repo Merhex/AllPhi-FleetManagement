@@ -7,7 +7,7 @@ namespace FleetManagement.API.Write.Controllers
 {
     [Route("api/write/[controller]")]
     [ApiController]
-    public class PersonsController : ControllerBase
+    public class PersonsController : WriteControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -21,7 +21,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
     }
 }

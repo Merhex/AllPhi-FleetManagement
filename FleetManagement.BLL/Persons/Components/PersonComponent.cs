@@ -21,60 +21,65 @@ namespace FleetManagement.BLL.Persons.Components
             _personRepository = personRepository;
         }
 
-        public async Task<IComponentResponse> UpdatePersonInformationAsync(IUpdatePersonInformationContract contract, CancellationToken token)
+        public Task<IComponentResponse> UpdatePersonInformationAsync(IUpdatePersonInformationContract contract, CancellationToken cancellationToken)
         {
-            var response = new ComponentResponse();
-
-            var person = await GetUniquePerson(contract, response, token);
-
-            UpdatePersonInformation(person, contract);
-
-            await PersonValidation(person, response, token);
-
-            await Persistance(response);
-
-            return response;
+            throw new System.NotImplementedException();
         }
 
-        #region PRIVATE
-        private async Task<Person> GetUniquePerson(IUpdatePersonInformationContract contract, ComponentResponse response, CancellationToken cancellationToken)
-        {
-            var person = await _personRepository.FindByNationalNumberAsync(contract.NationalNumber, cancellationToken);
-            if (person is null) 
-                response.NotFound(contract.NationalNumber);
-            else 
-                response.Ok();
+        //public async Task<IComponentResponse> UpdatePersonInformationAsync(IUpdatePersonInformationContract contract, CancellationToken token)
+        //{
+        //    var response = new ComponentResponse();
 
-            return person;
-        }
+        //    var person = await GetUniquePerson(contract, response, token);
 
-        private static void UpdatePersonInformation(Person person, IUpdatePersonInformationContract contract)
-        {
-            if (person is null) person = new Person();
+        //    UpdatePersonInformation(person, contract);
 
-            person.AddressLine = contract.AddressLine;
-            person.City = contract.City;
-            person.DateOfBirth = contract.DateOfBirth;
-            person.FirstName = contract.FirstName;
-            person.LastName = contract.LastName;
-            person.NationalNumber = contract.NationalNumber;
-            person.ZipCode = contract.ZipCode;
-        }
+        //    await PersonValidation(person, response, token);
 
-        private async Task PersonValidation(Person person, ComponentResponse response, CancellationToken cancellationToken) 
-        {
-            var validation = await _personValidator.ValidateAsync(person, cancellationToken);
-            if (validation.IsValid is not true)
-                response.ValidationFailure(validation);
-        }
+        //    await Persistance(response);
 
-        private async Task Persistance(ComponentResponse response)
-        {
-            if (response.Valid is not true) return;
+        //    return response;
+        //}
 
-            var saved = await _personRepository.SaveAsync();
-            if (saved is not true) response.PersistanceFailure();
-        }
-        #endregion
+        //#region PRIVATE
+        //private async Task<Person> GetUniquePerson(IUpdatePersonInformationContract contract, ComponentResponse response, CancellationToken cancellationToken)
+        //{
+        //    var person = await _personRepository.FindByNationalNumberAsync(contract.NationalNumber, cancellationToken);
+        //    if (person is null) 
+        //        response.NotFound(contract.NationalNumber);
+        //    else 
+        //        response.Ok();
+
+        //    return person;
+        //}
+
+        //private static void UpdatePersonInformation(Person person, IUpdatePersonInformationContract contract)
+        //{
+        //    if (person is null) person = new Person();
+
+        //    person.AddressLine = contract.AddressLine;
+        //    person.City = contract.City;
+        //    person.DateOfBirth = contract.DateOfBirth;
+        //    person.FirstName = contract.FirstName;
+        //    person.LastName = contract.LastName;
+        //    person.NationalNumber = contract.NationalNumber;
+        //    person.ZipCode = contract.ZipCode;
+        //}
+
+        //private async Task PersonValidation(Person person, ComponentResponse response, CancellationToken cancellationToken) 
+        //{
+        //    var validation = await _personValidator.ValidateAsync(person, cancellationToken);
+        //    if (validation.IsValid is not true)
+        //        response.ValidationFailure(validation);
+        //}
+
+        //private async Task Persistance(ComponentResponse response)
+        //{
+        //    if (response.Valid is not true) return;
+
+        //    var saved = await _personRepository.SaveAsync();
+        //    if (saved is not true) response.PersistanceFailure();
+        //}
+        //#endregion
     }
 }

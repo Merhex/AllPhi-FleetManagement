@@ -9,8 +9,12 @@ namespace FleetManagement.DAL.Configurations
         public void Configure(EntityTypeBuilder<MotorVehicle> builder)
         {
             builder
+                .HasKey(motoVehicle => motoVehicle.Id);
+
+            builder
                 .Property(v => v.ChassisNumber)
                 .HasMaxLength(17)
+                .IsRequired()
                 .IsFixedLength();
         }
     }

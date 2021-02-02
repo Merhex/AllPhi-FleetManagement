@@ -7,7 +7,7 @@ namespace FleetManagement.API.Write.Controllers
 {
     [Route("api/write/[controller]")]
     [ApiController]
-    public class FuelCardsController : ControllerBase
+    public class FuelCardsController : WriteControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -21,7 +21,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
         [HttpPatch("options")]
@@ -29,7 +29,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
         [HttpDelete("card")]
@@ -37,7 +37,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
     }
 }

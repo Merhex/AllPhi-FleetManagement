@@ -1,4 +1,3 @@
-using FleetManagement.API.Configurations;
 using FleetManagement.BLL;
 using FleetManagement.DAL;
 using FluentValidation.AspNetCore;
@@ -32,7 +31,7 @@ namespace FleetManagement.API.Write
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FleetManagement.API.Read", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FleetManagement.API.Write", Version = "v1" });
             });
 
             ConfigureServices(services);
@@ -45,11 +44,13 @@ namespace FleetManagement.API.Write
                 .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(BusinessLogicLayer).Assembly))
                 .AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
 
-            services.AddRequiredDependenciesInContainer();
+            services.AddDbContext<FleetManagementContext>();
+            services.AddRepositories();
+
+            services.AddBusinessLogicDependencies();
 
             services.AddMediatR(typeof(Startup).Assembly);
 
-            services.AddDbContext<FleetManagementContext>();
 
         }
 

@@ -7,7 +7,7 @@ namespace FleetManagement.API.Write.Controllers
 {
     [Route("api/write/[controller]")]
     [ApiController]
-    public class MotorVehiclesController : ControllerBase
+    public class MotorVehiclesController : WriteControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -21,7 +21,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
         [HttpPost("licensePlates/create")]
@@ -29,10 +29,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return response.Success ?  
-                Ok() 
-                : 
-                BadRequest(response);
+            return WriteApiResponse(response);
         }
 
         [HttpPost("licensePlates/assign")]
@@ -40,7 +37,7 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
         [HttpPost("licensePlates/withdraw")]
@@ -48,15 +45,23 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
-        [HttpPatch("licensePlates/status")]
-        public async Task<IActionResult> ChangeLicensePlateInUse(ChangeLicensePlateInUseStatusCommand command)
+        [HttpPatch("licensePlates/activate")]
+        public async Task<IActionResult> ActivateLicensePlate(ActivateLicensePlateCommand command)
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
+        }
+
+        [HttpPatch("licensePlates/deactivate")]
+        public async Task<IActionResult> DeactivateLicensePlate(DeactivateLicensePlateCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return WriteApiResponse(response);
         }
 
         [HttpDelete("licensePlates/delete")]
@@ -64,15 +69,23 @@ namespace FleetManagement.API.Write.Controllers
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
         }
 
-        [HttpPatch("operational")]
-        public async Task<IActionResult> ChangeOperationalStatusMotorVehicle(ChangeMotorVehicleOperationalStatusCommand command)
+        [HttpPatch("activate")]
+        public async Task<IActionResult> ActivateMotorVehicle(ActivateMotorVehicleCommand command)
         {
             var response = await _mediator.Send(command);
 
-            return StatusCode(response.Status, response);
+            return WriteApiResponse(response);
+        }
+
+        [HttpPatch("deactivate")]
+        public async Task<IActionResult> DeactivateMotorVehicle(DeactivateMotorVehicleCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return WriteApiResponse(response);
         }
     }
 }

@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.Models", "F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.Tests", "FleetManagement.Tests\FleetManagement.Tests.csproj", "{890A8B4A-D386-4757-BA2B-5E42011432B7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.API.Configurations", "FleetManagement.API.Configurations\FleetManagement.API.Configurations.csproj", "{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,18 +83,6 @@ Global
 		{890A8B4A-D386-4757-BA2B-5E42011432B7}.Release|x64.Build.0 = Release|Any CPU
 		{890A8B4A-D386-4757-BA2B-5E42011432B7}.Release|x86.ActiveCfg = Release|Any CPU
 		{890A8B4A-D386-4757-BA2B-5E42011432B7}.Release|x86.Build.0 = Release|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|x64.Build.0 = Debug|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Debug|x86.Build.0 = Debug|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|x64.ActiveCfg = Release|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|x64.Build.0 = Release|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|x86.ActiveCfg = Release|Any CPU
-		{734F1E8A-D4AE-468A-AEC6-9D24373EA37E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

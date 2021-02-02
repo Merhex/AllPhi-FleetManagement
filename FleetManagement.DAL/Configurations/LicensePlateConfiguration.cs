@@ -9,7 +9,11 @@ namespace FleetManagement.DAL.Configurations
         public void Configure(EntityTypeBuilder<LicensePlate> builder)
         {
             builder
+                .HasKey(licensePlate => licensePlate.Id);
+
+            builder
                 .Property(l => l.Identifier)
+                .IsRequired()
                 .HasMaxLength(10);
         }
     }
