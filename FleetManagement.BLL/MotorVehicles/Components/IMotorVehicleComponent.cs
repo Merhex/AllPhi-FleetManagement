@@ -11,7 +11,9 @@ namespace FleetManagement.BLL.MotorVehicles.Components.Interfaces
         Task<IComponentResponse> DeleteLicensePlateAsync(IDeleteLicensePlateContract contract, CancellationToken cancellationToken);
         Task<IComponentResponse> CreateMotorVehicleAsync(ICreateMotorVehicleContract contract, CancellationToken cancellationToken);
         Task<IComponentResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken cancellationToken);
-        Task<IComponentResponse> ChangeLicensePlateInUseStatusAsync(IChangeLicensePlateInUseStatusContract contract, CancellationToken cancellationToken);
-        Task<IComponentResponse> ChangeMotorVehicleOperationalStatusAsync(IChangeMotorVehicleOperationalStatusContract contract, CancellationToken cancellationToken);
+        Task<IComponentResponse> ActivateLicensePlateAsync(IActivateLicensePlateContract contract, CancellationToken cancellationToken);
+        Task<IComponentResponse> DeactivateLicensePlateAsync(IDeactivateLicensePlateContract contract, CancellationToken cancellationToken);
+        Task<IComponentResponse> ActivateMotorVehicleAsync(IActivateMotorVehicle contract, CancellationToken cancellationToken);
+        Task<IComponentResponse> DeactivateMotorVehicleAsync(IDeactivateMotorVehicle contract, CancellationToken cancellationToken);
     }
 }

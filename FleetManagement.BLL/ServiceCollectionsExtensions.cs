@@ -24,15 +24,6 @@ namespace FleetManagement.BLL
             return collection;
         }
 
-        public static IServiceCollection AddBusinessRequirements(this IServiceCollection collection)
-        {
-            collection.AddTransient<IBusinessRequirements<ICreateMotorVehicleContract>, CreateMotorVehicleRequirements>();
-            collection.AddTransient<IBusinessRequirements<ICreateLicensePlateContract>, CreateLicensePlateRequirements>();
-            collection.AddTransient<IBusinessRequirements<IAssignLicensePlateContract>, AssignLicensePlateToMotorVehicleRequirements>();
-
-            return collection;
-        }
-
         public static IServiceCollection AddBusinessComponents(this IServiceCollection collection)
         {
             collection.AddTransient<IPersonComponent, PersonComponent>();

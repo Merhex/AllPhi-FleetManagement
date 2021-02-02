@@ -1,4 +1,6 @@
 ﻿using FluentValidation.Results;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FleetManagement.BLL
 {
@@ -12,5 +14,22 @@ namespace FleetManagement.BLL
 
             return response;
         }
+
+        public static IBusinessRuleResponse Failure(this IBusinessRuleResponse response, IBusinessRule source, IEnumerable<string> messages)
+        {
+            response = new BusinessRuleResponse { Name = DisplayName(source), Messages = messages.ToList() };
+
+            return response;
+        }
+        public static IBusinessRuleResponse Failure(this IBusinessRuleResponse response, IBusinessRule source, string message)
+        {
+            response = new BusinessRuleResponse { Name = DisplayName(source), Messages = { message } };
+
+            return response;
+        }
+
+        #region PRIVATE
+        private static string DisplayName(object source) => $"Check: {source.GetType().Name}";
+        #endregion
     }
 }

@@ -24,7 +24,7 @@ namespace FleetManagement.BLL
             var motorVehicle = CreateMotorVehicleFromContract(contract);
 
             BusinessRules.Add(
-                new MotorVehicleExists(
+                new MotorVehicleCannotExist(
                     _serviceProvider.GetRequiredService<IMotorVehicleRepository>(), contract.ChassisNumber));
             BusinessRules.Add(
                 new MotorVehicleDataValidation(

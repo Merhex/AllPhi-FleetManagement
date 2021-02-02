@@ -6,13 +6,13 @@ using System.Collections.Generic;
 
 namespace FleetManagement.BLL
 {
-    public class AssignLicensePlateToMotorVehicleRequirements : IBusinessRequirements<IAssignLicensePlateContract>
+    public class AssignLicensePlateRequirements : IBusinessRequirements<IAssignLicensePlateContract>
     {
         private readonly IServiceProvider _serviceProvider;
 
         public List<IBusinessRule> BusinessRules { get; set; } = new List<IBusinessRule>();
 
-        public AssignLicensePlateToMotorVehicleRequirements(IServiceProvider serviceProvider)
+        public AssignLicensePlateRequirements(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
@@ -28,11 +28,11 @@ namespace FleetManagement.BLL
                     _serviceProvider.GetRequiredService<IMotorVehicleRepository>(), contract.ChassisNumber));
 
             BusinessRules.Add(
-                new LicensePlateNotInUse(
+                new LicensePlateNotActivated(
                     _serviceProvider.GetRequiredService<ILicensePlateRepository>(), contract.Identifier));
 
             BusinessRules.Add(
-                new LicensePlateAlreadyAssigned(
+                new LicensePlateNotAssigned(
                     _serviceProvider.GetRequiredService<IMotorVehicleRepository>(), contract.Identifier));
         }
     }

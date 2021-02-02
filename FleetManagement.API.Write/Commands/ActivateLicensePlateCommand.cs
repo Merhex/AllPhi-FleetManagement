@@ -4,9 +4,8 @@ using MediatR;
 
 namespace FleetManagement.API.Write.Commands
 {
-    public record ChangeLicensePlateInUseStatusCommand : IRequest<IComponentResponse>, IChangeLicensePlateInUseStatusContract
+    public record ActivateLicensePlateCommand : IRequest<IComponentResponse>, IActivateLicensePlateContract
     {
         public string Identifier { get; init; }
-        public bool Status { get; init; }
     }
 }

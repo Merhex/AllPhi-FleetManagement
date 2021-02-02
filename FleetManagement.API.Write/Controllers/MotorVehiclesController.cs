@@ -48,8 +48,16 @@ namespace FleetManagement.API.Write.Controllers
             return WriteApiResponse(response);
         }
 
-        [HttpPatch("licensePlates/status")]
-        public async Task<IActionResult> ChangeLicensePlateInUse(ChangeLicensePlateInUseStatusCommand command)
+        [HttpPatch("licensePlates/activate")]
+        public async Task<IActionResult> ActivateLicensePlate(ActivateLicensePlateCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return WriteApiResponse(response);
+        }
+
+        [HttpPatch("licensePlates/deactivate")]
+        public async Task<IActionResult> DeactivateLicensePlate(DeactivateLicensePlateCommand command)
         {
             var response = await _mediator.Send(command);
 
@@ -64,8 +72,16 @@ namespace FleetManagement.API.Write.Controllers
             return WriteApiResponse(response);
         }
 
-        [HttpPatch("operational")]
-        public async Task<IActionResult> ChangeOperationalStatusMotorVehicle(ChangeMotorVehicleOperationalStatusCommand command)
+        [HttpPatch("activate")]
+        public async Task<IActionResult> ActivateMotorVehicle(ActivateMotorVehicleCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return WriteApiResponse(response);
+        }
+
+        [HttpPatch("deactivate")]
+        public async Task<IActionResult> DeactivateMotorVehicle(DeactivateMotorVehicleCommand command)
         {
             var response = await _mediator.Send(command);
 

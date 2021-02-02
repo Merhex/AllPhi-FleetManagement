@@ -24,12 +24,12 @@ namespace FleetManagement.BLL
             var licensePlate = new LicensePlate { Identifier = contract.Identifier };
 
             BusinessRules.Add(
-                new LicensePlateDataValidation(
-                    _serviceProvider.GetRequiredService<LicensePlateDataValidator>(), licensePlate));
+                new LicensePlateCannotExist(
+                    _serviceProvider.GetRequiredService<ILicensePlateRepository>(), contract.Identifier));
 
             BusinessRules.Add(
-                new LicensePlateExists(
-                    _serviceProvider.GetRequiredService<ILicensePlateRepository>(), contract.Identifier));
+                new LicensePlateDataValidation(
+                    _serviceProvider.GetRequiredService<LicensePlateDataValidator>(), licensePlate));
         }
     }
 }

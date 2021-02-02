@@ -28,59 +28,6 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             _businessHandler = businessHandler;
         }
 
-        //public async Task<IComponentResponse> AssignLicensePlateToMotorVehicleAsync(IAssignLicensePlateContract contract, CancellationToken token)
-        //{
-        //    var response = new ComponentResponse();
-
-        //    var licensePlate = await GetUniqueLicensePlate(contract.LicensePlateIdentifier, response, token);
-
-        //    var motorVehicle = await GetUniqueMotorVehicle(contract.ChassisNumber, response, token);
-
-        //    LicensePlateMustNotBeInUse(licensePlate, response);
-
-        //    await LicensePlateMustNotBeAssignedToAnotherMotorVehicle(contract, response, token);
-
-        //    AssignLicensePlateToMotorVehicle(motorVehicle, licensePlate, response);
-
-        //    await Persistance(response);
-
-        //    return response;
-        //}
-
-        //public async Task<IComponentResponse> ChangeLicensePlateInUseStatusAsync(IChangeLicensePlateInUseStatusContract contract, CancellationToken token)
-        //{
-        //    var response = new ComponentResponse();
-
-        //    var licensePlate = await GetUniqueLicensePlate(contract.Identifier, response, token);
-
-        //    var motorVehicle = await GetMotorVehicleByLicensePlate(licensePlate.Identifier, response, token);
-
-        //    LicensePlateToBeChangedMustBeAssignedToMotorVehicle(motorVehicle, response);
-
-        //    AnotherLicensePlateMustNotBeInUseOnMotorVehicle(motorVehicle, contract.Status, response);
-
-        //    ChangeLicensePlateUseCase(licensePlate, contract.Status, response);
-
-        //    CreateLicensePlateHistorySnapshot(licensePlate, motorVehicle, response);
-
-        //    await Persistance(response);
-
-        //    return response;
-        //}
-
-        //public async Task<IComponentResponse> ChangeMotorVehicleOperationalStatusAsync(IChangeMotorVehicleOperationalStatusContract contract, CancellationToken token)
-        //{
-        //    var response = new ComponentResponse();
-
-        //    var motorVehicle = await GetUniqueMotorVehicle(contract.ChassisNumber, response, token);
-
-        //    ChangeMotorVehicleOperationalStatus(motorVehicle, contract.Operational);
-
-        //    await Persistance(response);
-
-        //    return response;
-        //}
-
         public async Task<IComponentResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken cancellationToken)
         {
             var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
@@ -134,26 +81,96 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
         public async Task<IComponentResponse> WithdrawLicensePlateFromMotorVehicleAsync(IWithdrawLicensePlateContract contract, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
+
+            if (handlerResponse.Success)
+            {
+                await WithdrawLicensePlateBasedOn(contract, cancellationToken);
+
+                return ComponentResponse.Success;
+            }
+            else
+            {
+                return new ComponentResponse()
+                    .WithResponse(handlerResponse);
+            }
         }
 
         public async Task<IComponentResponse> DeleteLicensePlateAsync(IDeleteLicensePlateContract contract, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IComponentResponse> ChangeLicensePlateInUseStatusAsync(IChangeLicensePlateInUseStatusContract contract, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IComponentResponse> ChangeMotorVehicleOperationalStatusAsync(IChangeMotorVehicleOperationalStatusContract contract, CancellationToken cancellationToken)
         {
             var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
 
             if (handlerResponse.Success)
             {
-                await ChangeMotorVehicleOperationalStatusBasedOn(contract, cancellationToken);
+                await DeleteLicensePlateBasedOn(contract, cancellationToken);
+
+                return ComponentResponse.Success;
+            }
+            else
+            {
+                return new ComponentResponse()
+                    .WithResponse(handlerResponse);
+            }
+        }
+
+        public async Task<IComponentResponse> ActivateLicensePlateAsync(IActivateLicensePlateContract contract, CancellationToken cancellationToken)
+        {
+            var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
+
+            if (handlerResponse.Success)
+            {
+                await ActivateLicensePlate(contract, cancellationToken);
+
+                return ComponentResponse.Success;
+            }
+            else
+            {
+                return new ComponentResponse()
+                    .WithResponse(handlerResponse);
+            }
+        }
+
+        public async Task<IComponentResponse> DeactivateLicensePlateAsync(IDeactivateLicensePlateContract contract, CancellationToken cancellationToken)
+        {
+            var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
+
+            if (handlerResponse.Success)
+            {
+                await DeactivateLicensePlate(contract, cancellationToken);
+
+                return ComponentResponse.Success;
+            }
+            else
+            {
+                return new ComponentResponse()
+                    .WithResponse(handlerResponse);
+            }
+        }
+
+        public async Task<IComponentResponse> ActivateMotorVehicleAsync(IActivateMotorVehicle contract, CancellationToken cancellationToken)
+        {
+            var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
+
+            if (handlerResponse.Success)
+            {
+                await ActivateMotorVehicle(contract, cancellationToken);
+
+                return ComponentResponse.Success;
+            }
+            else
+            {
+                return new ComponentResponse()
+                    .WithResponse(handlerResponse);
+            }
+        }
+
+        public async Task<IComponentResponse> DeactivateMotorVehicleAsync(IDeactivateMotorVehicle contract, CancellationToken cancellationToken)
+        {
+            var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
+
+            if (handlerResponse.Success)
+            {
+                await DeactivateMotorVehicle(contract, cancellationToken);
 
                 return ComponentResponse.Success;
             }
@@ -165,6 +182,65 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         }
 
         #region PRIVATE
+        private async Task DeactivateLicensePlate(IDeactivateLicensePlateContract contract, CancellationToken cancellationToken)
+        {
+            var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
+            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdentifierAsync(contract.Identifier, cancellationToken);
+
+            licensePlate.InUse = false;
+
+            var snapshot = new LicensePlateSnapshot
+            {
+                LicensePlate = licensePlate,
+                MotorVehicle = motorVehicle,
+                InUse = false,
+                SnapshotDate = DateTime.Now
+            };
+
+            _licensePlateSnaphotRepository.Add(snapshot);
+
+            await _licensePlateRepository.SaveAsync();
+        }
+
+        private async Task DeleteLicensePlateBasedOn(IDeleteLicensePlateContract contract, CancellationToken cancellationToken)
+        {
+            var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
+
+            _licensePlateRepository.Remove(licensePlate);
+
+            await _licensePlateRepository.SaveAsync();
+        }
+
+        private async Task ActivateLicensePlate(IActivateLicensePlateContract contract, CancellationToken cancellationToken)
+        {
+            var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
+            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdentifierAsync(contract.Identifier, cancellationToken);
+
+            licensePlate.InUse = true;
+
+            var snapshot = new LicensePlateSnapshot 
+            { 
+                LicensePlate = licensePlate,
+                MotorVehicle = motorVehicle, 
+                InUse = true, 
+                SnapshotDate = DateTime.Now
+            };
+
+            _licensePlateSnaphotRepository.Add(snapshot);
+
+            await _licensePlateRepository.SaveAsync();
+        }
+
+        private async Task WithdrawLicensePlateBasedOn(IWithdrawLicensePlateContract contract, CancellationToken cancellationToken)
+        {
+            var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdentifierIncludeLicensePlatesAsync(contract.Identifier, cancellationToken);
+            var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
+
+            motorVehicle.LicensePlates.Remove(licensePlate);
+
+            await _motorVehicleRepository.SaveAsync();
+        }
+
         private async Task AssignLicensePlateToMotorVehicleBasedOn(IAssignLicensePlateContract contract, CancellationToken cancellationToken)
         {
             var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
@@ -201,11 +277,20 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             await _motorVehicleRepository.SaveAsync();
         }
 
-        private async Task ChangeMotorVehicleOperationalStatusBasedOn(IChangeMotorVehicleOperationalStatusContract contract, CancellationToken cancellationToken)
+        private async Task ActivateMotorVehicle(IActivateMotorVehicle contract, CancellationToken cancellationToken)
         {
             var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(contract.ChassisNumber, cancellationToken);
 
-            motorVehicle.Operational = contract.Operational;
+            motorVehicle.Operational = true;
+
+            await _motorVehicleRepository.SaveAsync();
+        }
+
+        private async Task DeactivateMotorVehicle(IDeactivateMotorVehicle contract, CancellationToken cancellationToken)
+        {
+            var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(contract.ChassisNumber, cancellationToken);
+
+            motorVehicle.Operational = false;
 
             await _motorVehicleRepository.SaveAsync();
         }

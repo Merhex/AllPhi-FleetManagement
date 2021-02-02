@@ -4,9 +4,8 @@ using MediatR;
 
 namespace FleetManagement.API.Write.Commands
 {
-    public record ChangeMotorVehicleOperationalStatusCommand : IRequest<IComponentResponse>, IChangeMotorVehicleOperationalStatusContract
+    public record ActivateMotorVehicleCommand : IRequest<IComponentResponse>, IActivateMotorVehicle
     {
         public string ChassisNumber { get; init; }
-        public bool Operational { get; init; }
     }
 }

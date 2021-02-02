@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.BLL
 {
-    public class LicensePlateExists : IBusinessRule
+    public class LicensePlateCannotExist : IBusinessRule
     {
         private readonly ILicensePlateRepository _repository;
         private readonly string _identifier;
 
-        public LicensePlateExists(ILicensePlateRepository repository, string identifier)
+        public LicensePlateCannotExist(ILicensePlateRepository repository, string identifier)
         {
             _repository = repository;
             _identifier = identifier;
@@ -19,9 +19,8 @@ namespace FleetManagement.BLL
         {
             var licensePlate = await _repository.FindByIdentifierAsync(_identifier, cancellationToken);
 
-            if (licensePlate is null)
-                return new BusinessRuleResponse()
-                    .Failure(this, $"The license plate with given identifier: {_identifier}, does not exist.");
+            if (licensePlate is not null)
+                return new BusinessRuleResponse().Failure(this, $"The license plate with given identifier: {_identifier}, already exists.");
 
             return BusinessRuleResponse.Success;
         }

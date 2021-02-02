@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.BLL
 {
-    public class MotorVehicleExists : IBusinessRule
+    public class MotorVehicleCannotExist : IBusinessRule
     {
         private readonly IMotorVehicleRepository _motorVehicleRepository;
         private readonly string _chassisNumber;
 
-        public MotorVehicleExists(IMotorVehicleRepository motorVehicleRepository, string chassisNumber)
+        public MotorVehicleCannotExist(IMotorVehicleRepository motorVehicleRepository, string chassisNumber)
         {
             _motorVehicleRepository = motorVehicleRepository;
             _chassisNumber = chassisNumber;
@@ -19,9 +19,9 @@ namespace FleetManagement.BLL
         {
             var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(_chassisNumber, cancellationToken);
 
-            if (motorVehicle is null)
+            if (motorVehicle is not null)
                 return new BusinessRuleResponse()
-                    .Failure(this, $"The motor vehicle with given chassis number: {_chassisNumber}, does not exist.");
+                    .Failure(this,  $"The motor vehicle with given chassis number: {_chassisNumber}, already exists.");
 
             return BusinessRuleResponse.Success;
         }

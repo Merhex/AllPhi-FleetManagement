@@ -31,7 +31,7 @@ namespace FleetManagement.API.Write
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FleetManagement.API.Read", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FleetManagement.API.Write", Version = "v1" });
             });
 
             ConfigureServices(services);

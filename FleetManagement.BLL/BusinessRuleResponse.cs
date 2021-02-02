@@ -8,12 +8,5 @@ namespace FleetManagement.BLL
         public string Name { get; set; }
         public List<string> Messages { get; set; } = new List<string>();
         public static BusinessRuleResponse Success => new BusinessRuleResponse { };
-        public BusinessRuleResponse Failure(IEnumerable<string> messages)
-        {
-            Name = GetType().Name;
-            Messages = messages.ToList();
-
-            return this;
-        }
     }
 }

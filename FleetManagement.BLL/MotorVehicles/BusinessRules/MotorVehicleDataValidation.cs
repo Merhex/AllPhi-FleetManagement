@@ -21,10 +21,8 @@ namespace FleetManagement.BLL
             var result = await _validator.ValidateAsync(_motorVehicle, cancellationToken);
 
             if (result.IsValid is false)
-            {
                 return new BusinessRuleResponse()
                     .ConvertValidationResult(result);
-            }
 
             return BusinessRuleResponse.Success;
         }
