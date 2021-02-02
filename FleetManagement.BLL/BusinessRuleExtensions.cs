@@ -21,6 +21,7 @@ namespace FleetManagement.BLL
 
             return response;
         }
+
         public static IBusinessRuleResponse Failure(this IBusinessRuleResponse response, IBusinessRule source, string message)
         {
             response = new BusinessRuleResponse { Name = DisplayName(source), Messages = { message } };
