@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.API.Read", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.BLL", "FleetManagement.BLL\FleetManagement.BLL.csproj", "{0EC1A042-4960-4FE9-B77D-81BE019AC625}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManagement.ReadModels", "ReadModels\FleetManagement.ReadModels.csproj", "{5924A3F6-B4A7-430C-B833-39D26273F357}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManagement.ReadModels", "FleetManagement.ReadModels\FleetManagement.ReadModels.csproj", "{5924A3F6-B4A7-430C-B833-39D26273F357}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
