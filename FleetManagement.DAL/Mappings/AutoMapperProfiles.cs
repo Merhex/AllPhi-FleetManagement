@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FleetManagement.Models;
-using FleetManagement.Models.ReadModels;
+using FleetManagement.ReadModels;
 using System.Linq;
 
 namespace FleetManagement.DAL.Mappings
@@ -9,9 +9,13 @@ namespace FleetManagement.DAL.Mappings
     {
         public AutoMapperProfiles()
         {
-            CreateMap<MotorVehicle, MotorVehicleLicensePlates>()
+            CreateMap<MotorVehicle, MotorVehicleLicensePlate>()
                 .ForMember(target => target.CurrentMileage, source => source
-                .MapFrom(x => x.MileageHistory.LastOrDefault().Mileage));
+                    .MapFrom(x => x.MileageHistory.FirstOrDefault().Mileage))
+                .ForMember(target => target.LicensePlate, source => source
+                    .MapFrom(x => x.LicensePlates.SingleOrDefault(x => x.InUse)));
+
+            CreateMap<MotorVehicle, MotorVehicleDetailed>();
         }
     }
 }

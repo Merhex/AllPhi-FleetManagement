@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FleetManagement.Models;
-using FleetManagement.Models.ReadModels;
+using FleetManagement.ReadModels;
 
 namespace FleetManagement.API.Read.Mappings
 {
@@ -8,8 +8,12 @@ namespace FleetManagement.API.Read.Mappings
     {
         public AutoMapperProfiles()
         {
-            CreateMap<MotorVehicleLicensePlates, MotorVehicleResponse>();
+            CreateMap<MotorVehicleLicensePlate, MotorVehicleResponse>();
             CreateMap<LicensePlate, LicensePlateResponse>();
+            CreateMap<MotorVehicleDetailed, MotorVehicleDetailedResponse>();
+            CreateMap<MotorVehicleMileageSnapshot, MotorVehicleMileageResponse>();
+            CreateMap<MotorVehicleWorkOrder, MotorVehicleWorkOrderResponse>();
+            CreateMap<Driver, DriverResponse>();
         }
     }
 }

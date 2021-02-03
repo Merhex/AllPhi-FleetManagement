@@ -8,28 +8,28 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.API.Read.Queries.Handlers
 {
-    public class AllOperationalMotorVehicleQueryHandler : IRequestHandler<AllOperationalMotorVehiclesQuery, IPaginatedResponse<MotorVehicleResponse>>
+    public class MotorVehicleOperationalQueryHandler : IRequestHandler<MotorVehicleOperationalQuery, IPaginatedResponse<MotorVehicleResponse>>
     {
         private readonly IReadRepository _readRepository;
         private readonly IMapper _mapper;
 
-        public AllOperationalMotorVehicleQueryHandler(IReadRepository readRepository, IMapper mapper)
+        public MotorVehicleOperationalQueryHandler(IReadRepository readRepository, IMapper mapper)
         {
             _readRepository = readRepository;
             _mapper = mapper;
         }
 
-        public async Task<IPaginatedResponse<MotorVehicleResponse>> Handle(AllOperationalMotorVehiclesQuery request, CancellationToken cancellationToken)
+        public async Task<IPaginatedResponse<MotorVehicleResponse>> Handle(MotorVehicleOperationalQuery query, CancellationToken cancellationToken)
         {
-            var result = await _readRepository.GetOperationalMotorVehicles(request.Page, request.PageSize);
+            var result = await _readRepository.GetOperationalMotorVehicles(query.Page, query.PageSize, cancellationToken);
 
             var mappedResult = _mapper.Map<IEnumerable<MotorVehicleResponse>>(result);
 
             return new PaginatedResponse<MotorVehicleResponse>() 
             { 
                 Items = mappedResult,
-                Page = request.Page,
-                PageSize = request.PageSize 
+                Page = query.Page,
+                PageSize = query.PageSize 
             };
         }
     }

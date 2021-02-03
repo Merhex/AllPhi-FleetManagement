@@ -11,6 +11,6 @@ namespace FleetManagement.API.Read.Mappings
         int CurrentMileage,
         int BodyType,
         int PropulsionType,
-        IEnumerable<LicensePlateResponse> LicensePlates
+        LicensePlateResponse LicensePlate
     );
 }

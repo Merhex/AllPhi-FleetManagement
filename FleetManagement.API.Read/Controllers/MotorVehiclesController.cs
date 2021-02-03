@@ -17,7 +17,15 @@ namespace FleetManagement.API.Read.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetOperationalMotorVehicles([FromQuery] AllOperationalMotorVehiclesQuery query)
+        public async Task<IActionResult> GetOperationalMotorVehicles([FromQuery] MotorVehicleOperationalQuery query)
+        {
+            var result = await _mediator.Send(query);
+
+            return Ok(result);
+        }
+
+        [HttpGet("detailed")]
+        public async Task<IActionResult> GetDetailedMotorVehicle([FromQuery] MotorVehicleDetailedQuery query)
         {
             var result = await _mediator.Send(query);
 

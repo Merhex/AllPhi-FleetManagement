@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FleetManagement.ReadModels
 {
-    public class MotorVehicleLicensePlates
+    public class MotorVehicleLicensePlate
     {
         public string ChassisNumber { get; set; }
         public string Brand { get; set; }
@@ -12,6 +12,6 @@ namespace FleetManagement.ReadModels
         public int CurrentMileage { get; set; }
         public MotorVehicleBodyType BodyType { get; set; }
         public MotorVehiclePropulsionType PropulsionType { get; set; }
-        public IEnumerable<LicensePlate> LicensePlates { get; set; }
+        public LicensePlate LicensePlate { get; set; }
     }
 }
