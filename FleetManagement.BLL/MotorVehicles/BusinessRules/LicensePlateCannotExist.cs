@@ -20,7 +20,8 @@ namespace FleetManagement.BLL
             var licensePlate = await _repository.FindByIdentifierAsync(_identifier, cancellationToken);
 
             if (licensePlate is not null)
-                return new BusinessRuleResponse().Failure(this, $"The license plate with given identifier: {_identifier}, already exists.");
+                return new BusinessRuleResponse()
+                    .Failure(this, $"The license plate with given identifier: {_identifier}, already exists.");
 
             return BusinessRuleResponse.Success;
         }

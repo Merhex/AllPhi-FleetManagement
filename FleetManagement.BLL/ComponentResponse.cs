@@ -5,7 +5,7 @@ namespace FleetManagement.BLL
     public class ComponentResponse : IComponentResponse
     {
         public static ComponentResponse Success => new ComponentResponse { };
-        public IDictionary<string, ICollection<string>> Failures { get; set; } = new Dictionary<string, ICollection<string>>();
+        public IDictionary<string, ICollection<string>> Messages { get; set; } = new Dictionary<string, ICollection<string>>();
 
         public ComponentResponse WithResponse(IBusinessHandlerResponse businessHandlerResponse)
         {
@@ -24,7 +24,7 @@ namespace FleetManagement.BLL
                 }
             }
 
-            Failures = responseDictionary;
+            Messages = responseDictionary;
 
             return this;
         }

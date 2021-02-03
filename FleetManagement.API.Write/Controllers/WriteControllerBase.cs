@@ -8,10 +8,10 @@ namespace FleetManagement.API.Write.Controllers
     {
         protected IActionResult WriteApiResponse(IComponentResponse response)
         {
-            if (response.Failures.Any()) 
+            if (response.Messages.Any()) 
                 return BadRequest(new
                 {
-                    Errors = response.Failures
+                    Errors = response.Messages
                 });
 
             return Ok();

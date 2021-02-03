@@ -14,18 +14,21 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         private readonly IMotorVehicleRepository _motorVehicleRepository;
         private readonly ILicensePlateRepository _licensePlateRepository;
         private readonly ILicensePlateSnapshotRepository _licensePlateSnaphotRepository;
+        private readonly IMotorVehicleMileageSnapshotRepository _motorVehicleMileageSnapshotRepository;
         private readonly IBusinessHandler _businessHandler;
 
         public MotorVehicleComponent(
             IMotorVehicleRepository motorVehicleRepository,
             ILicensePlateRepository licensePlateRepository,
             ILicensePlateSnapshotRepository licensePlateSnaphotRepository,
+            IMotorVehicleMileageSnapshotRepository motorVehicleMileageSnapshotRepository,
             IBusinessHandler businessHandler)
         {
             _motorVehicleRepository = motorVehicleRepository;
             _licensePlateRepository = licensePlateRepository;
             _licensePlateSnaphotRepository = licensePlateSnaphotRepository;
             _businessHandler = businessHandler;
+            _motorVehicleMileageSnapshotRepository = motorVehicleMileageSnapshotRepository;
         }
 
         public async Task<IComponentResponse> CreateLicensePlateAsync(ICreateLicensePlateContract contract, CancellationToken cancellationToken)
@@ -272,9 +275,18 @@ namespace FleetManagement.BLL.MotorVehicles.Components
                 PropulsionType = (MotorVehiclePropulsionType)contract.PropulsionType
             };
 
-            _motorVehicleRepository.Add(motorVehicle);
+            var mileage = new MotorVehicleMileageSnapshot
+            {
+                MotorVehicle = motorVehicle,
+                Mileage = contract.Mileage,
+                SnapshotDate = DateTime.Now
+            };
 
+            _motorVehicleRepository.Add(motorVehicle);
             await _motorVehicleRepository.SaveAsync();
+
+            _motorVehicleMileageSnapshotRepository.Add(mileage);
+            await _motorVehicleMileageSnapshotRepository.SaveAsync();
         }
 
         private async Task ActivateMotorVehicle(IActivateMotorVehicle contract, CancellationToken cancellationToken)

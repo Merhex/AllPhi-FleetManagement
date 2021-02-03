@@ -7,6 +7,7 @@ namespace FleetManagement.Models
     {
         public int Id { get; set; }
 
+        [RegularExpression("[A-Z-0-9.]{1,9}")]
         [MaxLength(9)]
         [Required]
         [Key]

@@ -24,10 +24,9 @@ namespace FleetManagement.BLL
             {
                 var licensePlateInUse = motorVehicle.LicensePlates.SingleOrDefault(licensePlate => licensePlate.InUse);
 
-                if (licensePlateInUse is not null)
-                    if (licensePlateInUse.Identifier.Equals(_identifier) is not true)
-                        return new BusinessRuleResponse()
-                            .Failure(this, $"The motor vehicle with chassis number: {motorVehicle.ChassisNumber}, has not a license plate with identifier: {_identifier}, active.");
+                if (licensePlateInUse is null)
+                    return new BusinessRuleResponse()
+                        .Failure(this, $"The motor vehicle with chassis number: {motorVehicle.ChassisNumber}, has not a license plate with identifier: {_identifier}, active.");
             }
                 
             return BusinessRuleResponse.Success;

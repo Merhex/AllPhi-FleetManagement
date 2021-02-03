@@ -21,9 +21,8 @@ namespace FleetManagement.BLL
 
             if (licensePlate is not null)
                 if (licensePlate.InUse)
-                    if (licensePlate.Identifier.Equals(_identifier) is not true)
-                        return new BusinessRuleResponse()
-                            .Failure(this, $"The license plate with identifier {_identifier} is active. Please deattach/deactivate the license plate first.");
+                    return new BusinessRuleResponse()
+                        .Failure(this, $"The license plate with identifier {_identifier} is active. Please deattach/deactivate the license plate first.");
 
             return BusinessRuleResponse.Success;
         }

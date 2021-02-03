@@ -1,6 +1,5 @@
 ﻿using FleetManagement.BLL;
 using FleetManagement.BLL.MotorVehicles.Contracts;
-using FleetManagement.Models;
 using MediatR;
 
 namespace FleetManagement.API.Write.Commands
@@ -13,5 +12,6 @@ namespace FleetManagement.API.Write.Commands
         public bool Operational { get; init; }
         public int BodyType { get; init; }
         public int PropulsionType { get; init; }
+        public int Mileage { get; init; }
     }
 }

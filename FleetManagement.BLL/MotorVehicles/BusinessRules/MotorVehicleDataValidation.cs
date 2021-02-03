@@ -22,7 +22,7 @@ namespace FleetManagement.BLL
 
             if (result.IsValid is false)
                 return new BusinessRuleResponse()
-                    .ConvertValidationResult(result);
+                    .ConvertValidationResult(this, result);
 
             return BusinessRuleResponse.Success;
         }

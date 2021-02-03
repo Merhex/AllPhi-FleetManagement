@@ -4,6 +4,6 @@ namespace FleetManagement.BLL
 {
     public interface IComponentResponse
     {
-        public IDictionary<string, ICollection<string>> Failures { get; }
+        public IDictionary<string, ICollection<string>> Messages { get; }
     }
 }

@@ -29,6 +29,10 @@ namespace FleetManagement.BLL
             BusinessRules.Add(
                 new MotorVehicleDataValidation(
                     _serviceProvider.GetRequiredService<MotorVehicleDataValidator>(), motorVehicle));
+
+            BusinessRules.Add(
+                new MotorVehicleMileageDataValidation(
+                    _serviceProvider.GetRequiredService<IMotorVehicleMileageSnapshotRepository>(), contract.Mileage, contract.ChassisNumber));
         }
 
         #region PRIVATE

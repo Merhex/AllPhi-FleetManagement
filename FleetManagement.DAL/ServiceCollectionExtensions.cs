@@ -20,7 +20,16 @@ namespace FleetManagement.DAL
 
             collection.AddTransient<ILicensePlateSnapshotRepository, LicensePlateSnapshotRepository>();
 
+            collection.AddTransient<IMotorVehicleMileageSnapshotRepository, MotorVehicleMileageSnapshotRepository>();
+
             collection.AddTransient<IPersonRepository, PersonRepository>();
+
+            return collection;
+        }
+
+        public static IServiceCollection AddReadRepositories(this IServiceCollection collection)
+        {
+            collection.AddTransient<IReadRepository, ReadRepository>();
 
             return collection;
         }
