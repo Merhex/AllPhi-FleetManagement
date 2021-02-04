@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FleetManagement.API.Read.Mappings
+namespace FleetManagement.Blazor.Models
 {
     public record MotorVehicleResponse
     (

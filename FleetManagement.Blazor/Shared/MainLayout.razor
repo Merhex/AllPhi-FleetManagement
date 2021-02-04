@@ -1,0 +1,19 @@
+﻿@inherits LayoutComponentBase
+
+<Layout Sider="true">
+    <LayoutSider>
+        <LayoutSiderContent>
+            <NavBar />
+        </LayoutSiderContent>
+    </LayoutSider>
+    <Layout Fluid>
+        <LayoutContent>
+            <Container Fluid="true">
+                @Body
+            </Container>
+        </LayoutContent>
+        <LayoutFooter Fixed>
+            Footer content
+        </LayoutFooter>
+    </Layout>
+</Layout>

@@ -56,6 +56,13 @@ namespace FleetManagement.API.Write
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                app.UseCors(options =>
+                {
+                    options.AllowAnyOrigin();
+                    options.AllowAnyMethod();
+                    options.AllowAnyHeader();
+                });
             }
 
             app.UseExceptionHandler(a => a.Run(async context =>

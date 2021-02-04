@@ -8,11 +8,18 @@ namespace FleetManagement.API.Read.Mappings
     {
         public AutoMapperProfiles()
         {
-            CreateMap<MotorVehicleLicensePlate, MotorVehicleResponse>();
+            CreateMap<MotorVehicleLicensePlate, MotorVehicleResponse>()
+                .ForMember(x => x.LicensePlateIdentifier, x => x
+                .MapFrom(x => x.LicensePlate.Identifier));
+
             CreateMap<LicensePlate, LicensePlateResponse>();
+
             CreateMap<MotorVehicleDetailed, MotorVehicleDetailedResponse>();
+
             CreateMap<MotorVehicleMileageSnapshot, MotorVehicleMileageResponse>();
+
             CreateMap<MotorVehicleWorkOrder, MotorVehicleWorkOrderResponse>();
+
             CreateMap<Driver, DriverResponse>();
         }
     }

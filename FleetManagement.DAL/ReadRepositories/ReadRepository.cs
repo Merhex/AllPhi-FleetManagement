@@ -37,9 +37,11 @@ namespace FleetManagement.DAL.Repositories
         {
             var motorVehicle = await _context.MotorVehicles
                                     .Include(motorVehicle => motorVehicle.Driver)
-                                    .Include(motorVehicle => motorVehicle.MileageHistory)
+                                    .Include(motorVehicle => motorVehicle.MileageHistory
+                                        .OrderByDescending(x => x.Mileage))
                                     .Include(motorVehicle => motorVehicle.LicensePlates)
-                                    .Include(motorVehicle => motorVehicle.Condition)
+                                    .Include(motorVehicle => motorVehicle.Condition
+                                        .OrderByDescending(x => x.CreationDate))
                                     .SingleOrDefaultAsync(motorVehicle => motorVehicle.ChassisNumber == chassisNumber, cancellationToken);
 
             return _mapper.Map<MotorVehicleDetailed>(motorVehicle);

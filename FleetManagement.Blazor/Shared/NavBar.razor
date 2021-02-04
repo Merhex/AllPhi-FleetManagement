@@ -1,0 +1,46 @@
+﻿<Bar Breakpoint="Breakpoint.Desktop"
+     NavigationBreakpoint="Breakpoint.Tablet"
+     Mode="BarMode.VerticalInline"
+     ThemeContrast="ThemeContrast.Light"
+     CollapseMode="BarCollapseMode.Small">
+    <BarToggler />
+    <BarBrand>
+        <BarItem>
+            <BarLink To="/">
+                <BarIcon IconName="IconName.Home"></BarIcon>
+                Fleet Management
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <BarLink To="/fleet">
+                    <BarIcon IconName="IconName.Car"></BarIcon>
+                    Fleet
+                </BarLink>
+            </BarItem>
+            <BarItem>
+                <BarLink To="/drivers">
+                    <BarIcon IconName="IconName.Users"></BarIcon>
+                    Drivers
+                </BarLink>
+            </BarItem>
+            <BarItem>
+
+                <BarLink To="/fuelcards">
+                    <BarIcon IconName="IconName.CreditCard"></BarIcon>
+                    Fuel cards
+                </BarLink>
+            </BarItem>
+        </BarStart>
+        <BarEnd>
+            <BarItem>
+                <BarLink Color="Color.Secondary">
+                    <BarIcon IconName="FontAwesomeIcons.SignInAlt"></BarIcon>
+                Log in
+                </BarLink>
+            </BarItem>
+        </BarEnd>
+    </BarMenu>
+</Bar>

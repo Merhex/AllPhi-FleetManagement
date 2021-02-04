@@ -1,0 +1,23 @@
+﻿@page "/fleet"
+@using FleetManagement.Blazor.Models
+
+<Heading>Fleet</Heading>
+
+<DataGrid TItem="MotorVehicleResponse"
+          Data="@MotorVehicles"
+          ReadData="@GetMotorVehicles">
+    <ChildContent>
+        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.ChassisNumber)" Caption="VIN"></DataGridColumn>
+        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Brand)" Caption="Brand"></DataGridColumn>
+        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Model)" Caption="Model"></DataGridColumn>
+        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.LicensePlateIdentifier)" Caption="Active license plate"></DataGridColumn>
+    </ChildContent>
+    <EmptyTemplate>
+        <Paragraph>No items to be displayed.</Paragraph>
+    </EmptyTemplate>
+    <LoadingTemplate>
+        <Loader />
+    </LoadingTemplate>
+</DataGrid>
+
+<SnackbarStack @ref="SnackbarStack" Location="SnackbarStackLocation.Right" Interval="5000" Multiline="true"/>
