@@ -19,7 +19,7 @@ namespace FleetManagement.BLL
             _serviceProvider = serviceProvider;
         }
 
-        public void Read(ICreateLicensePlateContract contract)
+        public void AddBusinessRules(ICreateLicensePlateContract contract)
         {
             var licensePlate = new LicensePlate { Identifier = contract.Identifier };
 

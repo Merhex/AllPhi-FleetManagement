@@ -2,19 +2,21 @@
 using FleetManagement.DAL.Repositories.Interfaces;
 using FleetManagement.ReadModels;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.Repositories
 {
-    public class ReadRepository : IReadRepository
+    public class ReadMotorVehicleRepository : IReadMotorVehicleRepository
     {
         private readonly FleetManagementContext _context;
         private readonly IMapper _mapper;
 
-        public ReadRepository(FleetManagementContext context, IMapper mapper)
+        public ReadMotorVehicleRepository(FleetManagementContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -45,6 +47,20 @@ namespace FleetManagement.DAL.Repositories
                                     .SingleOrDefaultAsync(motorVehicle => motorVehicle.ChassisNumber == chassisNumber, cancellationToken);
 
             return _mapper.Map<MotorVehicleDetailed>(motorVehicle);
+        }
+
+        public async Task<int> GetTotalCount<T>() where T : class =>
+            await _context.Set<T>().CountAsync();
+
+        public Task<int> GetTotalCount<T>(params Expression<Func<T, bool>>[] filters) where T : class
+        {
+            var set = _context.Set<T>().AsQueryable();
+
+            if (filters.Any())
+                foreach (var filter in filters)
+                    set.Where(filter);
+
+            return set.CountAsync();
         }
     }
 }

@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.BLL", "Flee
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.ReadModels", "FleetManagement.ReadModels\FleetManagement.ReadModels.csproj", "{5924A3F6-B4A7-430C-B833-39D26273F357}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManagement.Blazor", "FleetManagement.Blazor\FleetManagement.Blazor.csproj", "{D9D0FDC4-64C5-480F-B862-9594140B4685}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.Blazor", "FleetManagement.Blazor\FleetManagement.Blazor.csproj", "{D9D0FDC4-64C5-480F-B862-9594140B4685}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

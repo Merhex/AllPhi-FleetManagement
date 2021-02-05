@@ -1,6 +1,9 @@
 ﻿using Blazorise.DataGrid;
 using Blazorise.Snackbar;
 using FleetManagement.Blazor.Models;
+using FleetManagement.Blazor.Queries;
+using FleetManagement.Blazor.Responses;
+using FleetManagement.Blazor.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -12,50 +15,49 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.Blazor.Pages
 {
-    public partial class Fleet
+    public partial class Fleet : ComponentBase
     {
-        List<MotorVehicleResponse> MotorVehicles { get; set; } = new List<MotorVehicleResponse>();
-        int Page { get; set; } = 1;
-        int PageSize { get; set; } = 20;
-        SnackbarStack SnackbarStack { get; set; }
+        private List<MotorVehicleResponse> MotorVehicles { get; set; } = new List<MotorVehicleResponse>();
+        private int MotorVehiclesTotal { get; set; }
+        private int Page { get; set; } = 1;
+        private int PageSize { get; set; } = 5;
+        private SnackbarStack SnackbarStack { get; set; }
 
         [Inject]
-        HttpClient HttpClient { get; set; }
+        private NavigationManager NavigationManager { get; set; }
         [Inject]
-        IConfiguration Configuration { get; set; }
+        private IApiRequestService ApiRequestService { get; set; }
 
-
-        async Task GetMotorVehicles(DataGridReadDataEventArgs<MotorVehicleResponse> e)
+        private async Task ReadData(DataGridReadDataEventArgs<MotorVehicleResponse> e)
         {
             try
             {
-                var readUrl = Configuration
-                                .GetSection("ApiUrls")
-                                .GetValue<string>("ReadSSL")
-                                ??
-                               Configuration
-                                .GetSection("ApiUrls")
-                                .GetValue<string>("Read");
+                Page = e.Page;
+                PageSize = e.PageSize;
 
-                var request = new HttpRequestMessage
-                {
-                    RequestUri = new Uri($"{readUrl}/motorvehicles?Page={Page}&PageSize={PageSize}"),
-                    Method = HttpMethod.Get
-                };
+                var query = new MotorVehicleOperationalQuery(e.Page, e.PageSize);
 
-                var response = await HttpClient.SendAsync(request);
+                var content = await ApiRequestService.SendGetRequest<PaginatedResponse<MotorVehicleResponse>>(query);
 
-                response.EnsureSuccessStatusCode();
+                MotorVehicles = content.Items.ToList();
+                MotorVehiclesTotal = content.TotalCount;
 
-                var content = await response.Content.ReadFromJsonAsync<IEnumerable<MotorVehicleResponse>>();
-
-                MotorVehicles = content.ToList();
+                StateHasChanged();
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
-                SnackbarStack.Push(ex.Message, SnackbarColor.Danger);
+                await SnackbarStack.PushAsync("Something went wrong with the HTTP request, if this persists, contact the system administrator.", SnackbarColor.Warning);
             }
+            catch (Exception)
+            {
+                await SnackbarStack.PushAsync("Something went wrong, contact the system administrator.", SnackbarColor.Danger);
+            }
+        }
 
+
+        private void RowClicked(DataGridRowMouseEventArgs<MotorVehicleResponse> e)
+        {
+            NavigationManager.NavigateTo($"/fleet/details/{e.Item.ChassisNumber}");
         }
     }
 }

@@ -1,11 +1,19 @@
 ﻿@page "/fleet"
-@using FleetManagement.Blazor.Models
+@using FleetManagement.Blazor.Responses
 
 <Heading>Fleet</Heading>
 
 <DataGrid TItem="MotorVehicleResponse"
           Data="@MotorVehicles"
-          ReadData="@GetMotorVehicles">
+          ReadData="@ReadData"
+          TotalItems="@MotorVehiclesTotal"
+          PageSize="@PageSize"
+          CurrentPage="@Page"
+          ShowPager="true"
+          Narrow="true"
+          RowClicked="@RowClicked"
+          Sortable="false"
+          Responsive="true">
     <ChildContent>
         <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.ChassisNumber)" Caption="VIN"></DataGridColumn>
         <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Brand)" Caption="Brand"></DataGridColumn>
@@ -20,4 +28,4 @@
     </LoadingTemplate>
 </DataGrid>
 
-<SnackbarStack @ref="SnackbarStack" Location="SnackbarStackLocation.Right" Interval="5000" Multiline="true"/>
+<SnackbarStack @ref="SnackbarStack" Location="SnackbarStackLocation.Right" Interval="5000" Multiline="true" />

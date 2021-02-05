@@ -17,7 +17,7 @@ namespace FleetManagement.BLL
             _serviceProvider = serviceProvider;
         }
 
-        public void Read(IDeleteLicensePlateContract contract)
+        public void AddBusinessRules(IDeleteLicensePlateContract contract)
         {
             BusinessRules.Add(
                new LicensePlateExists(

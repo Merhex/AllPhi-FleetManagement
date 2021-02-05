@@ -17,7 +17,7 @@ namespace FleetManagement.BLL
             _serviceProvider = serviceProvider;
         }
 
-        public void Read(IDeactivateMotorVehicle contract)
+        public void AddBusinessRules(IDeactivateMotorVehicle contract)
         {
             BusinessRules.Add(
                 new MotorVehicleExists(

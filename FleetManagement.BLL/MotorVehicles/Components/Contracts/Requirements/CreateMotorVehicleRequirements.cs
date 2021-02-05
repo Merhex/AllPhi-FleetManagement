@@ -19,13 +19,14 @@ namespace FleetManagement.BLL
             _serviceProvider = serviceProvider;
         }
 
-        public void Read(ICreateMotorVehicleContract contract)
+        public void AddBusinessRules(ICreateMotorVehicleContract contract)
         {
             var motorVehicle = CreateMotorVehicleFromContract(contract);
 
             BusinessRules.Add(
                 new MotorVehicleCannotExist(
                     _serviceProvider.GetRequiredService<IMotorVehicleRepository>(), contract.ChassisNumber));
+
             BusinessRules.Add(
                 new MotorVehicleDataValidation(
                     _serviceProvider.GetRequiredService<MotorVehicleDataValidator>(), motorVehicle));

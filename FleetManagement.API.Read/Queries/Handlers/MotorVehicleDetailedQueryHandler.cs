@@ -9,10 +9,10 @@ namespace FleetManagement.API.Read.Queries.Handlers
 {
     public class MotorVehicleDetailedQueryHandler : IRequestHandler<MotorVehicleDetailedQuery, MotorVehicleDetailedResponse>
     {
-        private readonly IReadRepository _readRepository;
+        private readonly IReadMotorVehicleRepository _readRepository;
         private readonly IMapper _mapper;
 
-        public MotorVehicleDetailedQueryHandler(IReadRepository readRepository, IMapper mapper)
+        public MotorVehicleDetailedQueryHandler(IReadMotorVehicleRepository readRepository, IMapper mapper)
         {
             _readRepository = readRepository;
             _mapper = mapper;

@@ -1,0 +1,69 @@
+﻿@page "/fleet/details/{chassisNumber}"
+
+<Heading Size="HeadingSize.Is1">Motor vehicle details</Heading>
+
+<Divider />
+
+<Loader Loading="@IsLoading">
+    <Container Fluid="true">
+        <Fields>
+            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                <FieldLabel>Brand</FieldLabel>
+                <TextEdit @bind-Text="@MotorVehicleDetailed.Brand"
+                          Disabled="@Disabled" />
+            </Field>
+            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                <FieldLabel>Model</FieldLabel>
+                <TextEdit @bind-Text="@MotorVehicleDetailed.Model"
+                          Disabled="@Disabled" />
+            </Field>
+            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                <FieldLabel>VIN</FieldLabel>
+                <TextEdit @bind-Text="@MotorVehicleDetailed.ChassisNumber"
+                          Disabled="@Disabled" />
+            </Field>
+            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                <FieldLabel>Body</FieldLabel>
+                <Select TValue="int"
+                        @bind-SelectedValue="MotorVehicleDetailed.BodyType"
+                        Disabled="@Disabled">
+                    <SelectItem Value="0">Sedan</SelectItem>
+                    <SelectItem Value="1">SUV</SelectItem>
+                    <SelectItem Value="2">Hatchback</SelectItem>
+                    <SelectItem Value="3">Roadster</SelectItem>
+                    <SelectItem Value="4">Pickup</SelectItem>
+                    <SelectItem Value="5">Van</SelectItem>
+                    <SelectItem Value="6">Coupe</SelectItem>
+                    <SelectItem Value="7">Truck</SelectItem>
+                    <SelectItem Value="8">Other</SelectItem>
+                </Select>
+            </Field>
+            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                <FieldLabel>Propulsion</FieldLabel>
+                <Select TValue="int"
+                        @bind-SelectedValue="MotorVehicleDetailed.PropulsionType"
+                        Disabled="@Disabled">
+                    <SelectItem Value="0">Gasoline</SelectItem>
+                    <SelectItem Value="1">Diesel</SelectItem>
+                    <SelectItem Value="2">Electric</SelectItem>
+                    <SelectItem Value="3">Hybrid Gasoline</SelectItem>
+                    <SelectItem Value="4">Hybrid Diesel</SelectItem>
+                    <SelectItem Value="8">Other</SelectItem>
+                </Select>
+            </Field>
+            <Field ColumnSize="ColumnSize.Is2.OnDesktop" Margin="Margin.Is1.FromLeft.IsAuto.OnY">
+                <Switch TValue="bool"
+                        @bind-Checked="@MotorVehicleDetailed.Operational"
+                        Disabled="@Disabled">Operational</Switch>
+            </Field>
+            <Field Margin="Margin.IsAuto">
+                <Button Block="true"
+                        Clicked="@ToggleEditMode"
+                        Color="Color.Info">
+                    Edit
+                </Button>
+            </Field>
+        </Fields>
+        <Divider />
+    </Container>
+</Loader>

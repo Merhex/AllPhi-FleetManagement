@@ -14,11 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise" Version="0.9.2.5" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.2.5" />
-    <PackageReference Include="Blazorise.DataGrid" Version="0.9.2.5" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.2.5" />
-    <PackageReference Include="Blazorise.Snackbar" Version="0.9.2.5" />
+    <PackageReference Include="Blazorise" Version="0.9.3-preview8" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3-preview8" />
+    <PackageReference Include="Blazorise.DataGrid" Version="0.9.3-preview8" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.3-preview8" />
+    <PackageReference Include="Blazorise.Snackbar" Version="0.9.3-preview8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.2" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
@@ -26,6 +26,10 @@
 
   <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\" />
   </ItemGroup>
 
 </Project>

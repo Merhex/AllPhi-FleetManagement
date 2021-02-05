@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FleetManagement.API.Read.Mappings;
 using FleetManagement.DAL.Repositories.Interfaces;
+using FleetManagement.Models;
 using MediatR;
 using System.Collections.Generic;
 using System.Threading;
@@ -10,10 +11,10 @@ namespace FleetManagement.API.Read.Queries.Handlers
 {
     public class MotorVehicleOperationalQueryHandler : IRequestHandler<MotorVehicleOperationalQuery, IPaginatedResponse<MotorVehicleResponse>>
     {
-        private readonly IReadRepository _readRepository;
+        private readonly IReadMotorVehicleRepository _readRepository;
         private readonly IMapper _mapper;
 
-        public MotorVehicleOperationalQueryHandler(IReadRepository readRepository, IMapper mapper)
+        public MotorVehicleOperationalQueryHandler(IReadMotorVehicleRepository readRepository, IMapper mapper)
         {
             _readRepository = readRepository;
             _mapper = mapper;
@@ -22,14 +23,14 @@ namespace FleetManagement.API.Read.Queries.Handlers
         public async Task<IPaginatedResponse<MotorVehicleResponse>> Handle(MotorVehicleOperationalQuery query, CancellationToken cancellationToken)
         {
             var result = await _readRepository.GetOperationalMotorVehicles(query.Page, query.PageSize, cancellationToken);
+            var count = await _readRepository.GetTotalCount<MotorVehicle>();
 
             var mappedResult = _mapper.Map<IEnumerable<MotorVehicleResponse>>(result);
 
-            return new PaginatedResponse<MotorVehicleResponse>() 
-            { 
+            return new PaginatedResponse<MotorVehicleResponse>()
+            {
                 Items = mappedResult,
-                Page = query.Page,
-                PageSize = query.PageSize 
+                TotalCount = count
             };
         }
     }

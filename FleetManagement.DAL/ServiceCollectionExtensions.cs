@@ -29,7 +29,7 @@ namespace FleetManagement.DAL
 
         public static IServiceCollection AddReadRepositories(this IServiceCollection collection)
         {
-            collection.AddTransient<IReadRepository, ReadRepository>();
+            collection.AddTransient<IReadMotorVehicleRepository, ReadMotorVehicleRepository>();
 
             return collection;
         }

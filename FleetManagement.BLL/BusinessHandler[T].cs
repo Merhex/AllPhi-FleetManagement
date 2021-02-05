@@ -18,7 +18,7 @@ namespace FleetManagement.BLL
 
         public async Task<IBusinessHandlerResponse> Validate(T contract, CancellationToken cancellationToken = default)
         {
-            _requirements.Read(contract);
+            _requirements.AddBusinessRules(contract);
 
             if (_requirements.BusinessRules.Count is 0) 
                 throw new Exception("There are no business rules defined in the requirement.");
