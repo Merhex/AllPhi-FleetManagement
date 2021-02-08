@@ -14,12 +14,10 @@ namespace FleetManagement.BLL.MotorVehicles.Validators
 
             RuleFor(motorVehicle => motorVehicle.BodyType)
                 .IsInEnum()
-                .NotEmpty()
                 .WithMessage("The given body type is not a valid option out of the option list.");
 
             RuleFor(motorVehicle => motorVehicle.PropulsionType)
                 .IsInEnum()
-                .NotEmpty()
                 .WithMessage("The given propulsion type is not a valid option out of the option list.");
 
             RuleFor(motorVehicle => motorVehicle.Brand)

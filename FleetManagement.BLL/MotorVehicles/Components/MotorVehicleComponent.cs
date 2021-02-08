@@ -65,6 +65,23 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             }
         }
 
+        public async Task<IComponentResponse> UpdateMotorVehicleAsync(IUpdateMotorVehicleContract contract, CancellationToken cancellationToken)
+        {
+            var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
+
+            if (handlerResponse.Success)
+            {
+                await UpdateMotorVehicle(contract, cancellationToken);
+
+                return ComponentResponse.Success;
+            }
+            else
+            {
+                return new ComponentResponse()
+                    .WithResponse(handlerResponse);
+            }
+        }
+
         public async Task<IComponentResponse> AssignLicensePlateToMotorVehicleAsync(IAssignLicensePlateContract contract, CancellationToken cancellationToken)
         {
             var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
@@ -150,7 +167,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             }
         }
 
-        public async Task<IComponentResponse> ActivateMotorVehicleAsync(IActivateMotorVehicle contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> ActivateMotorVehicleAsync(IActivateMotorVehicleContract contract, CancellationToken cancellationToken)
         {
             var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
 
@@ -167,7 +184,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             }
         }
 
-        public async Task<IComponentResponse> DeactivateMotorVehicleAsync(IDeactivateMotorVehicle contract, CancellationToken cancellationToken)
+        public async Task<IComponentResponse> DeactivateMotorVehicleAsync(IDeactivateMotorVehicleContract contract, CancellationToken cancellationToken)
         {
             var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
 
@@ -185,6 +202,19 @@ namespace FleetManagement.BLL.MotorVehicles.Components
         }
 
         #region PRIVATE
+        private async Task UpdateMotorVehicle(IUpdateMotorVehicleContract contract, CancellationToken cancellationToken)
+        {
+            var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(contract.ChassisNumber, cancellationToken);
+
+            motorVehicle.BodyType       = (MotorVehicleBodyType) contract.BodyType;
+            motorVehicle.PropulsionType = (MotorVehiclePropulsionType) contract.PropulsionType;
+            motorVehicle.Operational    = contract.Operational;
+            motorVehicle.Model          = contract.Model;
+            motorVehicle.Brand          = contract.Brand;
+
+            await _motorVehicleRepository.SaveAsync();
+        }
+
         private async Task DeactivateLicensePlate(IDeactivateLicensePlateContract contract, CancellationToken cancellationToken)
         {
             var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
@@ -289,7 +319,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             await _motorVehicleMileageSnapshotRepository.SaveAsync();
         }
 
-        private async Task ActivateMotorVehicle(IActivateMotorVehicle contract, CancellationToken cancellationToken)
+        private async Task ActivateMotorVehicle(IActivateMotorVehicleContract contract, CancellationToken cancellationToken)
         {
             var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(contract.ChassisNumber, cancellationToken);
 
@@ -298,7 +328,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             await _motorVehicleRepository.SaveAsync();
         }
 
-        private async Task DeactivateMotorVehicle(IDeactivateMotorVehicle contract, CancellationToken cancellationToken)
+        private async Task DeactivateMotorVehicle(IDeactivateMotorVehicleContract contract, CancellationToken cancellationToken)
         {
             var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(contract.ChassisNumber, cancellationToken);
 

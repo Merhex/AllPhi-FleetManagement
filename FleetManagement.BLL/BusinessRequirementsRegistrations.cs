@@ -13,10 +13,11 @@ namespace FleetManagement.BLL
             collection.AddTransient<IBusinessRequirements<IAssignLicensePlateContract>, AssignLicensePlateRequirements>();
             collection.AddTransient<IBusinessRequirements<IDeleteLicensePlateContract>, DeleteLicensePlateRequirements>();
             collection.AddTransient<IBusinessRequirements<IWithdrawLicensePlateContract>, WithdrawLicensePlateRequirements>();
-            collection.AddTransient<IBusinessRequirements<IActivateMotorVehicle>, ActivateMotorVehicleRequirements>();
-            collection.AddTransient<IBusinessRequirements<IDeactivateMotorVehicle>, DeactivateMotorVehicleRequirements>();
+            collection.AddTransient<IBusinessRequirements<IActivateMotorVehicleContract>, ActivateMotorVehicleRequirements>();
+            collection.AddTransient<IBusinessRequirements<IDeactivateMotorVehicleContract>, DeactivateMotorVehicleRequirements>();
             collection.AddTransient<IBusinessRequirements<IActivateLicensePlateContract>, ActivateLicensePlateRequirements>();
             collection.AddTransient<IBusinessRequirements<IDeactivateLicensePlateContract>, DeactivateLicensePlateRequirements>();
+            collection.AddTransient<IBusinessRequirements<IUpdateMotorVehicleContract>, UpdateMotorVehicleRequirements>();
 
             return collection;
         }

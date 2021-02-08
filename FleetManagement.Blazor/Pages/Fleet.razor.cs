@@ -1,5 +1,6 @@
 ﻿using Blazorise.DataGrid;
 using Blazorise.Snackbar;
+using FleetManagement.Blazor.Filters;
 using FleetManagement.Blazor.Models;
 using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
@@ -20,8 +21,11 @@ namespace FleetManagement.Blazor.Pages
         private List<MotorVehicleResponse> MotorVehicles { get; set; } = new List<MotorVehicleResponse>();
         private int MotorVehiclesTotal { get; set; }
         private int Page { get; set; } = 1;
-        private int PageSize { get; set; } = 5;
+        private int PageSize { get; set; } = 20;
         private SnackbarStack SnackbarStack { get; set; }
+        private MotorVehicleFilter MotorVehicleFilter { get; set; } = new MotorVehicleFilter();
+        private bool DataLoading { get; set; } = true;
+        private bool IsFilterVisible { get; set; } = false;
 
         [Inject]
         private NavigationManager NavigationManager { get; set; }
@@ -32,15 +36,14 @@ namespace FleetManagement.Blazor.Pages
         {
             try
             {
+                DataLoading = true;
+
                 Page = e.Page;
                 PageSize = e.PageSize;
 
-                var query = new MotorVehicleOperationalQuery(e.Page, e.PageSize);
+                await GetOperationalVehicles(Page, PageSize);
 
-                var content = await ApiRequestService.SendGetRequest<PaginatedResponse<MotorVehicleResponse>>(query);
-
-                MotorVehicles = content.Items.ToList();
-                MotorVehiclesTotal = content.TotalCount;
+                DataLoading = false;
 
                 StateHasChanged();
             }
@@ -54,6 +57,27 @@ namespace FleetManagement.Blazor.Pages
             }
         }
 
+        private async Task GetOperationalVehicles(int page, int pageSize)
+        {
+            var query = new MotorVehicleOperationalQuery(page, pageSize, MotorVehicleFilter);
+
+            var content = await ApiRequestService.SendGetRequest<PaginatedResponse<MotorVehicleResponse>>(query);
+
+            MotorVehicles = content.Items.ToList();
+            MotorVehiclesTotal = content.TotalCount;
+        }
+
+        private void ClearFilter()
+        {
+            MotorVehicleFilter = new MotorVehicleFilter();
+        }
+
+        private async Task ApplyFilter()
+        {
+            Page = 1;
+
+            await GetOperationalVehicles(Page, PageSize);
+        }
 
         private void RowClicked(DataGridRowMouseEventArgs<MotorVehicleResponse> e)
         {

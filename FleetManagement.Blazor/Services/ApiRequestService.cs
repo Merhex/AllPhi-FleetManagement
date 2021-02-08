@@ -1,6 +1,8 @@
-﻿using FleetManagement.Blazor.Queries;
+﻿using FleetManagement.Blazor.Commands;
+using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -14,6 +16,7 @@ namespace FleetManagement.Blazor.Services
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
         private readonly string _readUrl;
+        private readonly string _writeUrl;
 
         public ApiRequestService(IConfiguration configuration, HttpClient httpClient)
         {
@@ -27,6 +30,14 @@ namespace FleetManagement.Blazor.Services
                             _configuration
                             .GetSection("ApiUrls")
                             .GetValue<string>("Read");
+
+            _writeUrl = _configuration
+                            .GetSection("ApiUrls")
+                            .GetValue<string>("WriteSSL")
+                            ??
+                            _configuration
+                            .GetSection("ApiUrls")
+                            .GetValue<string>("Write");
         }
 
         public async Task<T> SendGetRequest<T>(IQuery query)
@@ -40,6 +51,30 @@ namespace FleetManagement.Blazor.Services
             return await SendRequest<T>(request);
         }
 
+        public async Task<IApiCommandResponse> SendPutRequest<T>(string endpoint, T data)
+        {
+            var uri = new Uri($"{_writeUrl}/{endpoint}");
+
+            var result = await _httpClient.PutAsJsonAsync(uri, data);
+
+            return await ApiCommandResponse(result);
+        }
+
+        public Task<IApiCommandResponse> SendPostRequest<T>(string endpoint, T data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IApiCommandResponse> SendPatchRequest<T>(string endpoint, T data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IApiCommandResponse> SendDeleteRequest<T>(string endpoint, T data)
+        {
+            throw new NotImplementedException();
+        }
+
         #region PRIVATE
         private async Task<T> SendRequest<T>(HttpRequestMessage request)
         {
@@ -48,6 +83,21 @@ namespace FleetManagement.Blazor.Services
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<T>();
+        }
+
+        private static async Task<IApiCommandResponse> ApiCommandResponse(HttpResponseMessage result)
+        {
+            if (result.IsSuccessStatusCode)
+            {
+                return new ApiCommandResponse();
+            }
+            else
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                var response = JsonConvert.DeserializeObject<ApiCommandResponse>(content);
+
+                return response;
+            }
         }
         #endregion
     }

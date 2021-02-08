@@ -3,6 +3,76 @@
 
 <Heading>Fleet</Heading>
 
+<Bar Mode="BarMode.Horizontal"
+     Breakpoint="Breakpoint.Desktop"
+     ThemeContrast="ThemeContrast.Light">
+
+    <BarToggler />
+
+    <BarBrand>
+        Filter
+    </BarBrand>
+
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <Row Gutter="(32, 16)">
+                    <Column ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Start">
+                                <AddonLabel>Brand</AddonLabel>
+                            </Addon>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="Tesla"
+                                          @bind-Text="@MotorVehicleFilter.Brand" />
+                            </Addon>
+                        </Addons>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Start">
+                                <AddonLabel>Model</AddonLabel>
+                            </Addon>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="Model 3"
+                                          @bind-Text="@MotorVehicleFilter.Model" />
+                            </Addon>
+                        </Addons>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is6.OnDesktop.IsFull.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Start">
+                                <AddonLabel>VIN</AddonLabel>
+                            </Addon>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="A VIN number"
+                                          @bind-Text="@MotorVehicleFilter.ChassisNumber" />
+                            </Addon>
+                        </Addons>
+                    </Column>
+                </Row>
+            </BarItem>
+        </BarStart>
+        <BarEnd Margin="Margin.Is2.FromTop">
+            <BarItem>
+                <Buttons Margin="Margin.IsAuto.OnDesktop.Is2.OnMobile">
+                    <Button Color="Color.Primary"
+                            Clicked="@ApplyFilter"
+                            Disabled="@DataLoading"
+                            Loading="@DataLoading">
+                        Apply filter
+                    </Button>
+                    <Button Color="Color.Secondary"
+                            Clicked="@ClearFilter"
+                            Disabled="@DataLoading">
+                        Clear filter
+                    </Button>
+                </Buttons>
+            </BarItem>
+        </BarEnd>
+    </BarMenu>
+</Bar>
+
 <DataGrid TItem="MotorVehicleResponse"
           Data="@MotorVehicles"
           ReadData="@ReadData"

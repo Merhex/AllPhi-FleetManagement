@@ -1,4 +1,6 @@
-﻿using FleetManagement.Blazor.Queries;
+﻿using Blazorise.Snackbar;
+using FleetManagement.Blazor.Commands;
+using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using FleetManagement.Blazor.Services;
 using Microsoft.AspNetCore.Components;
@@ -20,6 +22,9 @@ namespace FleetManagement.Blazor.Pages
         private MotorVehicleDetailedResponse MotorVehicleDetailed { get; set; }
         private bool IsLoading { get; set; } = true;
         private bool Disabled { get; set; } = true;
+        private bool UpdateButtonShown { get; set; } = false;
+        private SnackbarStack SnackbarStack { get; set; }
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -30,9 +35,39 @@ namespace FleetManagement.Blazor.Pages
             IsLoading = false;
         }
 
-        public void ToggleEditMode()
+        private void ToggleEditMode()
         {
             Disabled = !Disabled;
+            UpdateButtonShown = !Disabled;
+        }
+
+        private async Task Submit()
+        {
+            UpdateButtonShown = false;
+            Disabled = true;
+
+            var updateCommand = new UpdateMotorVehicleCommand()
+            {
+                ChassisNumber  = MotorVehicleDetailed.ChassisNumber,
+                BodyType       = MotorVehicleDetailed.BodyType,
+                Brand          = MotorVehicleDetailed.Brand,
+                Model          = MotorVehicleDetailed.Model,
+                Operational    = MotorVehicleDetailed.Operational,
+                PropulsionType = MotorVehicleDetailed.PropulsionType
+            };
+
+            var response = await ApiRequestService.SendPutRequest(updateCommand.Endpoint, updateCommand);
+
+            if (response.Errors.Any())
+            {
+                foreach (var subject in response.Errors)
+                    foreach (var message in subject.Value)
+                        await SnackbarStack.PushAsync(message, SnackbarColor.Danger);
+            }
+            else
+            {
+                await SnackbarStack.PushAsync("Update successful.", SnackbarColor.Success);
+            }
         }
     }
 }

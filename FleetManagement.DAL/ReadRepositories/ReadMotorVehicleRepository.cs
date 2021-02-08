@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FleetManagement.DAL.Repositories.Interfaces;
+using FleetManagement.Models;
 using FleetManagement.ReadModels;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -22,13 +23,14 @@ namespace FleetManagement.DAL.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<MotorVehicleLicensePlate>> GetOperationalMotorVehicles(int page = 1, int pageSize = 20, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<MotorVehicleLicensePlate>> GetOperationalMotorVehicles(int page = 1, int pageSize = 20, CancellationToken cancellationToken = default, params Expression<Func<MotorVehicle, bool>>[] filters)
         {
             var motorVehicles = await _context.MotorVehicles
                                     .Include(motorVehicle => motorVehicle.LicensePlates)
                                     .Include(motorVehicle => motorVehicle.MileageHistory
                                         .OrderByDescending(x => x.Mileage))
                                     .Where(motorVehicle => motorVehicle.Operational)
+                                    .AddFilters(filters)
                                     .Pagination(page, pageSize)
                                     .ToListAsync(cancellationToken);
 
@@ -52,15 +54,7 @@ namespace FleetManagement.DAL.Repositories
         public async Task<int> GetTotalCount<T>() where T : class =>
             await _context.Set<T>().CountAsync();
 
-        public Task<int> GetTotalCount<T>(params Expression<Func<T, bool>>[] filters) where T : class
-        {
-            var set = _context.Set<T>().AsQueryable();
-
-            if (filters.Any())
-                foreach (var filter in filters)
-                    set.Where(filter);
-
-            return set.CountAsync();
-        }
+        public Task<int> GetTotalCount<T>(params Expression<Func<T, bool>>[] filters) where T : class =>
+            _context.Set<T>().AsQueryable().AddFilters(filters).CountAsync();
     }
 }

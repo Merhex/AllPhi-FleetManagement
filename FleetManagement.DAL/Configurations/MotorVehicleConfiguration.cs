@@ -12,6 +12,11 @@ namespace FleetManagement.DAL.Configurations
                 .HasKey(motoVehicle => motoVehicle.Id);
 
             builder
+                .HasMany(x => x.LicensePlates)
+                .WithOne(x => x.MotorVehicle)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
                 .Property(v => v.ChassisNumber)
                 .HasMaxLength(17)
                 .IsRequired()

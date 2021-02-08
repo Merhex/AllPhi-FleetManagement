@@ -12,6 +12,11 @@ namespace FleetManagement.DAL.Configurations
                 .HasKey(licensePlate => licensePlate.Id);
 
             builder
+                .HasOne(x => x.MotorVehicle)
+                .WithMany(x => x.LicensePlates)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
                 .Property(l => l.Identifier)
                 .IsRequired()
                 .HasMaxLength(10);

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace FleetManagement.DAL
 {
@@ -9,6 +11,14 @@ namespace FleetManagement.DAL
             return queryable
                     .Skip(pageSize * (page - 1))
                     .Take(pageSize);
+        }
+        public static IQueryable<T> AddFilters<T>(this IQueryable<T> queryable, params Expression<Func<T, bool>>[] filters)
+        {
+            if (filters.Any())
+                foreach (var filter in filters)
+                    queryable = queryable.Where(filter);
+
+            return queryable;
         }
     }
 }

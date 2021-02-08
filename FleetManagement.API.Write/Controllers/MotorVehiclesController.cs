@@ -87,5 +87,13 @@ namespace FleetManagement.API.Write.Controllers
 
             return WriteApiResponse(response);
         }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateMotorVehicle(UpdateMotorVehicleCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return WriteApiResponse(response);
+        }
     }
 }

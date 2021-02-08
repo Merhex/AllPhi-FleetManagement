@@ -16,6 +16,8 @@ namespace FleetManagement.Models
         [Required]
         public bool InUse { get; set; }
 
+        public int? MotorVehicleId { get; set; }
+        public MotorVehicle MotorVehicle { get; set; }
         public ICollection<LicensePlateSnapshot> History { get; set; }
     }
 }

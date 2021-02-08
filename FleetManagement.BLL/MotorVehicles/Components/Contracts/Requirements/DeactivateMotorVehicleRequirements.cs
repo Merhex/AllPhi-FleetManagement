@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace FleetManagement.BLL
 {
-    public class DeactivateMotorVehicleRequirements : IBusinessRequirements<IDeactivateMotorVehicle>
+    public class DeactivateMotorVehicleRequirements : IBusinessRequirements<IDeactivateMotorVehicleContract>
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -17,14 +17,10 @@ namespace FleetManagement.BLL
             _serviceProvider = serviceProvider;
         }
 
-        public void AddBusinessRules(IDeactivateMotorVehicle contract)
+        public void AddBusinessRules(IDeactivateMotorVehicleContract contract)
         {
             BusinessRules.Add(
                 new MotorVehicleExists(
-                    _serviceProvider.GetRequiredService<IMotorVehicleRepository>(), contract.ChassisNumber));
-
-            BusinessRules.Add(
-                new MotorVehicleOperational(
                     _serviceProvider.GetRequiredService<IMotorVehicleRepository>(), contract.ChassisNumber));
         }
     }

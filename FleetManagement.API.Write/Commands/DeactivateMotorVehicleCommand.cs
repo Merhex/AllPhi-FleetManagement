@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FleetManagement.API.Write.Commands
 {
-    public record DeactivateMotorVehicleCommand : IRequest<IComponentResponse>, IDeactivateMotorVehicle
+    public record DeactivateMotorVehicleCommand : IRequest<IComponentResponse>, IDeactivateMotorVehicleContract
     {
         public string ChassisNumber { get ; init; }
     }
