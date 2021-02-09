@@ -2,16 +2,14 @@
 
 namespace FleetManagement.Blazor.Queries
 {
-    public class MotorVehiclesQuery : IQuery
+    public class MotorVehiclesQuery : IQuery, IPageable, ISortable
     {
-        public string Endpoint { get; }
-        public MotorVehicleFilter MotorVehicleFilter { get; set; } = default;
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public MotorVehicleFilter MotorVehicleFilter { get; set; } = new MotorVehicleFilter();
+        public string PropertyName { get; set; }
+        public bool Descending { get; set; }
 
-        public string QueryParameters { get; set; }
-
-        public MotorVehiclesQuery(int page, int pageSize, MotorVehicleFilter filter = default)
-        {
-            Endpoint = $"MotorVehicles?Page={page}&PageSize={pageSize}{filter.GetQueryParamaters()}";
-        }
+        public string Endpoint => $"MotorVehicles?Page={Page}&PageSize={PageSize}{MotorVehicleFilter.GetQueryParamaters()}&PropertyName={PropertyName}&Descending={Descending}";
     }
 }

@@ -23,13 +23,20 @@ namespace FleetManagement.DAL.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<MotorVehicleLicensePlate>> GetMotorVehicles(int page = 1, int pageSize = 20, CancellationToken cancellationToken = default, params Expression<Func<MotorVehicle, bool>>[] filters)
+        public async Task<IEnumerable<MotorVehicleLicensePlate>> GetMotorVehicles(
+            int page = 1,
+            int pageSize = 20,
+            string propertyName = null,
+            bool isDescending = false,
+            CancellationToken cancellationToken = default,
+            params Expression<Func<MotorVehicle, bool>>[] filters)
         {
             var motorVehicles = await _context.MotorVehicles
                                     .Include(motorVehicle => motorVehicle.LicensePlates)
                                     .Include(motorVehicle => motorVehicle.MileageHistory
                                         .OrderByDescending(x => x.Mileage))
                                     .AddFilters(filters)
+                                    .SortOnProperty(propertyName, isDescending)
                                     .Pagination(page, pageSize)
                                     .ToListAsync(cancellationToken);
 

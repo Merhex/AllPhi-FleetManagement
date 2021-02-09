@@ -36,9 +36,15 @@ namespace FleetManagement.API.Read.Queries.Handlers
             filters.Add(x => x.Operational == query.Operational);
 
             
-            var result = await _readRepository.GetMotorVehicles(query.Page, query.PageSize, cancellationToken, filters.ToArray());
-            var count = await _readRepository.GetTotalCount(filters.ToArray());
+            var result = await _readRepository.GetMotorVehicles(
+                query.Page,
+                query.PageSize,
+                query.PropertyName,
+                query.Descending,
+                cancellationToken, 
+                filters.ToArray());
 
+            var count = await _readRepository.GetTotalCount(filters.ToArray());
             var mappedResult = _mapper.Map<IEnumerable<MotorVehicleResponse>>(result);
 
             return new PaginatedResponse<MotorVehicleResponse>()

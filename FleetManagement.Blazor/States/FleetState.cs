@@ -1,4 +1,6 @@
-﻿using FleetManagement.Blazor.Filters;
+﻿using Blazorise;
+using Blazorise.DataGrid;
+using FleetManagement.Blazor.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +14,7 @@ namespace FleetManagement.Blazor.States
         public int Page { get; set; }
         public int PageSize { get; set; }
         public bool FilterIsVisible { get; set; }
+        public DataGridColumnInfo ColumnSorted { get; set; }
+        public SortDirection SortDirection { get; set; }
     }
 }

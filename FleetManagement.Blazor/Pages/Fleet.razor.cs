@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using Blazorise;
 using Blazorise.DataGrid;
 using Blazorise.Snackbar;
 using FleetManagement.Blazor.Filters;
@@ -23,7 +24,7 @@ namespace FleetManagement.Blazor.Pages
         [Parameter]
         public int Page { get; set; } = 1;
         [Parameter]
-        public int PageSize { get; set; } = 15;
+        public int PageSize { get; set; } = 10;
 
         private List<MotorVehicleResponse> MotorVehicles { get; set; } = new List<MotorVehicleResponse>();
         private int MotorVehiclesTotal { get; set; }
@@ -31,6 +32,8 @@ namespace FleetManagement.Blazor.Pages
         private MotorVehicleFilter MotorVehicleFilter { get; set; } = new MotorVehicleFilter();
         private bool DataLoading { get; set; } = true;
         private bool FilterIsVisible { get; set; } = false;
+        private DataGridColumnInfo ColumnSorted { get; set; }
+        private SortDirection SortDirection { get; set; } = SortDirection.None;
 
         private const string _fleetStateLocalStorageKey = "fleetStateKey";
 
@@ -41,32 +44,17 @@ namespace FleetManagement.Blazor.Pages
         [Inject]
         private ILocalStorageService LocalStorage { get; set; }
 
-        private async Task ReadData(DataGridReadDataEventArgs<MotorVehicleResponse> e)
+        private async Task ReadData(DataGridReadDataEventArgs<MotorVehicleResponse> eventArgs)
         {
             try
             {
                 DataLoading = true;
 
-                Page = e.Page;
-                PageSize = e.PageSize;
+                Page = eventArgs.Page;
+                PageSize = eventArgs.PageSize;
+                ColumnSorted = eventArgs.Columns.SingleOrDefault(x => x.Direction != SortDirection.None);
 
-                var state = await LocalStorage.GetItemAsync<FleetState>(_fleetStateLocalStorageKey);
-
-                if (state is not null)
-                {
-                    Page = state.Page;
-                    PageSize = state.PageSize;
-                    MotorVehicleFilter = state.Filter;
-                    FilterIsVisible = state.FilterIsVisible;
-
-                    await GetOperationalVehicles(state.Page, state.PageSize, state.Filter);
-
-                    await LocalStorage.RemoveItemAsync(_fleetStateLocalStorageKey);
-                }
-                else
-                {
-                    await GetOperationalVehicles(e.Page, e.PageSize, MotorVehicleFilter);
-                }
+                await GetMotorVehicles();
 
                 DataLoading = false;
 
@@ -76,15 +64,51 @@ namespace FleetManagement.Blazor.Pages
             {
                 await SnackbarStack.PushAsync("Something went wrong with the HTTP request, if this persists, contact the system administrator.", SnackbarColor.Warning);
             }
-            catch (Exception)
-            {
-                await SnackbarStack.PushAsync("Something went wrong, contact the system administrator.", SnackbarColor.Danger);
-            }
         }
 
-        private async Task GetOperationalVehicles(int page, int pageSize, MotorVehicleFilter filter)
+        private async Task GetMotorVehicles()
         {
-            var query = new MotorVehiclesQuery(page, pageSize, filter);
+            var state = await LocalStorage.GetItemAsync<FleetState>(_fleetStateLocalStorageKey);
+
+            bool descending = SortDirection switch
+            {
+                SortDirection.Descending => true,
+                SortDirection.Ascending => false,
+                SortDirection.None => false,
+                _ => false,
+            };
+
+            var query = new MotorVehiclesQuery
+            {
+                Page = Page,
+                PageSize = PageSize,
+                MotorVehicleFilter = MotorVehicleFilter,
+                Descending = descending,
+            };
+
+            if (ColumnSorted is not null)
+                query.PropertyName = ColumnSorted.Field;
+
+            if (state is not null)
+            {
+                descending = state.SortDirection switch
+                {
+                    SortDirection.Descending => true,
+                    SortDirection.Ascending => false,
+                    SortDirection.None => false,
+                    _ => false,
+                };
+
+                query.MotorVehicleFilter = state.Filter;
+                query.Descending = descending;
+                query.Page = state.Page;
+                query.PageSize = state.PageSize;
+
+                if (state.ColumnSorted is not null)
+                    query.PropertyName = state.ColumnSorted.Field;
+
+                await LocalStorage.RemoveItemAsync(_fleetStateLocalStorageKey);
+            }
 
             var content = await ApiRequestService.SendGetRequest<PaginatedResponse<MotorVehicleResponse>>(query);
 
@@ -108,7 +132,7 @@ namespace FleetManagement.Blazor.Pages
         {
             Page = 1;
 
-            await GetOperationalVehicles(Page, PageSize, MotorVehicleFilter);
+            await GetMotorVehicles();
         }
 
         private async Task RowClicked(DataGridRowMouseEventArgs<MotorVehicleResponse> e)
@@ -118,7 +142,9 @@ namespace FleetManagement.Blazor.Pages
                 Filter = MotorVehicleFilter,
                 Page = Page,
                 PageSize = PageSize,
-                FilterIsVisible = FilterIsVisible
+                FilterIsVisible = FilterIsVisible,
+                SortDirection = SortDirection,
+                ColumnSorted = ColumnSorted
             });
 
             NavigationManager.NavigateTo($"/fleet/details/{e.Item.ChassisNumber}");
