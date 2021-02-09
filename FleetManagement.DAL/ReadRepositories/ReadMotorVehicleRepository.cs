@@ -23,13 +23,12 @@ namespace FleetManagement.DAL.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<MotorVehicleLicensePlate>> GetOperationalMotorVehicles(int page = 1, int pageSize = 20, CancellationToken cancellationToken = default, params Expression<Func<MotorVehicle, bool>>[] filters)
+        public async Task<IEnumerable<MotorVehicleLicensePlate>> GetMotorVehicles(int page = 1, int pageSize = 20, CancellationToken cancellationToken = default, params Expression<Func<MotorVehicle, bool>>[] filters)
         {
             var motorVehicles = await _context.MotorVehicles
                                     .Include(motorVehicle => motorVehicle.LicensePlates)
                                     .Include(motorVehicle => motorVehicle.MileageHistory
                                         .OrderByDescending(x => x.Mileage))
-                                    .Where(motorVehicle => motorVehicle.Operational)
                                     .AddFilters(filters)
                                     .Pagination(page, pageSize)
                                     .ToListAsync(cancellationToken);
@@ -55,6 +54,9 @@ namespace FleetManagement.DAL.Repositories
             await _context.Set<T>().CountAsync();
 
         public Task<int> GetTotalCount<T>(params Expression<Func<T, bool>>[] filters) where T : class =>
-            _context.Set<T>().AsQueryable().AddFilters(filters).CountAsync();
+            _context.Set<T>()
+            .AsQueryable()
+            .AddFilters(filters)
+            .CountAsync();
     }
 }

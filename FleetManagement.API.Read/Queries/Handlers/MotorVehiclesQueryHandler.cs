@@ -11,18 +11,18 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.API.Read.Queries.Handlers
 {
-    public class MotorVehicleOperationalQueryHandler : IRequestHandler<MotorVehicleOperationalQuery, IPaginatedResponse<MotorVehicleResponse>>
+    public class MotorVehiclesQueryHandler : IRequestHandler<MotorVehiclesQuery, IPaginatedResponse<MotorVehicleResponse>>
     {
         private readonly IReadMotorVehicleRepository _readRepository;
         private readonly IMapper _mapper;
 
-        public MotorVehicleOperationalQueryHandler(IReadMotorVehicleRepository readRepository, IMapper mapper)
+        public MotorVehiclesQueryHandler(IReadMotorVehicleRepository readRepository, IMapper mapper)
         {
             _readRepository = readRepository;
             _mapper = mapper;
         }
 
-        public async Task<IPaginatedResponse<MotorVehicleResponse>> Handle(MotorVehicleOperationalQuery query, CancellationToken cancellationToken)
+        public async Task<IPaginatedResponse<MotorVehicleResponse>> Handle(MotorVehiclesQuery query, CancellationToken cancellationToken)
         {
             var filters = new List<Expression<Func<MotorVehicle, bool>>>();
 
@@ -32,8 +32,11 @@ namespace FleetManagement.API.Read.Queries.Handlers
                 filters.Add(x => x.ChassisNumber.Contains(query.ChassisNumber));
             if (query.Model is not null)
                 filters.Add(x => x.Model.Contains(query.Model));
+               
+            filters.Add(x => x.Operational == query.Operational);
 
-            var result = await _readRepository.GetOperationalMotorVehicles(query.Page, query.PageSize, cancellationToken, filters.ToArray());
+            
+            var result = await _readRepository.GetMotorVehicles(query.Page, query.PageSize, cancellationToken, filters.ToArray());
             var count = await _readRepository.GetTotalCount(filters.ToArray());
 
             var mappedResult = _mapper.Map<IEnumerable<MotorVehicleResponse>>(result);

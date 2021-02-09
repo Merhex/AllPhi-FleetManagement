@@ -1,16 +1,22 @@
-﻿@page "/fleet"
+﻿@page "/fleet/"
 @using FleetManagement.Blazor.Responses
 
 <Heading>Fleet</Heading>
 
 <Bar Mode="BarMode.Horizontal"
-     Breakpoint="Breakpoint.Desktop"
-     ThemeContrast="ThemeContrast.Light">
-
-    <BarToggler />
+     Breakpoint="Breakpoint.None"
+     ThemeContrast="ThemeContrast.None"
+     Visible="@FilterIsVisible"
+     Padding="Padding.Is0"
+     Margin="Margin.Is2.FromBottom">
 
     <BarBrand>
-        Filter
+        <BarLink Clicked="@FilterVisibilityToggle">
+            <BarItem>
+                <BarIcon IconName="FontAwesomeIcons.Filter" />
+            </BarItem>
+            Filter
+        </BarLink>
     </BarBrand>
 
     <BarMenu>
@@ -39,7 +45,7 @@
                             </Addon>
                         </Addons>
                     </Column>
-                    <Column ColumnSize="ColumnSize.Is6.OnDesktop.IsFull.OnMobile">
+                    <Column ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
                         <Addons>
                             <Addon AddonType="AddonType.Start">
                                 <AddonLabel>VIN</AddonLabel>
@@ -47,6 +53,17 @@
                             <Addon AddonType="AddonType.Body">
                                 <TextEdit Placeholder="A VIN number"
                                           @bind-Text="@MotorVehicleFilter.ChassisNumber" />
+                            </Addon>
+                        </Addons>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Start">
+                                <AddonLabel>Operational</AddonLabel>
+                            </Addon>
+                            <Addon AddonType="AddonType.Body" Margin="Margin.IsAuto.OnDesktop
+                                                                            .Is2.FromLeft.OnMobile">
+                                <Switch Size="Size.Medium" TValue="bool" @bind-Checked="@MotorVehicleFilter.Operational"></Switch>
                             </Addon>
                         </Addons>
                     </Column>
@@ -80,7 +97,6 @@
           PageSize="@PageSize"
           CurrentPage="@Page"
           ShowPager="true"
-          Narrow="true"
           RowClicked="@RowClicked"
           Sortable="false"
           Responsive="true">
@@ -88,7 +104,19 @@
         <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.ChassisNumber)" Caption="VIN"></DataGridColumn>
         <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Brand)" Caption="Brand"></DataGridColumn>
         <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Model)" Caption="Model"></DataGridColumn>
-        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.LicensePlateIdentifier)" Caption="Active license plate"></DataGridColumn>
+        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.LicensePlateIdentifier)" Caption="Active license plate">
+            <DisplayTemplate>
+                @if (context.LicensePlateIdentifier is not null)
+                {
+                    <Button Color="Color.Danger" Outline="true" Disabled="true" ReadOnly="true">@context.LicensePlateIdentifier</Button>
+                }
+            </DisplayTemplate>
+        </DataGridColumn>
+        <DataGridCheckColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Operational)" Caption="Operational">
+            <DisplayTemplate>
+                <Check TValue="bool" Checked="context.Operational" Disabled="true" ReadOnly="true" />
+            </DisplayTemplate>
+        </DataGridCheckColumn>
     </ChildContent>
     <EmptyTemplate>
         <Paragraph>No items to be displayed.</Paragraph>

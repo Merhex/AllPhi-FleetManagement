@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -22,7 +23,8 @@ namespace FleetManagement.Blazor
                   options.ChangeTextOnKeyPress = true;
               })
               .AddBootstrapProviders()
-              .AddFontAwesomeIcons();
+              .AddFontAwesomeIcons()
+              .AddBlazoredLocalStorage();
 
             builder.RootComponents.Add<App>("#app");
 

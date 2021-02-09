@@ -11,6 +11,7 @@ namespace FleetManagement.Blazor.Filters
         public string ChassisNumber { get; set; }
         public string Model { get; set; }
         public string Brand { get; set; }
+        public bool Operational { get; set; } = true;
 
         public string GetQueryParamaters()
         {
@@ -24,6 +25,8 @@ namespace FleetManagement.Blazor.Filters
 
             if (Brand is not null)
                 builder.Append($"&Brand={Brand}");
+
+            builder.Append($"&Operational={Operational}");
 
             return builder.ToString();
         }

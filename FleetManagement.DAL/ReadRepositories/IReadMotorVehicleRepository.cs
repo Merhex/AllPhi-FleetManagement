@@ -10,9 +10,8 @@ namespace FleetManagement.DAL.Repositories.Interfaces
 {
     public interface IReadMotorVehicleRepository
     {
-        Task<IEnumerable<MotorVehicleLicensePlate>> GetOperationalMotorVehicles(int page, int pageSize, CancellationToken cancellationToken, params Expression<Func<MotorVehicle, bool>>[] filters);
+        Task<IEnumerable<MotorVehicleLicensePlate>> GetMotorVehicles(int page, int pageSize, CancellationToken cancellationToken, params Expression<Func<MotorVehicle, bool>>[] filters);
         Task<MotorVehicleDetailed> GetMotorVehicleDetailed(string chassisNumber, CancellationToken cancellationToken = default);
-        Task<int> GetTotalCount<T>() where T : class;
         Task<int> GetTotalCount<T>(params Expression<Func<T, bool>>[] filters) where T : class;
     }
 }

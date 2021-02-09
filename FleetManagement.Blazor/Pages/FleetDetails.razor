@@ -1,7 +1,9 @@
 ﻿@page "/fleet/details/{chassisNumber}"
 
 <Heading Size="HeadingSize.Is1">Motor vehicle details</Heading>
-
+<Button Clicked="@ReturnToFleet">
+    <Blazorise.Icons.FontAwesome.Icon Name="FontAwesomeIcons.Backward"></Blazorise.Icons.FontAwesome.Icon>
+</Button>
 <Divider />
 
 <Loader Loading="@IsLoading">

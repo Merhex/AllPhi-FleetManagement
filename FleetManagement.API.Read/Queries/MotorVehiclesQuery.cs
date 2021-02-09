@@ -3,7 +3,7 @@ using MediatR;
 
 namespace FleetManagement.API.Read.Queries
 {
-    public class MotorVehicleOperationalQuery : IRequest<IPaginatedResponse<MotorVehicleResponse>>, IPaginatedQuery
+    public class MotorVehiclesQuery : IRequest<IPaginatedResponse<MotorVehicleResponse>>, IPaginatedQuery
     {
         public int Page { get; set; }
         public int PageSize { get; set; }
@@ -11,5 +11,6 @@ namespace FleetManagement.API.Read.Queries
         public string ChassisNumber { get; set; }
         public string Model { get; set; }
         public string Brand { get; set; }
+        public bool Operational { get; set; }
     }
 }

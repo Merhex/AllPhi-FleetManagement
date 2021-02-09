@@ -4,9 +4,6 @@ using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using FleetManagement.Blazor.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,6 +16,9 @@ namespace FleetManagement.Blazor.Pages
 
         [Inject]
         private IApiRequestService ApiRequestService { get; set; }
+        [Inject]
+        private NavigationManager NavigationManager { get; set; }
+
         private MotorVehicleDetailedResponse MotorVehicleDetailed { get; set; }
         private bool IsLoading { get; set; } = true;
         private bool Disabled { get; set; } = true;
@@ -68,6 +68,11 @@ namespace FleetManagement.Blazor.Pages
             {
                 await SnackbarStack.PushAsync("Update successful.", SnackbarColor.Success);
             }
+        }
+
+        private void ReturnToFleet()
+        {
+            NavigationManager.NavigateTo("/fleet");
         }
     }
 }
