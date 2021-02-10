@@ -35,7 +35,6 @@ namespace FleetManagement.API.Read.Queries.Handlers
                
             filters.Add(x => x.Operational == query.Operational);
 
-            
             var result = await _readRepository.GetMotorVehicles(
                 query.Page,
                 query.PageSize,

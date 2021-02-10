@@ -94,10 +94,10 @@
           ShowPager="true"
           RowClicked="@RowClicked">
     <ChildContent>
-        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.ChassisNumber)" Caption="VIN"></DataGridColumn>
-        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Brand)" Caption="Brand"></DataGridColumn>
-        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Model)" Caption="Model"></DataGridColumn>
-        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.LicensePlateIdentifier)" Caption="Active plate">
+        <DataGridColumn Direction="@ChassisNumberSortDirection" TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.ChassisNumber)" Caption="VIN"></DataGridColumn>
+        <DataGridColumn Direction="@BrandSortDirection"TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Brand)" Caption="Brand"></DataGridColumn>
+        <DataGridColumn Direction="@ModelSortDirection"TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Model)" Caption="Model"></DataGridColumn>
+        <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.LicensePlateIdentifier)" Sortable="false" Caption="Active plate">
             <DisplayTemplate>
                 @if (context.LicensePlateIdentifier is not null)
                 {
@@ -109,7 +109,7 @@
                 }
             </DisplayTemplate>
         </DataGridColumn>
-        <DataGridCheckColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Operational)" Caption="Operational">
+        <DataGridCheckColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Operational)" Sortable="false" Caption="Operational">
             <DisplayTemplate>
                 <Check TValue="bool" Checked="context.Operational" Disabled="true" ReadOnly="true" />
             </DisplayTemplate>

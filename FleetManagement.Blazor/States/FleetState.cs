@@ -1,6 +1,6 @@
-﻿using Blazorise;
-using Blazorise.DataGrid;
+﻿using Blazorise.DataGrid;
 using FleetManagement.Blazor.Filters;
+using FleetManagement.Blazor.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +14,6 @@ namespace FleetManagement.Blazor.States
         public int Page { get; set; }
         public int PageSize { get; set; }
         public bool FilterIsVisible { get; set; }
-        public List<DataGridColumnInfo> Columns { get; set; }
+        public List<ColumnState> ColumnStates { get; set; } = new List<ColumnState>();
     }
 }
