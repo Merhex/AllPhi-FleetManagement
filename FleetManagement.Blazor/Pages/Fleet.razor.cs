@@ -27,15 +27,15 @@ namespace FleetManagement.Blazor.Pages
         public int PageSize { get; set; } = 10;
 
         private List<MotorVehicleResponse> MotorVehicles { get; set; } = new List<MotorVehicleResponse>();
-        private int MotorVehiclesTotal { get; set; }
-        private SnackbarStack SnackbarStack { get; set; }
+        private List<DataGridColumnInfo> Columns { get; set; }
         private MotorVehicleFilter MotorVehicleFilter { get; set; } = new MotorVehicleFilter();
+        private SnackbarStack SnackbarStack { get; set; }
+        private int MotorVehiclesTotal { get; set; }
         private bool DataLoading { get; set; } = true;
         private bool FilterIsVisible { get; set; } = false;
-        private DataGridColumnInfo ColumnSorted { get; set; }
-        private SortDirection SortDirection { get; set; } = SortDirection.None;
 
         private const string _fleetStateLocalStorageKey = "fleetStateKey";
+
 
         [Inject]
         private NavigationManager NavigationManager { get; set; }
@@ -52,7 +52,9 @@ namespace FleetManagement.Blazor.Pages
 
                 Page = eventArgs.Page;
                 PageSize = eventArgs.PageSize;
-                ColumnSorted = eventArgs.Columns.SingleOrDefault(x => x.Direction != SortDirection.None);
+                Columns = eventArgs.Columns
+                    .Where(x => x.Direction != SortDirection.None)
+                    .ToList();
 
                 await GetMotorVehicles();
 
@@ -70,44 +72,23 @@ namespace FleetManagement.Blazor.Pages
         {
             var state = await LocalStorage.GetItemAsync<FleetState>(_fleetStateLocalStorageKey);
 
-            bool descending = SortDirection switch
-            {
-                SortDirection.Descending => true,
-                SortDirection.Ascending => false,
-                SortDirection.None => false,
-                _ => false,
-            };
-
             var query = new MotorVehiclesQuery
             {
                 Page = Page,
                 PageSize = PageSize,
-                MotorVehicleFilter = MotorVehicleFilter,
-                Descending = descending,
+                MotorVehicleFilter = MotorVehicleFilter
             };
-
-            if (ColumnSorted is not null)
-                query.PropertyName = ColumnSorted.Field;
 
             if (state is not null)
             {
-                descending = state.SortDirection switch
-                {
-                    SortDirection.Descending => true,
-                    SortDirection.Ascending => false,
-                    SortDirection.None => false,
-                    _ => false,
-                };
-
-                query.MotorVehicleFilter = state.Filter;
-                query.Descending = descending;
-                query.Page = state.Page;
-                query.PageSize = state.PageSize;
-
-                if (state.ColumnSorted is not null)
-                    query.PropertyName = state.ColumnSorted.Field;
+                var sortables = GetSortables(state.Columns);
+                query.Sortables = sortables;
 
                 await LocalStorage.RemoveItemAsync(_fleetStateLocalStorageKey);
+            }
+            else
+            {
+                query.Sortables = GetSortables(Columns);
             }
 
             var content = await ApiRequestService.SendGetRequest<PaginatedResponse<MotorVehicleResponse>>(query);
@@ -127,7 +108,6 @@ namespace FleetManagement.Blazor.Pages
 
             await ApplyFilter();
         }
-
         private async Task ApplyFilter()
         {
             Page = 1;
@@ -143,11 +123,37 @@ namespace FleetManagement.Blazor.Pages
                 Page = Page,
                 PageSize = PageSize,
                 FilterIsVisible = FilterIsVisible,
-                SortDirection = SortDirection,
-                ColumnSorted = ColumnSorted
+                Columns = Columns
             });
 
             NavigationManager.NavigateTo($"/fleet/details/{e.Item.ChassisNumber}");
+        }
+
+        private static List<ISortable> GetSortables(List<DataGridColumnInfo> columns)
+        {
+            var sortables = new List<ISortable>();
+
+            if (columns.Count is not 0)
+            {
+                foreach (var column in columns)
+                {
+                    bool descending = column.Direction switch
+                    {
+                        SortDirection.Descending => true,
+                        SortDirection.Ascending => false,
+                        SortDirection.None => false,
+                        _ => false,
+                    };
+
+                    sortables.Add(new Sortable
+                    {
+                        Descending = descending,
+                        PropertyName = column.Field
+                    });
+                }
+            }
+
+            return sortables;
         }
     }
 }

@@ -7,8 +7,7 @@ namespace FleetManagement.API.Read.Queries
     {
         public int Page { get; set; }
         public int PageSize { get; set; }
-        public string PropertyName { get; set; }
-        public bool Descending { get; set; }
+        public string SortBy { get; set; }
 
         public string ChassisNumber { get; set; }
         public string Model { get; set; }

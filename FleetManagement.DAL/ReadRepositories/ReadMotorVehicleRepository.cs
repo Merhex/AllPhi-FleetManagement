@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,8 +27,7 @@ namespace FleetManagement.DAL.Repositories
         public async Task<IEnumerable<MotorVehicleLicensePlate>> GetMotorVehicles(
             int page = 1,
             int pageSize = 20,
-            string propertyName = null,
-            bool isDescending = false,
+            string sortString = null,
             CancellationToken cancellationToken = default,
             params Expression<Func<MotorVehicle, bool>>[] filters)
         {
@@ -36,7 +36,7 @@ namespace FleetManagement.DAL.Repositories
                                     .Include(motorVehicle => motorVehicle.MileageHistory
                                         .OrderByDescending(x => x.Mileage))
                                     .AddFilters(filters)
-                                    .SortOnProperty(propertyName, isDescending)
+                                    .SortBy(sortString)
                                     .Pagination(page, pageSize)
                                     .ToListAsync(cancellationToken);
 

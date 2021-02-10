@@ -2,7 +2,6 @@
 {
     public interface ISortableQuery
     {
-        public string PropertyName { get; set; }
-        public bool Descending { get; set; }
+        public string SortBy { get; }
     }
 }

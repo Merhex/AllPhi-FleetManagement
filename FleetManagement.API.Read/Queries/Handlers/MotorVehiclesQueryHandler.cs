@@ -39,8 +39,7 @@ namespace FleetManagement.API.Read.Queries.Handlers
             var result = await _readRepository.GetMotorVehicles(
                 query.Page,
                 query.PageSize,
-                query.PropertyName,
-                query.Descending,
+                query.SortBy,
                 cancellationToken, 
                 filters.ToArray());
 

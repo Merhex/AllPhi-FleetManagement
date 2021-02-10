@@ -23,13 +23,10 @@ namespace FleetManagement.DAL
             return queryable;
         }
 
-        public static IQueryable<T> SortOnProperty<T>(this IQueryable<T> queryable, string property, bool descending)
+        public static IQueryable<T> SortBy<T>(this IQueryable<T> queryable, string sortString)
         {
-            if (property is null) return queryable;
-
-            string direction = descending ? "desc" : "asc";
-            string order = $"{property} {direction}";
-            queryable = queryable.OrderBy(order);
+            if (string.IsNullOrWhiteSpace(sortString) is not true)
+                queryable = queryable.OrderBy(sortString);
 
             return queryable;
         }

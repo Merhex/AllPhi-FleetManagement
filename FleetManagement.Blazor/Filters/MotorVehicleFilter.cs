@@ -6,29 +6,29 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.Blazor.Filters
 {
-    public class MotorVehicleFilter
+    public class MotorVehicleFilter : IFilterable
     {
         public string ChassisNumber { get; set; }
         public string Model { get; set; }
         public string Brand { get; set; }
         public bool Operational { get; set; } = true;
 
-        public string GetQueryParamaters()
+        public string GetFilterParameters()
         {
-            var builder = new StringBuilder("");
+            var filterParameters = new List<string>();
 
             if (ChassisNumber is not null)
-                builder.Append($"&ChassisNumber={ChassisNumber}");
+                filterParameters.Add($"ChassisNumber={ChassisNumber}");
 
             if (Model is not null)
-                builder.Append($"&Model={Model}");
+                filterParameters.Add($"Model={Model}");
 
             if (Brand is not null)
-                builder.Append($"&Brand={Brand}");
+                filterParameters.Add($"Brand={Brand}");
 
-            builder.Append($"&Operational={Operational}");
+            filterParameters.Add($"Operational={Operational}");
 
-            return builder.ToString();
+            return string.Join('&', filterParameters);
         }
     }
 }
