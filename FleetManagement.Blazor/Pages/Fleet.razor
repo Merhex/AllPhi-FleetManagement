@@ -1,7 +1,8 @@
 ﻿@page "/fleet/"
-@using FleetManagement.Blazor.Responses
 
-<Heading>Fleet</Heading>
+<Heading Margin="Margin.Is2" Display="Display.Inline">Fleet</Heading>
+
+@using FleetManagement.Blazor.Responses
 
 <Bar Mode="BarMode.Horizontal"
      Breakpoint="Breakpoint.None"
@@ -86,7 +87,7 @@
 </Bar>
 
 <DataGrid TItem="MotorVehicleResponse"
-          Data="@MotorVehicles"
+          Data="@MotorVehicleItems"
           ReadData="@ReadData"
           TotalItems="@MotorVehiclesTotal"
           PageSize="@PageSize"
@@ -95,8 +96,8 @@
           RowClicked="@RowClicked">
     <ChildContent>
         <DataGridColumn Direction="@ChassisNumberSortDirection" TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.ChassisNumber)" Caption="VIN"></DataGridColumn>
-        <DataGridColumn Direction="@BrandSortDirection"TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Brand)" Caption="Brand"></DataGridColumn>
-        <DataGridColumn Direction="@ModelSortDirection"TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Model)" Caption="Model"></DataGridColumn>
+        <DataGridColumn Direction="@BrandSortDirection" TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Brand)" Caption="Brand"></DataGridColumn>
+        <DataGridColumn Direction="@ModelSortDirection" TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.Model)" Caption="Model"></DataGridColumn>
         <DataGridColumn TItem="MotorVehicleResponse" Field="@nameof(MotorVehicleResponse.LicensePlateIdentifier)" Sortable="false" Caption="Active plate">
             <DisplayTemplate>
                 @if (context.LicensePlateIdentifier is not null)
@@ -123,4 +124,3 @@
     </LoadingTemplate>
 </DataGrid>
 
-<SnackbarStack @ref="SnackbarStack" Location="SnackbarStackLocation.Right" Interval="5000" Multiline="true" />

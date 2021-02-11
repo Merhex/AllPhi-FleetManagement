@@ -45,7 +45,7 @@ namespace FleetManagement.API.Read.Queries.Handlers
             var count = await _readRepository.GetTotalCount(filters.ToArray());
             var mappedResult = _mapper.Map<IEnumerable<MotorVehicleResponse>>(result);
 
-            return new PaginatedResponse<MotorVehicleResponse>()
+            return new PaginatedResponse<MotorVehicleResponse>
             {
                 Items = mappedResult,
                 TotalCount = count

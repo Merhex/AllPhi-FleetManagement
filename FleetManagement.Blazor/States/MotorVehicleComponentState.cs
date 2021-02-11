@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.Blazor.States
 {
-    public class FleetState
+    public class MotorVehicleComponentState
     {
         public MotorVehicleFilter Filter { get; set; }
         public int Page { get; set; }

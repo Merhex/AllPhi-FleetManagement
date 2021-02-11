@@ -17,13 +17,13 @@ namespace FleetManagement.Blazor.Filters
         {
             var filterParameters = new List<string>();
 
-            if (ChassisNumber is not null)
+            if (string.IsNullOrWhiteSpace(ChassisNumber))
                 filterParameters.Add($"ChassisNumber={ChassisNumber}");
 
-            if (Model is not null)
+            if (string.IsNullOrWhiteSpace(Model))
                 filterParameters.Add($"Model={Model}");
 
-            if (Brand is not null)
+            if (string.IsNullOrWhiteSpace(Brand))
                 filterParameters.Add($"Brand={Brand}");
 
             filterParameters.Add($"Operational={Operational}");

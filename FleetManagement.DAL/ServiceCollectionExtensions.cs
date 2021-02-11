@@ -31,6 +31,8 @@ namespace FleetManagement.DAL
         {
             collection.AddTransient<IReadMotorVehicleRepository, ReadMotorVehicleRepository>();
 
+            collection.AddTransient<IReadLicensePlatesRepository, ReadLicensePlateRepository>();
+
             return collection;
         }
     }

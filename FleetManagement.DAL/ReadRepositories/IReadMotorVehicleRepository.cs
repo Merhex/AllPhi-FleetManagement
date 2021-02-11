@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.Repositories.Interfaces
 {
-    public interface IReadMotorVehicleRepository
+    public interface IReadMotorVehicleRepository : ITotalEntityCounter
     {
-        Task<IEnumerable<MotorVehicleLicensePlate>> GetMotorVehicles(int page, int pageSize, string sortBy, CancellationToken cancellationToken, params Expression<Func<MotorVehicle, bool>>[] filters);
+        Task<IEnumerable<MotorVehicleLicensePlate>> GetMotorVehicles(int page, int pageSize, string sortBy = null, CancellationToken cancellationToken = default, params Expression<Func<MotorVehicle, bool>>[] filters);
         Task<MotorVehicleDetailed> GetMotorVehicleDetailed(string chassisNumber, CancellationToken cancellationToken = default);
-        Task<int> GetTotalCount<T>(params Expression<Func<T, bool>>[] filters) where T : class;
     }
 }

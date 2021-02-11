@@ -3,31 +3,26 @@ using Blazorise;
 using Blazorise.DataGrid;
 using Blazorise.Snackbar;
 using FleetManagement.Blazor.Filters;
-using FleetManagement.Blazor.Models;
 using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using FleetManagement.Blazor.Services;
 using FleetManagement.Blazor.States;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace FleetManagement.Blazor.Pages
 {
-    public partial class Fleet : ComponentBase
+    public partial class Fleet
     {
         [Parameter]
         public int Page { get; set; } = 1;
         [Parameter]
         public int PageSize { get; set; } = 10;
 
-        private List<MotorVehicleResponse> MotorVehicles { get; set; } = new List<MotorVehicleResponse>();
+        private List<MotorVehicleResponse> MotorVehicleItems { get; set; } = new List<MotorVehicleResponse>();
         private List<DataGridColumnInfo> Columns { get; set; }
         private MotorVehicleFilter MotorVehicleFilter { get; set; } = new MotorVehicleFilter();
         private SnackbarStack SnackbarStack { get; set; }
@@ -52,7 +47,7 @@ namespace FleetManagement.Blazor.Pages
 
         protected override async Task OnInitializedAsync()
         {
-           var state = SynchronousLocalStorage.GetItem<FleetState>(_fleetStateLocalStorageKey);
+            var state = SynchronousLocalStorage.GetItem<MotorVehicleComponentState>(_fleetStateLocalStorageKey);
 
             if (state is not null)
             {
@@ -107,7 +102,7 @@ namespace FleetManagement.Blazor.Pages
 
             var content = await ApiRequestService.SendGetRequest<PaginatedResponse<MotorVehicleResponse>>(query);
 
-            MotorVehicles = content.Items.ToList();
+            MotorVehicleItems = content.Items.ToList();
             MotorVehiclesTotal = content.TotalCount;
         }
 
@@ -122,6 +117,7 @@ namespace FleetManagement.Blazor.Pages
 
             await ApplyFilter();
         }
+
         private async Task ApplyFilter()
         {
             Page = 1;
@@ -131,7 +127,7 @@ namespace FleetManagement.Blazor.Pages
 
         private async Task RowClicked(DataGridRowMouseEventArgs<MotorVehicleResponse> e)
         {
-            await LocalStorage.SetItemAsync(_fleetStateLocalStorageKey, new FleetState
+            await LocalStorage.SetItemAsync(_fleetStateLocalStorageKey, new MotorVehicleComponentState
             {
                 Filter = MotorVehicleFilter,
                 Page = Page,
@@ -160,7 +156,7 @@ namespace FleetManagement.Blazor.Pages
             if (columns.Count is not 0)
                 foreach (var column in columns)
                 {
-                    if (column.Direction is SortDirection.None) 
+                    if (column.Direction is SortDirection.None)
                         continue;
 
                     yield return new Sortable
