@@ -47,21 +47,22 @@ namespace FleetManagement.Blazor.Pages
         private IApiRequestService ApiRequestService { get; set; }
         [Inject]
         private ILocalStorageService LocalStorage { get; set; }
+        [Inject]
+        private ISyncLocalStorageService SynchronousLocalStorage { get; set; }
 
-        private async Task ReadData(DataGridReadDataEventArgs<MotorVehicleResponse> eventArgs)
+        protected override async Task OnInitializedAsync()
         {
-            DataLoading = true;
-
-            var state = await LocalStorage.GetItemAsync<FleetState>(_fleetStateLocalStorageKey);
+           var state = SynchronousLocalStorage.GetItem<FleetState>(_fleetStateLocalStorageKey);
 
             if (state is not null)
             {
                 Page = state.Page;
                 PageSize = state.PageSize;
+                MotorVehicleFilter = state.Filter;
 
                 foreach (var columnState in state.ColumnStates)
                 {
-                    var x = columnState.Field switch
+                    _ = columnState.Field switch
                     {
                         "Brand" => BrandSortDirection = columnState.Direction,
                         "Model" => ModelSortDirection = columnState.Direction,
@@ -70,41 +71,39 @@ namespace FleetManagement.Blazor.Pages
                     };
                 }
             }
-            else
+
+            await LocalStorage.RemoveItemAsync(_fleetStateLocalStorageKey);
+        }
+
+        private async Task ReadData(DataGridReadDataEventArgs<MotorVehicleResponse> eventArgs)
+        {
+            try
             {
+                DataLoading = true;
+
                 Page = eventArgs.Page;
                 PageSize = eventArgs.PageSize;
                 Columns = eventArgs.Columns.ToList();
+
+                await GetMotorVehicles();
+
+                DataLoading = false;
             }
-
-            await GetMotorVehicles();
-
-            DataLoading = false;
-
-            StateHasChanged();
+            catch (HttpRequestException)
+            {
+                await SnackbarStack.PushAsync("Something went wrong fetching the data. If this persists, contact the system administrator.", SnackbarColor.Warning);
+            }
         }
 
         private async Task GetMotorVehicles()
         {
-            var state = await LocalStorage.GetItemAsync<FleetState>(_fleetStateLocalStorageKey);
-
             var query = new MotorVehiclesQuery
             {
                 Page = Page,
                 PageSize = PageSize,
-                MotorVehicleFilter = MotorVehicleFilter
+                MotorVehicleFilter = MotorVehicleFilter,
+                Sortables = GetSortables(Columns).ToList()
             };
-
-            if (state is not null)
-            {
-                query.Sortables = GetSortables(state.ColumnStates).ToList();
-
-                await LocalStorage.RemoveItemAsync(_fleetStateLocalStorageKey);
-            }
-            else
-            {
-                query.Sortables = GetSortables(Columns).ToList();
-            }
 
             var content = await ApiRequestService.SendGetRequest<PaginatedResponse<MotorVehicleResponse>>(query);
 
@@ -168,22 +167,6 @@ namespace FleetManagement.Blazor.Pages
                     {
                         Descending = IsDescending(column.Direction),
                         PropertyName = column.Field
-                    };
-                }
-        }
-
-        private static IEnumerable<ISortable> GetSortables(List<ColumnState> columnStates)
-        {
-            if (columnStates.Count is not 0)
-                foreach (var state in columnStates)
-                {
-                    if (state.Direction is SortDirection.None)
-                        continue;
-
-                    yield return new Sortable
-                    {
-                        Descending = IsDescending(state.Direction),
-                        PropertyName = state.Field
                     };
                 }
         }
