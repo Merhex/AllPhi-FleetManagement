@@ -15,13 +15,14 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
-    <PackageReference Include="Blazorise" Version="0.9.3-preview8" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3-preview8" />
-    <PackageReference Include="Blazorise.DataGrid" Version="0.9.3-preview8" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.3-preview8" />
-    <PackageReference Include="Blazorise.Snackbar" Version="0.9.3-preview8" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.2" PrivateAssets="all" />
+    <PackageReference Include="Blazorise" Version="0.9.3-preview9" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3-preview9" />
+    <PackageReference Include="Blazorise.Charts" Version="0.9.3-preview9" />
+    <PackageReference Include="Blazorise.DataGrid" Version="0.9.3-preview9" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.3-preview9" />
+    <PackageReference Include="Blazorise.Snackbar" Version="0.9.3-preview9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.3" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>

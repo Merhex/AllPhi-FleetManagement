@@ -2,7 +2,7 @@
 
 namespace FleetManagement.BLL.Drivers.Contracts
 {
-    public interface ICreateDriverContract
+    public interface ICreateDriverContract : IContract
     {
         public string FirstName { get; init; }
         public string LastName { get; init; }

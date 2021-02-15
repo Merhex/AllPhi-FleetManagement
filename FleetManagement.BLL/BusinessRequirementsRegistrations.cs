@@ -1,4 +1,6 @@
-﻿using FleetManagement.BLL.MotorVehicles.Contracts;
+﻿using FleetManagement.BLL.Drivers.Contracts;
+using FleetManagement.BLL.Drivers.Contracts.Requirements;
+using FleetManagement.BLL.MotorVehicles.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FleetManagement.BLL
@@ -18,6 +20,7 @@ namespace FleetManagement.BLL
             collection.AddTransient<IBusinessRequirements<IActivateLicensePlateContract>, ActivateLicensePlateRequirements>();
             collection.AddTransient<IBusinessRequirements<IDeactivateLicensePlateContract>, DeactivateLicensePlateRequirements>();
             collection.AddTransient<IBusinessRequirements<IUpdateMotorVehicleContract>, UpdateMotorVehicleRequirements>();
+            collection.AddTransient<IBusinessRequirements<ICreateDriverContract>, CreateDriverRequirements>();
 
             return collection;
         }

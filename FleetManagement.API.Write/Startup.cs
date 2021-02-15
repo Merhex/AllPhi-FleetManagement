@@ -1,5 +1,6 @@
 using FleetManagement.BLL;
 using FleetManagement.DAL;
+using FleetManagement.DAL.NHibernate;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -46,6 +47,7 @@ namespace FleetManagement.API.Write
 
             services.AddDbContext<FleetManagementContext>();
             services.AddRepositories();
+            services.AddNHibernate(Configuration.GetConnectionString("FleetManagementDatabase"));
 
             services.AddBusinessLogicDependencies();
 

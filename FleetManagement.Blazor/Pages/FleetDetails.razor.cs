@@ -1,9 +1,12 @@
-﻿using Blazorise.Snackbar;
+﻿using Blazorise.Charts;
+using Blazorise.Snackbar;
 using FleetManagement.Blazor.Commands;
 using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using FleetManagement.Blazor.Services;
 using Microsoft.AspNetCore.Components;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,6 +27,7 @@ namespace FleetManagement.Blazor.Pages
         private bool Disabled { get; set; } = true;
         private bool UpdateButtonShown { get; set; } = false;
         private SnackbarStack SnackbarStack { get; set; }
+        private LineChart<double> MileageChart { get; set; } = new LineChart<double>();
 
 
         protected override async Task OnInitializedAsync()
@@ -48,11 +52,11 @@ namespace FleetManagement.Blazor.Pages
 
             var updateCommand = new UpdateMotorVehicleCommand()
             {
-                ChassisNumber  = MotorVehicleDetailed.ChassisNumber,
-                BodyType       = MotorVehicleDetailed.BodyType,
-                Brand          = MotorVehicleDetailed.Brand,
-                Model          = MotorVehicleDetailed.Model,
-                Operational    = MotorVehicleDetailed.Operational,
+                ChassisNumber = MotorVehicleDetailed.ChassisNumber,
+                BodyType = MotorVehicleDetailed.BodyType,
+                Brand = MotorVehicleDetailed.Brand,
+                Model = MotorVehicleDetailed.Model,
+                Operational = MotorVehicleDetailed.Operational,
                 PropulsionType = MotorVehicleDetailed.PropulsionType
             };
 

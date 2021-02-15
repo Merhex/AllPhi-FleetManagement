@@ -70,12 +70,12 @@
                     </Button>
                     @if (UpdateButtonShown)
                     {
-                    <Button Clicked="@Submit"
-                            Type="ButtonType.Submit"
-                            PreventDefaultOnSubmit="true"
-                            Color="Color.Warning">
-                        Update
-                    </Button>
+                        <Button Clicked="@Submit"
+                                Type="ButtonType.Submit"
+                                PreventDefaultOnSubmit="true"
+                                Color="Color.Warning">
+                            Update
+                        </Button>
                     }
                 </Buttons>
             </Field>
@@ -83,6 +83,37 @@
 
         <Divider />
 
+        <Heading Size="HeadingSize.Is2">License plates on vehicle</Heading>
+        <Table>
+            <TableHeader ThemeContrast="ThemeContrast.Light">
+                <TableRow>
+                    <TableHeaderCell>Active</TableHeaderCell>
+                    <TableHeaderCell>Identifier</TableHeaderCell>
+                </TableRow>
+            </TableHeader>
+            @foreach (var licensePlate in MotorVehicleDetailed.LicensePlates)
+            {
+                <TableRow>
+                    @if (licensePlate.InUse)
+                    {
+                        <TableRowHeader>
+                            <Blazorise.Icon Name="FontAwesomeIcons.Star"></Blazorise.Icon>
+                            Yes
+                        </TableRowHeader>
+                    }
+                    else
+                    {
+                        <TableRowHeader>No</TableRowHeader>
+                    }
+                    <TableRowCell>@licensePlate.Identifier</TableRowCell>
+                </TableRow>
+            }
+        </Table>
+
+        <Divider />
+
+        <Container Fluid="true">
+            <Heading Size="HeadingSize.Is2">Mileage history</Heading>
+        </Container>
     </Container>
 </Loader>
-

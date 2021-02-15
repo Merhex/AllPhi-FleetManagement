@@ -47,7 +47,7 @@ namespace FleetManagement.Blazor.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var state = SynchronousLocalStorage.GetItem<MotorVehicleComponentState>(_fleetStateLocalStorageKey);
+            var state = SynchronousLocalStorage.GetItem<FleetState>(_fleetStateLocalStorageKey);
 
             if (state is not null)
             {
@@ -127,7 +127,7 @@ namespace FleetManagement.Blazor.Pages
 
         private async Task RowClicked(DataGridRowMouseEventArgs<MotorVehicleResponse> e)
         {
-            await LocalStorage.SetItemAsync(_fleetStateLocalStorageKey, new MotorVehicleComponentState
+            await LocalStorage.SetItemAsync(_fleetStateLocalStorageKey, new FleetState
             {
                 Filter = MotorVehicleFilter,
                 Page = Page,
