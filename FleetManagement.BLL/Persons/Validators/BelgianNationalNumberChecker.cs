@@ -18,6 +18,9 @@ namespace FleetManagement.BLL.Persons.Validators
 
         public static bool ValidateChecksum(DateTime birthdate, string nationalNumber)
         {
+            if (ValidateFormatting(nationalNumber) is false)
+                return false;
+
             var numbers = nationalNumber.OnlyAsNumbers();
 
             var sequenceToBeChecked = numbers[0..9];
@@ -35,6 +38,9 @@ namespace FleetManagement.BLL.Persons.Validators
 
         public static bool ValidateForContainingBirthdate(DateTime birthdate, string nationalNumber)
         {
+            if (ValidateFormatting(nationalNumber) is false)
+                return false;
+
             var month = birthdate.Month;
             var day = birthdate.Day.AsTwoDigits();
             var year = birthdate.Year.AsTwoDigitYear();

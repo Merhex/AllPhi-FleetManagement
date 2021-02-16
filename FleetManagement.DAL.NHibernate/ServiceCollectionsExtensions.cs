@@ -1,14 +1,11 @@
 ﻿using FleetManagement.DAL.NHibernate.Mappings;
-using FleetManagement.Models;
-using FluentNHibernate.Automapping;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate.Cfg;
-using NHibernate.Cfg.MappingSchema;
 using NHibernate.Dialect;
-using NHibernate.Mapping.ByCode;
+using NHibernate.Driver;
 
 namespace FleetManagement.DAL.NHibernate
 {
@@ -16,11 +13,16 @@ namespace FleetManagement.DAL.NHibernate
     {
 		public static IServiceCollection AddNHibernate(this IServiceCollection collection, string connectionString)
         {
-            var configuration = new NamespaceMappingConfiguration();
+            var configuration = new Configuration().DataBaseIntegration(db =>
+            {
+                db.Dialect<MsSql2012Dialect>();
+                db.ConnectionString = connectionString;
+                db.BatchSize = 100;
+                db.Driver<SqlClientDriver>();
+            });
 
             var sessionFactory = Fluently
-                .Configure()
-                .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
+                .Configure(configuration)
                 .Mappings(x =>
                 {
                     x.FluentMappings.Conventions.Add(DefaultLazy.Never());

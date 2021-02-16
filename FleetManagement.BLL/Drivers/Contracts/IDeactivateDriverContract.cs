@@ -1,8 +1,7 @@
 ﻿namespace FleetManagement.BLL.Drivers.Contracts
 {
-    public interface IChangeDriverActivityStatusContract
+    public interface IDeactivateDriverContract : IContract
     {
-        public bool Active { get; init; }
         public string NationalNumber { get; init; }
     }
 }

@@ -7,6 +7,8 @@ namespace FleetManagement.DAL.NHibernate.Mappings
     {
         public PersonMap()
         {
+            Table("Persons");
+
             Id(x => x.Id);
 
             Map(x => x.AddressLine)
@@ -35,6 +37,8 @@ namespace FleetManagement.DAL.NHibernate.Mappings
             Map(x => x.City)
                 .Length(50)
                 .Not.Nullable();
+
+            DiscriminateSubClassesOnColumn("[Discriminator]");
         }
     }
 }

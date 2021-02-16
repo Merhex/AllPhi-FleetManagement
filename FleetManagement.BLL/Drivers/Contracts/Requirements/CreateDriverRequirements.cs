@@ -43,7 +43,8 @@ namespace FleetManagement.BLL.Drivers.Contracts.Requirements
                 DateOfBirth = contract.DateOfBirth,
                 FirstName = contract.FirstName,
                 LastName = contract.LastName,
-                NationalNumber = contract.NationalNumber
+                NationalNumber = contract.NationalNumber,
+                ZipCode = contract.ZipCode
             };
         }
     }

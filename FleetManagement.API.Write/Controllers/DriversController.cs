@@ -24,8 +24,16 @@ namespace FleetManagement.API.Write.Controllers
             return WriteApiResponse(response);
         }
 
-        [HttpPut("activity")]
-        public async Task<IActionResult> ChangeActivityOfDriver(ChangeDriverActivityStatusCommand command)
+        [HttpPut("activate")]
+        public async Task<IActionResult> ActivateDriver(ActivateDriverCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return WriteApiResponse(response);
+        }
+
+        [HttpPut("deactivate")]
+        public async Task<IActionResult> DeactivateDriver(DeactivateDriverCommand command)
         {
             var response = await _mediator.Send(command);
 

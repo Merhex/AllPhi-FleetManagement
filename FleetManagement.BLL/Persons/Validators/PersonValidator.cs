@@ -18,12 +18,15 @@ namespace FleetManagement.BLL.Persons.Validators
 
             RuleFor(person => person.LastName).MaximumLength(50).NotEmpty();
 
-            RuleFor(person => person.ZipCode).InclusiveBetween(1000, 9999).NotEmpty();
+            RuleFor(person => person.ZipCode).InclusiveBetween(1000, 9999);
 
             RuleFor(person => person.NationalNumber)
                 .Must(HaveValidFormattedNationalNumber)
+                    .WithMessage("The specified national number does not have the right format. The format should be as followed: XX.XX.XX-XXX.XX")
                 .Must(HaveValidChecksumInNationalNumber)
-                .Must(HaveValidBirthdateInNationalNumber);
+                    .WithMessage("The specified national number does not have a valid checksum, please check that you entered the numbers correctly.")
+                .Must(HaveValidBirthdateInNationalNumber)
+                    .WithMessage("The specified national number does not have a valid birthdate, please check that you entered the numbers correctly.");
         }
 
         #region PRIVATE

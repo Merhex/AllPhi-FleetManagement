@@ -17,7 +17,6 @@ namespace FleetManagement.BLL.Persons.Components
             PersonValidator personValidator,
             IPersonRepository personRepository)
         {
-            _personValidator = personValidator;
             _personRepository = personRepository;
         }
 
@@ -25,61 +24,5 @@ namespace FleetManagement.BLL.Persons.Components
         {
             throw new System.NotImplementedException();
         }
-
-        //public async Task<IComponentResponse> UpdatePersonInformationAsync(IUpdatePersonInformationContract contract, CancellationToken token)
-        //{
-        //    var response = new ComponentResponse();
-
-        //    var person = await GetUniquePerson(contract, response, token);
-
-        //    UpdatePersonInformation(person, contract);
-
-        //    await PersonValidation(person, response, token);
-
-        //    await Persistance(response);
-
-        //    return response;
-        //}
-
-        //#region PRIVATE
-        //private async Task<Person> GetUniquePerson(IUpdatePersonInformationContract contract, ComponentResponse response, CancellationToken cancellationToken)
-        //{
-        //    var person = await _personRepository.FindByNationalNumberAsync(contract.NationalNumber, cancellationToken);
-        //    if (person is null) 
-        //        response.NotFound(contract.NationalNumber);
-        //    else 
-        //        response.Ok();
-
-        //    return person;
-        //}
-
-        //private static void UpdatePersonInformation(Person person, IUpdatePersonInformationContract contract)
-        //{
-        //    if (person is null) person = new Person();
-
-        //    person.AddressLine = contract.AddressLine;
-        //    person.City = contract.City;
-        //    person.DateOfBirth = contract.DateOfBirth;
-        //    person.FirstName = contract.FirstName;
-        //    person.LastName = contract.LastName;
-        //    person.NationalNumber = contract.NationalNumber;
-        //    person.ZipCode = contract.ZipCode;
-        //}
-
-        //private async Task PersonValidation(Person person, ComponentResponse response, CancellationToken cancellationToken) 
-        //{
-        //    var validation = await _personValidator.ValidateAsync(person, cancellationToken);
-        //    if (validation.IsValid is not true)
-        //        response.ValidationFailure(validation);
-        //}
-
-        //private async Task Persistance(ComponentResponse response)
-        //{
-        //    if (response.Valid is not true) return;
-
-        //    var saved = await _personRepository.SaveAsync();
-        //    if (saved is not true) response.PersistanceFailure();
-        //}
-        //#endregion
     }
 }

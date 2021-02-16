@@ -4,9 +4,8 @@ using MediatR;
 
 namespace FleetManagement.API.Write.Commands
 {
-    public record ChangeDriverActivityStatusCommand : IRequest<IComponentResponse>, IChangeDriverActivityStatusContract
+    public record DeactivateDriverCommand : IRequest<IComponentResponse>, IDeactivateDriverContract
     {
-        public bool Active { get; init; }
         public string NationalNumber { get; init; }
     }
 }

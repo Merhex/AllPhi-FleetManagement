@@ -9,6 +9,8 @@ namespace FleetManagement.DAL.NHibernate.Mappings
         {
             Map(x => x.Active)
                 .Not.Nullable();
+
+            
             //References(x => x.DriverLicense);
             //References(x => x.FuelCard);
             //References(x => x.MotorVehicle);
