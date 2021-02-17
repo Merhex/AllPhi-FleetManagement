@@ -84,32 +84,38 @@
         <Divider />
 
         <Heading Size="HeadingSize.Is2">License plates on vehicle</Heading>
-        <Table>
-            <TableHeader ThemeContrast="ThemeContrast.Light">
-                <TableRow>
-                    <TableHeaderCell>Active</TableHeaderCell>
-                    <TableHeaderCell>Identifier</TableHeaderCell>
-                </TableRow>
-            </TableHeader>
-            @foreach (var licensePlate in MotorVehicleDetailed.LicensePlates)
-            {
-                <TableRow>
-                    @if (licensePlate.InUse)
-                    {
-                        <TableRowHeader>
-                            <Blazorise.Icon Name="FontAwesomeIcons.Star"></Blazorise.Icon>
-                            Yes
-                        </TableRowHeader>
-                    }
-                    else
-                    {
-                        <TableRowHeader>No</TableRowHeader>
-                    }
-                    <TableRowCell>@licensePlate.Identifier</TableRowCell>
-                </TableRow>
-            }
-        </Table>
-
+        @if (MotorVehicleDetailed.LicensePlates.Any())
+        {
+            <Table>
+                <TableHeader ThemeContrast="ThemeContrast.Light">
+                    <TableRow>
+                        <TableHeaderCell>Active</TableHeaderCell>
+                        <TableHeaderCell>Identifier</TableHeaderCell>
+                    </TableRow>
+                </TableHeader>
+                @foreach (var licensePlate in MotorVehicleDetailed.LicensePlates)
+                {
+                    <TableRow>
+                        @if (licensePlate.InUse)
+                        {
+                            <TableRowHeader>
+                                <Blazorise.Icon Name="FontAwesomeIcons.Star"></Blazorise.Icon>
+                                Yes
+                            </TableRowHeader>
+                        }
+                        else
+                        {
+                            <TableRowHeader>No</TableRowHeader>
+                        }
+                        <TableRowCell>@licensePlate.Identifier</TableRowCell>
+                    </TableRow>
+                }
+            </Table>
+        }
+        else
+        {
+            <Paragraph>This motor vehicle does not have any license plates assigned.</Paragraph>
+        }
         <Divider />
 
         <Container Fluid="true">
