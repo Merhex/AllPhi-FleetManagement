@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.Repositories.Interfaces
 {
-    public interface IFuelCardOptionRepository : IRepository<FuelCardOption, int>
+    public interface IFuelCardOptionRepository
     {
         Task<FuelCardOption> FindByNameAsync(string optionName, CancellationToken cancellationToken);
     }

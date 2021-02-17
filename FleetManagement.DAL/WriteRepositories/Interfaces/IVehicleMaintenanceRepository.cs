@@ -2,7 +2,7 @@
 
 namespace FleetManagement.DAL.Repositories.Interfaces
 {
-    public interface IVehicleMaintenanceRepository : IRepository<MotorVehicleMaintenance, int>
+    public interface IVehicleMaintenanceRepository
     {
 
     }

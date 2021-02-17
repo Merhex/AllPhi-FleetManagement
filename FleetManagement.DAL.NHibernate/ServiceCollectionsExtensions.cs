@@ -41,6 +41,7 @@ namespace FleetManagement.DAL.NHibernate
         private static IServiceCollection AddMapperSessions(this IServiceCollection collection)
         {
             collection.AddTransient<IDriverSession, DriverSession>();
+            collection.AddTransient<IPersonSession, PersonSession>();
 
             return collection;
         }

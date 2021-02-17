@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.Repositories.Interfaces
 {
-    public interface IDriverLicenseRepository : IRepository<DriverLicense, int>
+    public interface IDriverLicenseRepository
     {
         Task<DriverLicense> FindLicenseByIdentifier(string identifier);
     }

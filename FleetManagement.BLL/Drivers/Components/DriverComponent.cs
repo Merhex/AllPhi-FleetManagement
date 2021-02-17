@@ -75,30 +75,48 @@ namespace FleetManagement.BLL.Drivers.Components
         #region PRIVATE
         private async Task ActivateDriver(IActivateDriverContract contract, CancellationToken cancellationToken)
         {
-            _driverSession.BeginTransaction();
+            try
+            {
+                _driverSession.BeginTransaction();
 
-            var driver = await _driverSession.GetDriverByNationalNumber(contract.NationalNumber, cancellationToken);
-            driver.Active = true;
+                var driver = await _driverSession.GetDriverByNationalNumber(contract.NationalNumber, cancellationToken);
+                driver.Active = true;
 
-            await _driverSession.Save(driver, cancellationToken);
-            await _driverSession.Commit(cancellationToken);
-
-            _driverSession.CloseTransaction();
-
-
+                await _driverSession.Save(driver, cancellationToken);
+                await _driverSession.Commit(cancellationToken);
+            }
+            catch (Exception)
+            {
+                await _driverSession.Rollback(cancellationToken);
+            }
+            finally
+            {
+                _driverSession.CloseTransaction();
+            }
         }
 
         private async Task DeactivateDriver(IDeactivateDriverContract contract, CancellationToken cancellationToken)
         {
-            _driverSession.BeginTransaction();
+            try
+            {
+                _driverSession.BeginTransaction();
 
-            var driver = await _driverSession.GetDriverByNationalNumber(contract.NationalNumber, cancellationToken);
-            driver.Active = false;
+                var driver = await _driverSession.GetDriverByNationalNumber(contract.NationalNumber, cancellationToken);
+                driver.Active = false;
 
-            await _driverSession.Save(driver, cancellationToken);
-            await _driverSession.Commit(cancellationToken);
+                await _driverSession.Save(driver, cancellationToken);
+                await _driverSession.Commit(cancellationToken);
 
-            _driverSession.CloseTransaction();
+            }
+            catch (Exception)
+            {
+                await _driverSession.Rollback(cancellationToken);
+            }
+            finally
+            {
+                _driverSession.CloseTransaction();
+
+            }
         }
 
         private async Task CreateDriver(ICreateDriverContract contract, CancellationToken cancellationToken)

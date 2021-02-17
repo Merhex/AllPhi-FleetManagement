@@ -26,7 +26,7 @@ namespace FleetManagement.BLL.Persons.Validators
                 .Must(HaveValidChecksumInNationalNumber)
                     .WithMessage("The specified national number does not have a valid checksum, please check that you entered the numbers correctly.")
                 .Must(HaveValidBirthdateInNationalNumber)
-                    .WithMessage("The specified national number does not have a valid birthdate, please check that you entered the numbers correctly.");
+                    .WithMessage("The birthdate or national number is not correct. Please check that you entered the numbers correctly.");
         }
 
         #region PRIVATE

@@ -1,4 +1,5 @@
-﻿using FleetManagement.Models;
+﻿using FleetManagement.DAL.Repositories.Interfaces;
+using FleetManagement.Models;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

@@ -2,7 +2,7 @@
 
 namespace FleetManagement.DAL.Repositories.Interfaces
 {
-    public interface IPhotoRepository : IRepository<Photo, int>
+    public interface IPhotoRepository
     {
 
     }

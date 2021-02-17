@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.Repositories.Interfaces
 {
-    public interface IPersonRepository : IRepository<Person, int>
+    public interface IPersonRepository
     {
         Task<Person> FindByNationalNumberAsync(string nationalNumber, CancellationToken cancellationToken);
     }

@@ -2,7 +2,7 @@
 
 namespace FleetManagement.DAL.Repositories.Interfaces
 {
-    public interface IWorkOrderStepRepository : IRepository<WorkOrderStep, int>
+    public interface IWorkOrderStepRepository
     {
 
     }
