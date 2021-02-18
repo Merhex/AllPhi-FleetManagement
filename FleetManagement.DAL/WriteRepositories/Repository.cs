@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.Repositories
@@ -40,7 +41,7 @@ namespace FleetManagement.DAL.Repositories
         public void RemoveRange(IEnumerable<T> entities) =>
             _context.Set<T>().RemoveRange(entities);
 
-        public async Task<bool> SaveAsync() =>
-            await _context.SaveChangesAsync() > 0;
+        public async Task<bool> SaveAsync(CancellationToken cancellationToken = default) =>
+            await _context.SaveChangesAsync(cancellationToken) > 0;
     }
 }

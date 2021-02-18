@@ -2,13 +2,13 @@
 
 <Heading Size="HeadingSize.Is1">Motor vehicle details</Heading>
 <Button Clicked="@ReturnToFleet">
-    <Blazorise.Icons.FontAwesome.Icon Name="FontAwesomeIcons.Backward"></Blazorise.Icons.FontAwesome.Icon>
+    <Blazorise.Icons.FontAwesome.Icon Name="FontAwesomeIcons.Backward" />
+    Return to main fleet page.
 </Button>
 <Divider />
 
 <Loader Loading="@IsLoading">
     <Container Fluid="true">
-        <SnackbarStack @ref="SnackbarStack" Location="SnackbarStackLocation.Center" Interval="10000" Multiline="true" />
         <Fields>
             <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
                 <FieldLabel>Brand</FieldLabel>
@@ -83,38 +83,70 @@
 
         <Divider />
 
-        <Heading Size="HeadingSize.Is2">License plates on vehicle</Heading>
-        @if (MotorVehicleDetailed.LicensePlates.Any())
-        {
-            <Table>
-                <TableHeader ThemeContrast="ThemeContrast.Light">
-                    <TableRow>
-                        <TableHeaderCell>Active</TableHeaderCell>
-                        <TableHeaderCell>Identifier</TableHeaderCell>
-                    </TableRow>
-                </TableHeader>
-                @foreach (var licensePlate in MotorVehicleDetailed.LicensePlates)
-                {
-                    <TableRow>
-                        <TableRowHeader>
-                            <Check TValue="bool" Checked="@licensePlate.InUse" Disabled="true"></Check>
-                        </TableRowHeader>
-                        <TableRowCell>
-                            <Button Color="Color.Danger" Outline="true" Disabled="true">@licensePlate.Identifier</Button>
-                        </TableRowCell>
-                    </TableRow>
-                }
-            </Table>
-        }
-        else
-        {
-            <Paragraph>This vehicle does not have any license plates assigned.</Paragraph>
-        }
+        <Container Fluid="true">
+            <Heading Size="HeadingSize.Is2">License plates on vehicle</Heading>
+            @if (MotorVehicleDetailed.LicensePlates.Any())
+            {
+                <Table>
+                    <TableHeader ThemeContrast="ThemeContrast.Light">
+                        <TableRow>
+                            <TableHeaderCell>Active</TableHeaderCell>
+                            <TableHeaderCell>Identifier</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    @foreach (var licensePlate in MotorVehicleDetailed.LicensePlates)
+                    {
+                        <TableRow>
+                            <TableRowHeader>
+                                <Check TValue="bool" Checked="@licensePlate.InUse" Disabled="true"></Check>
+                            </TableRowHeader>
+                            <TableRowCell>
+                                <Button Color="Color.Danger" Outline="true" Disabled="true">@licensePlate.Identifier</Button>
+                            </TableRowCell>
+                        </TableRow>
+                    }
+                </Table>
+            }
+            else
+            {
+                <Paragraph>This vehicle does not have any license plates assigned.</Paragraph>
+            }
+        </Container>
 
         <Divider />
 
         <Container Fluid="true">
             <Heading Size="HeadingSize.Is2">Mileage history</Heading>
+            @if (MileageAddShown)
+            {
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+                        <FieldLabel>Mileage</FieldLabel>
+                        <NumericEdit @bind-Value="MileageSnapshotValue"
+                                     TValue="int" />
+                    </Field>
+                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+                        <FieldLabel>Date of mileage</FieldLabel>
+                        <DateEdit TValue="DateTime"
+                                  @bind-Date="@MileageSnapshotDate" />
+                    </Field>
+                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+                        <Button Color="Color.Info"
+                                Clicked="@AddMileageSnapshot"
+                                Type="ButtonType.Submit">
+                            Add
+                        </Button>
+                    </Field>
+                </Fields>
+            }
+            else
+            {
+                <Button Clicked="@ToggleMileageAddMode">
+                    <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
+                    Add new mileage
+                </Button>
+            }
+
             @if (MotorVehicleDetailed.MileageHistory.Any())
             {
                 <Card Margin="Margin.Is4.OnY">
@@ -132,4 +164,6 @@
             }
         </Container>
     </Container>
+
+    <SnackbarStack @ref="SnackbarStack" Location="SnackbarStackLocation.Center" Interval="10000" Multiline="true" />
 </Loader>

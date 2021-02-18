@@ -11,10 +11,10 @@ namespace FleetManagement.DAL.Repositories
     {
         public MotorVehicleMileageSnapshotRepository(FleetManagementContext context) : base(context) { }
 
-        public async Task<MotorVehicleMileageSnapshot> GetMileageForMotorVehicle(string chassisNumber, CancellationToken cancellationToken) =>
+        public async Task<MotorVehicleMileageSnapshot> GetLastMileageOfMotorVehicle(string chassisNumber, CancellationToken cancellationToken) =>
            await _context.MotorVehicleMileageSnapshots
                 .Where(snapshot => snapshot.MotorVehicle.ChassisNumber == chassisNumber)
-                .OrderByDescending(snapshot => snapshot.Mileage)
+                .OrderByDescending(snapshot => snapshot.SnapshotDate)
                 .FirstOrDefaultAsync(cancellationToken);
     }
 }

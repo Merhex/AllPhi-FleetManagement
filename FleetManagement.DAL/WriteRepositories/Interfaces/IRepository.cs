@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.Repositories.Interfaces
@@ -14,6 +15,6 @@ namespace FleetManagement.DAL.Repositories.Interfaces
         void AddRange(IEnumerable<T> entities);
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entities);
-        Task<bool> SaveAsync();
+        Task<bool> SaveAsync(CancellationToken cancellationToken = default);
     }
 }

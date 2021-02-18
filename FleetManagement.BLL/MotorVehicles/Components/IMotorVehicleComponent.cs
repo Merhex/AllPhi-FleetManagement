@@ -7,6 +7,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components.Interfaces
     public interface IMotorVehicleComponent
     {
         Task<IComponentResponse> AssignLicensePlateToMotorVehicleAsync(IAssignLicensePlateContract contract, CancellationToken cancellationToken);
+        Task<IComponentResponse> AddMileageToMotorVehicleAsync(IAddMileageToMotorVehicleContract contract, CancellationToken cancellationToken);
         Task<IComponentResponse> WithdrawLicensePlateFromMotorVehicleAsync(IWithdrawLicensePlateContract contract, CancellationToken cancellationToken);
         Task<IComponentResponse> DeleteLicensePlateAsync(IDeleteLicensePlateContract contract, CancellationToken cancellationToken);
         Task<IComponentResponse> CreateMotorVehicleAsync(ICreateMotorVehicleContract contract, CancellationToken cancellationToken);

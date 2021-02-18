@@ -95,5 +95,13 @@ namespace FleetManagement.API.Write.Controllers
 
             return WriteApiResponse(response);
         }
+
+        [HttpPost("mileage/add")]
+        public async Task<IActionResult> AddMileageToMotorVehicle(AddMileageToMotorVehicleCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            return WriteApiResponse(response);
+        }
     }
 }

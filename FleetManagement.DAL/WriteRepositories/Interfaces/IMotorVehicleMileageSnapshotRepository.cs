@@ -6,6 +6,6 @@ namespace FleetManagement.DAL.Repositories.Interfaces
 {
     public interface IMotorVehicleMileageSnapshotRepository : IRepository<MotorVehicleMileageSnapshot, int>
     {
-        Task<MotorVehicleMileageSnapshot> GetMileageForMotorVehicle(string chassisNumber, CancellationToken cancellationToken);
+        Task<MotorVehicleMileageSnapshot> GetLastMileageOfMotorVehicle(string chassisNumber, CancellationToken cancellationToken);
     }
 }

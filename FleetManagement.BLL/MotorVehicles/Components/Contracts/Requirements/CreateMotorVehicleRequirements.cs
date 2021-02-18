@@ -22,18 +22,18 @@ namespace FleetManagement.BLL
         public void AddBusinessRules(ICreateMotorVehicleContract contract)
         {
             var motorVehicle = CreateMotorVehicleFromContract(contract);
+            var motorVehicleRepository = _serviceProvider.GetRequiredService<IMotorVehicleRepository>();
+            var mileageRepository = _serviceProvider.GetRequiredService<IMotorVehicleMileageSnapshotRepository>();
+            var motorVehicleDataValidator = _serviceProvider.GetRequiredService<MotorVehicleDataValidator>();
 
             BusinessRules.Add(
-                new MotorVehicleCannotExist(
-                    _serviceProvider.GetRequiredService<IMotorVehicleRepository>(), contract.ChassisNumber));
+                new MotorVehicleCannotExist(motorVehicleRepository, contract.ChassisNumber));
 
             BusinessRules.Add(
-                new MotorVehicleDataValidation(
-                    _serviceProvider.GetRequiredService<MotorVehicleDataValidator>(), motorVehicle));
+                new MotorVehicleDataValidation(motorVehicleDataValidator, motorVehicle));
 
             BusinessRules.Add(
-                new MotorVehicleMileageDataValidation(
-                    _serviceProvider.GetRequiredService<IMotorVehicleMileageSnapshotRepository>(), contract.Mileage, contract.ChassisNumber));
+                new MotorVehicleMileageDataValidation(mileageRepository, contract.ChassisNumber, contract.Mileage, DateTime.Now));
         }
 
         #region PRIVATE
@@ -48,7 +48,6 @@ namespace FleetManagement.BLL
                 Operational = contract.Operational,
                 PropulsionType = (MotorVehiclePropulsionType)contract.PropulsionType
             };
-
         }
         #endregion
     }

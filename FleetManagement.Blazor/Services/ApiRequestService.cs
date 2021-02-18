@@ -58,9 +58,13 @@ namespace FleetManagement.Blazor.Services
             return await ApiCommandResponse(result);
         }
 
-        public Task<IApiCommandResponse> SendPostRequest<T>(string endpoint, T data)
+        public async Task<IApiCommandResponse> SendPostRequest<T>(string endpoint, T data)
         {
-            throw new NotImplementedException();
+            var uri = new Uri($"{_writeUrl}/{endpoint}");
+
+            var result = await _httpClient.PostAsJsonAsync(uri, data);
+
+            return await ApiCommandResponse(result);
         }
 
         public Task<IApiCommandResponse> SendPatchRequest<T>(string endpoint, T data)

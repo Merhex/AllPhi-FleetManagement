@@ -37,7 +37,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             if (handlerResponse.Success)
             {
-                await CreateNewLicensePlateBasedOn(contract);
+                await CreateLicensePlate(contract, cancellationToken);
 
                 return ComponentResponse.Success;
             }
@@ -54,7 +54,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             if (handlerResponse.Success)
             {
-                await CreateMotorVehicleBasedOn(contract);
+                await CreateMotorVehicle(contract, cancellationToken);
 
                 return ComponentResponse.Success;
             }
@@ -88,7 +88,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             if (handlerResponse.Success)
             {
-                await AssignLicensePlateToMotorVehicleBasedOn(contract, cancellationToken);
+                await AssignLicensePlateToMotorVehicle(contract, cancellationToken);
 
                 return ComponentResponse.Success;
             }
@@ -105,7 +105,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             if (handlerResponse.Success)
             {
-                await WithdrawLicensePlateBasedOn(contract, cancellationToken);
+                await WithdrawLicensePlate(contract, cancellationToken);
 
                 return ComponentResponse.Success;
             }
@@ -122,7 +122,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             if (handlerResponse.Success)
             {
-                await DeleteLicensePlateBasedOn(contract, cancellationToken);
+                await DeleteLicensePlate(contract, cancellationToken);
 
                 return ComponentResponse.Success;
             }
@@ -201,7 +201,40 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             }
         }
 
+        public async Task<IComponentResponse> AddMileageToMotorVehicleAsync(IAddMileageToMotorVehicleContract contract, CancellationToken cancellationToken)
+        {
+            var handlerResponse = await _businessHandler.Validate(contract, cancellationToken);
+
+            if (handlerResponse.Success)
+            {
+                await AddMileageToMotorVehicle(contract, cancellationToken);
+
+                return ComponentResponse.Success;
+            }
+            else
+            {
+                return new ComponentResponse()
+                    .WithResponse(handlerResponse);
+            }
+        }
+
         #region PRIVATE
+        private async Task AddMileageToMotorVehicle(IAddMileageToMotorVehicleContract contract, CancellationToken cancellationToken)
+        {
+            var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(contract.ChassisNumber, cancellationToken);
+
+            var snapshot = new MotorVehicleMileageSnapshot
+            {
+                Mileage = contract.Mileage,
+                MotorVehicle = motorVehicle,
+                SnapshotDate = contract.Date
+            };
+
+            motorVehicle.MileageHistory.Add(snapshot);
+
+            await _motorVehicleRepository.SaveAsync(cancellationToken);
+        }
+
         private async Task UpdateMotorVehicle(IUpdateMotorVehicleContract contract, CancellationToken cancellationToken)
         {
             var motorVehicle = await _motorVehicleRepository.FindByChassisNumberAsync(contract.ChassisNumber, cancellationToken);
@@ -212,7 +245,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             motorVehicle.Model          = contract.Model;
             motorVehicle.Brand          = contract.Brand;
 
-            await _motorVehicleRepository.SaveAsync();
+            await _motorVehicleRepository.SaveAsync(cancellationToken);
         }
 
         private async Task DeactivateLicensePlate(IDeactivateLicensePlateContract contract, CancellationToken cancellationToken)
@@ -232,16 +265,16 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             _licensePlateSnaphotRepository.Add(snapshot);
 
-            await _licensePlateRepository.SaveAsync();
+            await _licensePlateRepository.SaveAsync(cancellationToken);
         }
 
-        private async Task DeleteLicensePlateBasedOn(IDeleteLicensePlateContract contract, CancellationToken cancellationToken)
+        private async Task DeleteLicensePlate(IDeleteLicensePlateContract contract, CancellationToken cancellationToken)
         {
             var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
 
             _licensePlateRepository.Remove(licensePlate);
 
-            await _licensePlateRepository.SaveAsync();
+            await _licensePlateRepository.SaveAsync(cancellationToken);
         }
 
         private async Task ActivateLicensePlate(IActivateLicensePlateContract contract, CancellationToken cancellationToken)
@@ -261,39 +294,39 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             _licensePlateSnaphotRepository.Add(snapshot);
 
-            await _licensePlateRepository.SaveAsync();
+            await _licensePlateRepository.SaveAsync(cancellationToken);
         }
 
-        private async Task WithdrawLicensePlateBasedOn(IWithdrawLicensePlateContract contract, CancellationToken cancellationToken)
+        private async Task WithdrawLicensePlate(IWithdrawLicensePlateContract contract, CancellationToken cancellationToken)
         {
             var motorVehicle = await _motorVehicleRepository.FindByLicensePlateIdentifierIncludeLicensePlatesAsync(contract.Identifier, cancellationToken);
             var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
 
             motorVehicle.LicensePlates.Remove(licensePlate);
 
-            await _motorVehicleRepository.SaveAsync();
+            await _motorVehicleRepository.SaveAsync(cancellationToken);
         }
 
-        private async Task AssignLicensePlateToMotorVehicleBasedOn(IAssignLicensePlateContract contract, CancellationToken cancellationToken)
+        private async Task AssignLicensePlateToMotorVehicle(IAssignLicensePlateContract contract, CancellationToken cancellationToken)
         {
             var licensePlate = await _licensePlateRepository.FindByIdentifierAsync(contract.Identifier, cancellationToken);
             var motorVehicle = await _motorVehicleRepository.FindByChassisNumberIncludeLicensePlatesAsync(contract.ChassisNumber, cancellationToken);
 
             motorVehicle.LicensePlates.Add(licensePlate);
 
-            await _motorVehicleRepository.SaveAsync();
+            await _motorVehicleRepository.SaveAsync(cancellationToken);
         }
 
-        private async Task CreateNewLicensePlateBasedOn(ICreateLicensePlateContract contract)
+        private async Task CreateLicensePlate(ICreateLicensePlateContract contract, CancellationToken cancellationToken)
         {
             var licensePlate = new LicensePlate { Identifier = contract.Identifier };
 
             _licensePlateRepository.Add(licensePlate);
 
-            await _licensePlateRepository.SaveAsync();
+            await _licensePlateRepository.SaveAsync(cancellationToken);
         }
 
-        private async Task CreateMotorVehicleBasedOn(ICreateMotorVehicleContract contract)
+        private async Task CreateMotorVehicle(ICreateMotorVehicleContract contract, CancellationToken cancellationToken)
         {
             var motorVehicle = new MotorVehicle
             {
@@ -313,10 +346,10 @@ namespace FleetManagement.BLL.MotorVehicles.Components
             };
 
             _motorVehicleRepository.Add(motorVehicle);
-            await _motorVehicleRepository.SaveAsync();
+            await _motorVehicleRepository.SaveAsync(cancellationToken);
 
             _motorVehicleMileageSnapshotRepository.Add(mileage);
-            await _motorVehicleMileageSnapshotRepository.SaveAsync();
+            await _motorVehicleMileageSnapshotRepository.SaveAsync(cancellationToken);
         }
 
         private async Task ActivateMotorVehicle(IActivateMotorVehicleContract contract, CancellationToken cancellationToken)
@@ -325,7 +358,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             motorVehicle.Operational = true;
 
-            await _motorVehicleRepository.SaveAsync();
+            await _motorVehicleRepository.SaveAsync(cancellationToken);
         }
 
         private async Task DeactivateMotorVehicle(IDeactivateMotorVehicleContract contract, CancellationToken cancellationToken)
@@ -334,7 +367,7 @@ namespace FleetManagement.BLL.MotorVehicles.Components
 
             motorVehicle.Operational = false;
 
-            await _motorVehicleRepository.SaveAsync();
+            await _motorVehicleRepository.SaveAsync(cancellationToken);
         }
         #endregion
     }
