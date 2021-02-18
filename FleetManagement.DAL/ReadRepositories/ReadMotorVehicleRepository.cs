@@ -46,7 +46,7 @@ namespace FleetManagement.DAL.Repositories
             var motorVehicle = await _context.MotorVehicles
                                     .Include(motorVehicle => motorVehicle.Driver)
                                     .Include(motorVehicle => motorVehicle.MileageHistory
-                                        .OrderByDescending(x => x.Mileage))
+                                        .OrderBy(x => x.SnapshotDate))
                                     .Include(motorVehicle => motorVehicle.LicensePlates)
                                     .Include(motorVehicle => motorVehicle.Condition
                                         .OrderByDescending(x => x.CreationDate))

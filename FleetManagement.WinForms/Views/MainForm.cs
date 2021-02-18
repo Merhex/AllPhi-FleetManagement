@@ -8,13 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FleetManagement.WinForms
+namespace FleetManagement.Blazor
 {
     public partial class MainForm : Form
     {
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        private void labelExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

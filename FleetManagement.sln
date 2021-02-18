@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.WinForms", 
 		{5924A3F6-B4A7-430C-B833-39D26273F357} = {5924A3F6-B4A7-430C-B833-39D26273F357}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManagement.DAL.NHibernate", "FleetManagement.DAL.NHibernate\FleetManagement.DAL.NHibernate.csproj", "{6B3BB5D6-BC4C-4134-8F5A-B29E57D3AB91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.DAL.NHibernate", "FleetManagement.DAL.NHibernate\FleetManagement.DAL.NHibernate.csproj", "{6B3BB5D6-BC4C-4134-8F5A-B29E57D3AB91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace FleetManagement.WinForms.ViewModels
+namespace FleetManagement.WinForms.Queries
 {
-    public class DriverModelView
+    public interface IQuery
     {
-
+        public string Endpoint { get; }
     }
 }

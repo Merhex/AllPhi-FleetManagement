@@ -1,5 +1,5 @@
-﻿using FleetManagement.Blazor.Queries;
-using FleetManagement.Blazor.Responses;
+﻿using FleetManagement.WinForms.Queries;
+using FleetManagement.WinForms.Responses;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace FleetManagement.Blazor.Services
+namespace FleetManagement.WinForms.Services
 {
     public class ApiRequestService : IApiRequestService
     {
@@ -21,21 +21,21 @@ namespace FleetManagement.Blazor.Services
             _configuration = configuration;
             _httpClient = httpClient;
 
-            _readUrl =  _configuration
+            _readUrl = _configuration
                             .GetSection("ApiUrls")
-                            .GetValue<string>("ReadSSL")
+                            .GetSection("ReadSSL").Value
                             ??
                             _configuration
                             .GetSection("ApiUrls")
-                            .GetValue<string>("Read");
+                            .GetSection("Read").Value;
 
             _writeUrl = _configuration
                             .GetSection("ApiUrls")
-                            .GetValue<string>("WriteSSL")
+                            .GetSection("WriteSSL").Value
                             ??
                             _configuration
                             .GetSection("ApiUrls")
-                            .GetValue<string>("Write");
+                            .GetSection("Write").Value;
         }
 
         public async Task<T> SendGetRequest<T>(IQuery query)

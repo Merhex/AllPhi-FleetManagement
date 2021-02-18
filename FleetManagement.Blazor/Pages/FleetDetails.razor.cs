@@ -22,12 +22,13 @@ namespace FleetManagement.Blazor.Pages
         [Inject]
         private NavigationManager NavigationManager { get; set; }
 
+        private LineChart<double> MileageChart { get; set; } = new LineChart<double>();
         private MotorVehicleDetailedResponse MotorVehicleDetailed { get; set; }
+        private SnackbarStack SnackbarStack { get; set; }
         private bool IsLoading { get; set; } = true;
         private bool Disabled { get; set; } = true;
+        private bool AlreadyInitialized { get; set; }
         private bool UpdateButtonShown { get; set; } = false;
-        private SnackbarStack SnackbarStack { get; set; }
-        private LineChart<double> MileageChart { get; set; } = new LineChart<double>();
 
 
         protected override async Task OnInitializedAsync()
@@ -77,6 +78,56 @@ namespace FleetManagement.Blazor.Pages
         private void ReturnToFleet()
         {
             NavigationManager.NavigateTo("/fleet");
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (AlreadyInitialized is false && IsLoading is false)
+            {
+                AlreadyInitialized = true;
+
+                await HandleRedraw(MileageChart, GetLineChartDataset);
+            }
+        }
+
+        async Task HandleRedraw<TDataSet, TItem, TOptions, TModel>(BaseChart<TDataSet, TItem, TOptions, TModel> chart, Func<TDataSet> getDataSet)
+            where TDataSet : ChartDataset<TItem>
+            where TOptions : ChartOptions
+            where TModel : ChartModel
+        {
+            await chart.Clear();
+
+            await chart.AddLabelsDatasetsAndUpdate(GetLabels().ToList(), getDataSet());
+        }
+
+        LineChartDataset<double> GetLineChartDataset()
+        {
+            return new LineChartDataset<double>
+            {
+                Label = "Mileage snapshot dates",
+                Data = GetData().ToList(),
+                BackgroundColor = ChartColor.FromRgba(10, 233, 249, 0.2f).ToJsRgba(),
+                BorderColor = ChartColor.FromRgba(10, 233, 249, 1f).ToJsRgba(),
+                Fill = true,
+                PointRadius = 3,
+                BorderWidth = 1,
+                PointBorderColor = { ChartColor.FromRgba(10, 233, 249, 1f).ToJsRgba() }
+            };
+        }
+
+        private IEnumerable<double> GetData()
+        {
+            foreach (var snapshot in MotorVehicleDetailed.MileageHistory)
+            {
+                yield return snapshot.Mileage;
+            }
+        }
+        private IEnumerable<string> GetLabels()
+        {
+            foreach (var snapshot in MotorVehicleDetailed.MileageHistory)
+            {
+                yield return snapshot.SnapshotDate.ToShortDateString();
+            }
         }
     }
 }

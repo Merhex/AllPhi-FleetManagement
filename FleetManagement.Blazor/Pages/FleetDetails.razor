@@ -96,30 +96,40 @@
                 @foreach (var licensePlate in MotorVehicleDetailed.LicensePlates)
                 {
                     <TableRow>
-                        @if (licensePlate.InUse)
-                        {
-                            <TableRowHeader>
-                                <Blazorise.Icon Name="FontAwesomeIcons.Star"></Blazorise.Icon>
-                                Yes
-                            </TableRowHeader>
-                        }
-                        else
-                        {
-                            <TableRowHeader>No</TableRowHeader>
-                        }
-                        <TableRowCell>@licensePlate.Identifier</TableRowCell>
+                        <TableRowHeader>
+                            <Check TValue="bool" Checked="@licensePlate.InUse" Disabled="true"></Check>
+                        </TableRowHeader>
+                        <TableRowCell>
+                            <Button Color="Color.Danger" Outline="true" Disabled="true">@licensePlate.Identifier</Button>
+                        </TableRowCell>
                     </TableRow>
                 }
             </Table>
         }
         else
         {
-            <Paragraph>This motor vehicle does not have any license plates assigned.</Paragraph>
+            <Paragraph>This vehicle does not have any license plates assigned.</Paragraph>
         }
+
         <Divider />
 
         <Container Fluid="true">
             <Heading Size="HeadingSize.Is2">Mileage history</Heading>
+            @if (MotorVehicleDetailed.MileageHistory.Any())
+            {
+                <Card Margin="Margin.Is4.OnY">
+                    <CardHeader>
+                        Every point represents the date when mileage was reported, and the respective mileage.
+                    </CardHeader>
+                    <CardBody>
+                        <LineChart @ref="MileageChart" TItem="double" />
+                    </CardBody>
+                </Card>
+            }
+            else
+            {
+                <Paragraph>There are currently no mileage reports for this vehicle.</Paragraph>
+            }
         </Container>
     </Container>
 </Loader>
