@@ -130,18 +130,21 @@
                         <DateEdit TValue="DateTime"
                                   @bind-Date="@MileageSnapshotDate" />
                     </Field>
-                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
-                        <Button Color="Color.Info"
-                                Clicked="@AddMileageSnapshot"
-                                Type="ButtonType.Submit">
-                            Add
-                        </Button>
-                    </Field>
+                    <Button Color="Color.Info"
+                            Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile"
+                            Clicked="@AddMileageSnapshot"
+                            Loading="@IsAddingMileage"
+                            Disabled="@IsAddingMileage"
+                            Type="ButtonType.Submit">
+                        Add
+                    </Button>
                 </Fields>
             }
             else
             {
-                <Button Clicked="@ToggleMileageAddMode">
+                <Button 
+                        Clicked="@ToggleMileageAddMode" 
+                        Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile">
                     <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
                     Add new mileage
                 </Button>

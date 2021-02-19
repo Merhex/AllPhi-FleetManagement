@@ -27,6 +27,7 @@ namespace FleetManagement.Blazor.Pages
         private MotorVehicleDetailedResponse MotorVehicleDetailed { get; set; }
         private SnackbarStack SnackbarStack { get; set; }
         private bool IsLoading { get; set; } = true;
+        private bool IsAddingMileage { get; set; }
         private bool Disabled { get; set; } = true;
         private bool AlreadyInitialized { get; set; }
         private bool UpdateButtonShown { get; set; } = false;
@@ -92,6 +93,8 @@ namespace FleetManagement.Blazor.Pages
 
         private async Task AddMileageSnapshot()
         {
+            IsAddingMileage = true;
+
             var command = new AddMileageToMotorVehicleCommand
             {
                 ChassisNumber = MotorVehicleDetailed.ChassisNumber,
@@ -113,6 +116,8 @@ namespace FleetManagement.Blazor.Pages
 
                 await SnackbarStack.PushAsync("Added mileage successfully.", SnackbarColor.Success);
             }
+
+            IsAddingMileage = false;
         }
 
         private async Task ShowErrorsWithSnackbar(IApiCommandResponse response)
