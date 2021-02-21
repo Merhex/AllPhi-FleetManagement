@@ -90,7 +90,8 @@
                 <Fields>
                     <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
                         <FieldLabel>License plate identifier</FieldLabel>
-                        <TextEdit @bind-Value="@LicensePlateToBeAssigned" />
+                            <TextEdit MaskType="MaskType.RegEx" EditMask="[A-Z-0-9.]{1,9}"
+                                      @bind-Text="@LicensePlateToBeAssigned" />
                     </Field>
                     <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
                         <Button Color="Color.Info"

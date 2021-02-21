@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FleetManagement.Blazor.Services
@@ -53,11 +54,13 @@ namespace FleetManagement.Blazor.Services
         public async Task<IApiCommandResponse> SendCommand(IApiCommand command)
         {
             var uri = new Uri($"{_writeUrl}/{command.Endpoint}");
+            var json = JsonConvert.SerializeObject(command);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = command.HttpMethod.Method switch
             {
-                "POST"  => await _httpClient.PostAsJsonAsync(uri, command),
-                "PUT"   => await _httpClient.PutAsJsonAsync(uri, command),
+                "POST"  => await _httpClient.PostAsync(uri, content),
+                "PUT"   => await _httpClient.PutAsync(uri, content),
                 _       => throw new InvalidProgramException($"The method set in the command is invalid. Method set was: {command.HttpMethod.Method}")
             };
 

@@ -150,6 +150,7 @@ namespace FleetManagement.Blazor.Pages
             }
 
             IsAssigningLicensePlate = false;
+            AddLicensePlateShown = false;
         }
 
         private async Task ShowErrorsWithSnackbar(IApiCommandResponse response)
