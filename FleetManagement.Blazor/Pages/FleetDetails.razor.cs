@@ -26,11 +26,14 @@ namespace FleetManagement.Blazor.Pages
         private LineChart<double> MileageChart { get; set; } = new LineChart<double>();
         private MotorVehicleDetailedResponse MotorVehicleDetailed { get; set; }
         private SnackbarStack SnackbarStack { get; set; }
+        public string LicensePlateToBeAssigned { get; set; }
         private bool IsLoading { get; set; } = true;
         private bool IsAddingMileage { get; set; }
         private bool Disabled { get; set; } = true;
-        private bool AlreadyInitialized { get; set; }
+        private bool AlreadyInitialized { get; set; } = false;
+        public bool IsAssigningLicensePlate { get; set; } = false;
         private bool UpdateButtonShown { get; set; } = false;
+        private bool AddLicensePlateShown { get; set; } = false;
         private bool MileageAddShown { get; set; } = false;
         private int MileageSnapshotValue { get; set; } = 0;
         public DateTime MileageSnapshotDate { get; set; } = DateTime.Now;
@@ -64,7 +67,12 @@ namespace FleetManagement.Blazor.Pages
             MileageAddShown = !MileageAddShown;
         }
 
-        private async Task Submit()
+        private void ToggleAddLicensePlateShown()
+        {
+            AddLicensePlateShown = !AddLicensePlateShown;
+        }
+
+        private async Task UpdateMotorVehicle()
         {
             UpdateButtonShown = false;
             Disabled = true;
@@ -79,7 +87,7 @@ namespace FleetManagement.Blazor.Pages
                 PropulsionType = MotorVehicleDetailed.PropulsionType
             };
 
-            var response = await ApiRequestService.SendPutRequest(updateCommand.Endpoint, updateCommand);
+            var response = await ApiRequestService.SendCommand(updateCommand);
 
             if (response.Errors.Any())
             {
@@ -102,7 +110,7 @@ namespace FleetManagement.Blazor.Pages
                 Mileage = MileageSnapshotValue
             };
 
-            var response = await ApiRequestService.SendPostRequest(command.Endpoint, command);
+            var response = await ApiRequestService.SendCommand(command);
 
             if (response.Errors.Any())
             {
@@ -118,6 +126,30 @@ namespace FleetManagement.Blazor.Pages
             }
 
             IsAddingMileage = false;
+        }
+
+        private async Task AssignLicensePlate()
+        {
+            IsAssigningLicensePlate = true;
+
+            var command = new AssignLicensePlateToMotorVehicleCommand
+            {
+                ChassisNumber = MotorVehicleDetailed.ChassisNumber,
+                Identifier = LicensePlateToBeAssigned,
+            };
+
+            var response = await ApiRequestService.SendCommand(command);
+
+            if (response.Errors.Any())
+            {
+                await ShowErrorsWithSnackbar(response);
+            }
+            else
+            {
+                await SnackbarStack.PushAsync("Assigned license plate successfully.", SnackbarColor.Success);
+            }
+
+            IsAssigningLicensePlate = false;
         }
 
         private async Task ShowErrorsWithSnackbar(IApiCommandResponse response)
@@ -136,7 +168,7 @@ namespace FleetManagement.Blazor.Pages
         {
             var query = new MotorVehicleDetailedQuery(ChassisNumber);
 
-            MotorVehicleDetailed = await ApiRequestService.SendGetRequest<MotorVehicleDetailedResponse>(query);
+            MotorVehicleDetailed = await ApiRequestService.SendQuery<MotorVehicleDetailedResponse>(query);
         }
 
 

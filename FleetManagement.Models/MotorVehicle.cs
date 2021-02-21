@@ -37,12 +37,12 @@ namespace FleetManagement.Models
         public int? DriverId { get; set; }
 
         [Required]
-        public ICollection<LicensePlate> LicensePlates { get; set; }
+        public ICollection<LicensePlate> LicensePlates { get; set; } = new List<LicensePlate>();
 
         [Required]
-        public ICollection<MotorVehicleMileageSnapshot> MileageHistory { get; set; }
+        public ICollection<MotorVehicleMileageSnapshot> MileageHistory { get; set; } = new List<MotorVehicleMileageSnapshot>();
 
         [Required]
-        public ICollection<MotorVehicleWorkOrder> Condition { get; set; }
+        public ICollection<MotorVehicleWorkOrder> Condition { get; set; } = new List<MotorVehicleWorkOrder>();
     }
 }

@@ -1,4 +1,5 @@
-﻿using FleetManagement.Blazor.Queries;
+﻿using FleetManagement.Blazor.Commands;
+using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -38,7 +39,7 @@ namespace FleetManagement.Blazor.Services
                             .GetValue<string>("Write");
         }
 
-        public async Task<T> SendGetRequest<T>(IQuery query)
+        public async Task<T> SendQuery<T>(IQuery query)
         {
             var request = new HttpRequestMessage
             {
@@ -49,32 +50,18 @@ namespace FleetManagement.Blazor.Services
             return await SendRequest<T>(request);
         }
 
-        public async Task<IApiCommandResponse> SendPutRequest<T>(string endpoint, T data)
+        public async Task<IApiCommandResponse> SendCommand(IApiCommand command)
         {
-            var uri = new Uri($"{_writeUrl}/{endpoint}");
+            var uri = new Uri($"{_writeUrl}/{command.Endpoint}");
 
-            var result = await _httpClient.PutAsJsonAsync(uri, data);
+            var response = command.HttpMethod.Method switch
+            {
+                "POST"  => await _httpClient.PostAsJsonAsync(uri, command),
+                "PUT"   => await _httpClient.PutAsJsonAsync(uri, command),
+                _       => throw new InvalidProgramException($"The method set in the command is invalid. Method set was: {command.HttpMethod.Method}")
+            };
 
-            return await ApiCommandResponse(result);
-        }
-
-        public async Task<IApiCommandResponse> SendPostRequest<T>(string endpoint, T data)
-        {
-            var uri = new Uri($"{_writeUrl}/{endpoint}");
-
-            var result = await _httpClient.PostAsJsonAsync(uri, data);
-
-            return await ApiCommandResponse(result);
-        }
-
-        public Task<IApiCommandResponse> SendPatchRequest<T>(string endpoint, T data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IApiCommandResponse> SendDeleteRequest<T>(string endpoint, T data)
-        {
-            throw new NotImplementedException();
+            return await ApiCommandResponse(response);
         }
 
         #region PRIVATE

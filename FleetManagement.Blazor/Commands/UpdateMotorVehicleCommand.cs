@@ -1,4 +1,6 @@
-﻿namespace FleetManagement.Blazor.Commands
+﻿using System.Net.Http;
+
+namespace FleetManagement.Blazor.Commands
 {
     public record UpdateMotorVehicleCommand : IApiCommand
     {
@@ -10,5 +12,6 @@
         public string ChassisNumber { get; set; }
 
         public string Endpoint => "MotorVehicles/update";
+        public HttpMethod HttpMethod { get; set; } = HttpMethod.Put;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 
 namespace FleetManagement.Blazor.Commands
 {
@@ -9,5 +10,6 @@ namespace FleetManagement.Blazor.Commands
         public string ChassisNumber { get; set; }
 
         public string Endpoint => "MotorVehicles/mileage/add";
+        public HttpMethod HttpMethod { get; set; } = HttpMethod.Post;
     }
 }

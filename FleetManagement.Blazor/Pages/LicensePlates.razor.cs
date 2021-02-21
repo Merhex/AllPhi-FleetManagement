@@ -59,7 +59,7 @@ namespace FleetManagement.Blazor.Pages
                 Sortables = GetSortables(Columns).ToList()
             };
 
-            var content = await ApiRequestService.SendGetRequest<PaginatedResponse<LicensePlateResponse>>(query);
+            var content = await ApiRequestService.SendQuery<PaginatedResponse<LicensePlateResponse>>(query);
 
             LicensePlatesItems = content.Items.ToList();
             LicensePlatesTotal = content.TotalCount;

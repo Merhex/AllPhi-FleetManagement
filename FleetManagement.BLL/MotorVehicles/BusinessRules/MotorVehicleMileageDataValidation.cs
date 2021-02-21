@@ -46,7 +46,7 @@ namespace FleetManagement.BLL
         }
 
         #region PRIVATE
-        private static bool IsEarlier(DateTime dateTime1, DateTime dateTime2) => DateTime.Compare(dateTime1, dateTime2) <= 0;
+        private static bool IsEarlier(DateTime dateTime1, DateTime dateTime2) => DateTime.Compare(dateTime1, dateTime2) < 0;
         #endregion
     }
 }

@@ -70,7 +70,7 @@
                     </Button>
                     @if (UpdateButtonShown)
                     {
-                        <Button Clicked="@Submit"
+                        <Button Clicked="@UpdateMotorVehicle"
                                 Type="ButtonType.Submit"
                                 PreventDefaultOnSubmit="true"
                                 Color="Color.Warning">
@@ -85,6 +85,34 @@
 
         <Container Fluid="true">
             <Heading Size="HeadingSize.Is2">License plates on vehicle</Heading>
+            @if (AddLicensePlateShown)
+            {
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+                        <FieldLabel>License plate identifier</FieldLabel>
+                        <TextEdit @bind-Value="@LicensePlateToBeAssigned" />
+                    </Field>
+                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+                        <Button Color="Color.Info"
+                                Margin="Margin.Is3.OnY"
+                                Clicked="@AssignLicensePlate"
+                                Loading="@IsAssigningLicensePlate"
+                                Disabled="@IsAssigningLicensePlate"
+                                Type="ButtonType.Submit">
+                            Add
+                        </Button>
+                    </Field>
+                </Fields>
+            }
+            else
+            {
+                <Button Clicked="@ToggleAddLicensePlateShown"
+                        Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile">
+                    <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
+                    Assign license plate
+                </Button>
+            }
+
             @if (MotorVehicleDetailed.LicensePlates.Any())
             {
                 <Table>
@@ -122,22 +150,26 @@
                 <Fields>
                     <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
                         <FieldLabel>Mileage</FieldLabel>
-                        <NumericEdit @bind-Value="MileageSnapshotValue"
-                                     TValue="int" />
+                        <NumericEdit
+                                  @bind-Value="@MileageSnapshotValue"
+                                  Max="1000000"
+                                  Min="0"/>
                     </Field>
                     <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
                         <FieldLabel>Date of mileage</FieldLabel>
                         <DateEdit TValue="DateTime"
                                   @bind-Date="@MileageSnapshotDate" />
                     </Field>
-                    <Button Color="Color.Info"
-                            Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile"
-                            Clicked="@AddMileageSnapshot"
-                            Loading="@IsAddingMileage"
-                            Disabled="@IsAddingMileage"
-                            Type="ButtonType.Submit">
-                        Add
-                    </Button>
+                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+                        <Button Color="Color.Info"
+                                Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile"
+                                Clicked="@AddMileageSnapshot"
+                                Loading="@IsAddingMileage"
+                                Disabled="@IsAddingMileage"
+                                Type="ButtonType.Submit">
+                            Add
+                        </Button>
+                    </Field>
                 </Fields>
             }
             else

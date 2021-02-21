@@ -100,7 +100,7 @@ namespace FleetManagement.Blazor.Pages
                 Sortables = GetSortables(Columns).ToList()
             };
 
-            var content = await ApiRequestService.SendGetRequest<PaginatedResponse<MotorVehicleResponse>>(query);
+            var content = await ApiRequestService.SendQuery<PaginatedResponse<MotorVehicleResponse>>(query);
 
             MotorVehicleItems = content.Items.ToList();
             MotorVehiclesTotal = content.TotalCount;
