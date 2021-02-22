@@ -16,6 +16,8 @@ namespace FleetManagement.DAL.Mappings
                     .MapFrom(x => x.LicensePlates.SingleOrDefault(x => x.InUse)));
 
             CreateMap<MotorVehicle, MotorVehicleDetailed>();
+
+            CreateMap<LicensePlate, LicensePlateDetailed>();
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿using Blazorise.Charts;
+﻿using Blazorise;
+using Blazorise.Charts;
 using Blazorise.Snackbar;
 using FleetManagement.Blazor.Commands;
-using FleetManagement.Blazor.Models;
 using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using FleetManagement.Blazor.Services;
@@ -26,9 +26,11 @@ namespace FleetManagement.Blazor.Pages
         private LineChart<double> MileageChart { get; set; } = new LineChart<double>();
         private MotorVehicleDetailedResponse MotorVehicleDetailed { get; set; }
         private SnackbarStack SnackbarStack { get; set; }
+        private Color LicensePlateTableRowColor { get; set; } = Color.None;
         public string LicensePlateToBeAssigned { get; set; }
         private bool IsLoading { get; set; } = true;
         private bool IsAddingMileage { get; set; }
+        public bool InChangeStatusOperation { get; set; }
         private bool Disabled { get; set; } = true;
         private bool AlreadyInitialized { get; set; } = false;
         public bool IsAssigningLicensePlate { get; set; } = false;
@@ -56,28 +58,12 @@ namespace FleetManagement.Blazor.Pages
             }
         }
 
-        private void ToggleEditMode()
-        {
-            Disabled = !Disabled;
-            UpdateButtonShown = !Disabled;
-        }
-
-        private void ToggleMileageAddMode()
-        {
-            MileageAddShown = !MileageAddShown;
-        }
-
-        private void ToggleAddLicensePlateShown()
-        {
-            AddLicensePlateShown = !AddLicensePlateShown;
-        }
-
         private async Task UpdateMotorVehicle()
         {
             UpdateButtonShown = false;
             Disabled = true;
 
-            var updateCommand = new UpdateMotorVehicleCommand()
+            var command = new UpdateMotorVehicleCommand()
             {
                 ChassisNumber = MotorVehicleDetailed.ChassisNumber,
                 BodyType = MotorVehicleDetailed.BodyType,
@@ -87,15 +73,91 @@ namespace FleetManagement.Blazor.Pages
                 PropulsionType = MotorVehicleDetailed.PropulsionType
             };
 
-            var response = await ApiRequestService.SendCommand(updateCommand);
+            var response = await ApiRequestService.SendCommand(command);
 
             if (response.Errors.Any())
             {
-                await ShowErrorsWithSnackbar(response);
+                await response.ShowErrorsWithSnackbar(SnackbarStack);
             }
             else
             {
-                await SnackbarStack.PushAsync("Update successful.", SnackbarColor.Success);
+                await SnackbarStack.PushAsync("✓", "Success", SnackbarColor.Success);
+            }
+        }
+
+        private async Task ChangeLicensePlateStatus(bool status, LicensePlateResponse licensePlate)
+        {
+            InChangeStatusOperation = true;
+            LicensePlateTableRowColor = Color.Dark;
+
+            var changeOperation = status switch
+            {
+                true => ActivateLicensePlate(licensePlate),
+                false => DeactivateLicensePlate(licensePlate)
+            };
+
+            await changeOperation;
+
+            InChangeStatusOperation = false;
+            LicensePlateTableRowColor = Color.None;
+        }
+
+        private async Task DeactivateLicensePlate(LicensePlateResponse licensePlate)
+        {
+            var command = new DeactivateLicensePlateCommand
+            {
+                Identifier = licensePlate.Identifier
+            };
+
+            var response = await ApiRequestService.SendCommand(command);
+
+            if (response.Errors.Any())
+            {
+                await response.ShowErrorsWithSnackbar(SnackbarStack);
+            }
+            else
+            {
+                await SnackbarStack.PushAsync("✓", "Success", SnackbarColor.Success);
+            }
+        }
+
+        private async Task ActivateLicensePlate(LicensePlateResponse licensePlate)
+        {
+            IApiCommand command;
+            IApiCommandResponse response;
+            var activeLicensePlate = MotorVehicleDetailed.LicensePlates.SingleOrDefault(x => x.InUse);
+
+            if (activeLicensePlate is not null)
+            {
+                command = new DeactivateLicensePlateCommand
+                {
+                    Identifier = activeLicensePlate.Identifier
+                };
+
+                response = await ApiRequestService.SendCommand(command);
+
+                if (response.Errors.Any())
+                {
+                    await response.ShowErrorsWithSnackbar(SnackbarStack);
+                    return;
+                }
+            }
+
+            command = new ActivateLicensePlateCommand
+            {
+                Identifier = licensePlate.Identifier
+            };
+
+            response = await ApiRequestService.SendCommand(command);
+
+            if (response.Errors.Any())
+            {
+                await response.ShowErrorsWithSnackbar(SnackbarStack);
+            }
+            else
+            {
+                await GetDetailedMotorVehicle();
+                await SnackbarStack.PushAsync("✓", "Success", SnackbarColor.Success);
             }
         }
 
@@ -114,14 +176,12 @@ namespace FleetManagement.Blazor.Pages
 
             if (response.Errors.Any())
             {
-                await ShowErrorsWithSnackbar(response);
+                await response.ShowErrorsWithSnackbar(SnackbarStack);
             }
             else
             {
                 await GetDetailedMotorVehicle();
-
                 await HandleRedraw(MileageChart, GetLineChartDataset);
-
                 await SnackbarStack.PushAsync("Added mileage successfully.", SnackbarColor.Success);
             }
 
@@ -142,22 +202,16 @@ namespace FleetManagement.Blazor.Pages
 
             if (response.Errors.Any())
             {
-                await ShowErrorsWithSnackbar(response);
+                await response.ShowErrorsWithSnackbar(SnackbarStack);
             }
             else
             {
+                await GetDetailedMotorVehicle();
                 await SnackbarStack.PushAsync("Assigned license plate successfully.", SnackbarColor.Success);
             }
 
             IsAssigningLicensePlate = false;
             AddLicensePlateShown = false;
-        }
-
-        private async Task ShowErrorsWithSnackbar(IApiCommandResponse response)
-        {
-            foreach (var subject in response.Errors)
-                foreach (var message in subject.Value)
-                    await SnackbarStack.PushAsync(message, SnackbarColor.Danger);
         }
 
         private void ReturnToFleet()
@@ -171,7 +225,6 @@ namespace FleetManagement.Blazor.Pages
 
             MotorVehicleDetailed = await ApiRequestService.SendQuery<MotorVehicleDetailedResponse>(query);
         }
-
 
         private async Task HandleRedraw<TDataSet, TItem, TOptions, TModel>(BaseChart<TDataSet, TItem, TOptions, TModel> chart, Func<TDataSet> getDataSet)
             where TDataSet : ChartDataset<TItem>

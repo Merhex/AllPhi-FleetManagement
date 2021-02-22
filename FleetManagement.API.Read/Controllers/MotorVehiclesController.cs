@@ -39,5 +39,14 @@ namespace FleetManagement.API.Read.Controllers
 
             return Ok(result);
         }
+
+
+        [HttpGet("licensePlate/detailed")]
+        public async Task<IActionResult> GetLicensePlate([FromQuery] LicensePlateDetailedQuery query)
+        {
+            var result = await _mediator.Send(query);
+
+            return Ok(result);
+        }
     }
 }

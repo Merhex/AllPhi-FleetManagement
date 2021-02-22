@@ -12,6 +12,6 @@ namespace FleetManagement.Blazor.Commands
         public string ChassisNumber { get; set; }
 
         public string Endpoint => "MotorVehicles/update";
-        public HttpMethod HttpMethod { get; set; } = HttpMethod.Put;
+        public HttpMethod HttpMethod => HttpMethod.Put;
     }
 }

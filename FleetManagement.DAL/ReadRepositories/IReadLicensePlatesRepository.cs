@@ -1,4 +1,5 @@
 ﻿using FleetManagement.Models;
+using FleetManagement.ReadModels;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -10,5 +11,6 @@ namespace FleetManagement.DAL.Repositories.Interfaces
     public interface IReadLicensePlatesRepository : ITotalEntityCounter
     {
         Task<IEnumerable<LicensePlate>> GetLicensePlates(int page, int pageSize, string sortBy = null, CancellationToken cancellation = default, params Expression<Func<LicensePlate, bool>>[] filters);
+        Task<LicensePlateDetailed> GetDetailedLicensePlate(string identifier, CancellationToken cancellationToken = default);
     }
 }

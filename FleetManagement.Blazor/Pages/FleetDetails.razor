@@ -64,7 +64,7 @@
             </Field>
             <Field Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile">
                 <Buttons>
-                    <Button Clicked="@ToggleEditMode"
+                    <Button Clicked="@(() => UpdateButtonShown = !UpdateButtonShown)"
                             Color="Color.Info">
                         Edit
                     </Button>
@@ -95,19 +95,24 @@
                     </Field>
                     <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
                         <Button Color="Color.Info"
-                                Margin="Margin.Is3.OnY"
+                                Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
                                 Clicked="@AssignLicensePlate"
                                 Loading="@IsAssigningLicensePlate"
                                 Disabled="@IsAssigningLicensePlate"
                                 Type="ButtonType.Submit">
                             Add
                         </Button>
+                        <Button Color="Color.Warning"
+                                Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
+                                Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
+                            Cancel
+                        </Button>
                     </Field>
                 </Fields>
             }
             else
             {
-                <Button Clicked="@ToggleAddLicensePlateShown"
+                <Button Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)"
                         Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile">
                     <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
                     Assign license plate
@@ -116,7 +121,7 @@
 
             @if (MotorVehicleDetailed.LicensePlates.Any())
             {
-                <Table>
+                <Table Margin="Margin.Is4.FromTop.OnDesktop.Is2.OnMobile">
                     <TableHeader ThemeContrast="ThemeContrast.Light">
                         <TableRow>
                             <TableHeaderCell>Active</TableHeaderCell>
@@ -125,9 +130,9 @@
                     </TableHeader>
                     @foreach (var licensePlate in MotorVehicleDetailed.LicensePlates)
                     {
-                        <TableRow>
+                        <TableRow Color="@LicensePlateTableRowColor">
                             <TableRowHeader>
-                                <Check TValue="bool" Checked="@licensePlate.InUse" Disabled="true"></Check>
+                                <Check TValue="bool" Checked="@licensePlate.InUse" Disabled="@InChangeStatusOperation" CheckedChanged="@((value) => ChangeLicensePlateStatus(value, licensePlate))"></Check>
                             </TableRowHeader>
                             <TableRowCell>
                                 <Button Color="Color.Danger" Outline="true" Disabled="true">@licensePlate.Identifier</Button>
@@ -163,12 +168,17 @@
                     </Field>
                     <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
                         <Button Color="Color.Info"
-                                Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile"
+                                Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
                                 Clicked="@AddMileageSnapshot"
                                 Loading="@IsAddingMileage"
                                 Disabled="@IsAddingMileage"
                                 Type="ButtonType.Submit">
                             Add
+                        </Button>
+                        <Button Color="Color.Warning"
+                                Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
+                                Clicked="@(() => MileageAddShown = !MileageAddShown)">
+                            Cancel
                         </Button>
                     </Field>
                 </Fields>
@@ -176,7 +186,7 @@
             else
             {
                 <Button 
-                        Clicked="@ToggleMileageAddMode" 
+                        Clicked="@(() => MileageAddShown = !MileageAddShown)" 
                         Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile">
                     <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
                     Add new mileage

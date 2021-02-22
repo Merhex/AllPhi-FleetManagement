@@ -9,6 +9,6 @@ namespace FleetManagement.Blazor.Commands
     public interface IApiCommand
     {
         public string Endpoint { get; }
-        public HttpMethod HttpMethod { get; set; }
+        public HttpMethod HttpMethod { get; }
     }
 }

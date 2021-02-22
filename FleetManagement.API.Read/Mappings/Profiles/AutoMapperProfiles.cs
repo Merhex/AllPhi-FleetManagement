@@ -10,7 +10,7 @@ namespace FleetManagement.API.Read.Mappings
         {
             CreateMap<MotorVehicleLicensePlate, MotorVehicleResponse>()
                 .ForMember(x => x.LicensePlateIdentifier, x => x
-                .MapFrom(x => x.LicensePlate.Identifier));
+                    .MapFrom(x => x.LicensePlate.Identifier));
 
             CreateMap<LicensePlate, LicensePlateResponse>();
 
@@ -20,7 +20,15 @@ namespace FleetManagement.API.Read.Mappings
 
             CreateMap<MotorVehicleWorkOrder, MotorVehicleWorkOrderResponse>();
 
+            CreateMap<MotorVehicle, MotorVehicleSimpleResponse>();
+
             CreateMap<Driver, DriverResponse>();
+
+            CreateMap<LicensePlateDetailed, LicensePlateDetailedResponse>()
+                .ForCtorParam(nameof(LicensePlateDetailedResponse.AssignedMotorVehicle), x => x
+                    .MapFrom(x => x.MotorVehicle));
+
+            CreateMap<LicensePlateSnapshot, LicensePlateSnapshotResponse>();
         }
     }
 }

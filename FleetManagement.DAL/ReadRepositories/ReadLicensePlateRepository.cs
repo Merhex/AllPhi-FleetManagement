@@ -1,5 +1,7 @@
-﻿using FleetManagement.DAL.Repositories.Interfaces;
+﻿using AutoMapper;
+using FleetManagement.DAL.Repositories.Interfaces;
 using FleetManagement.Models;
+using FleetManagement.ReadModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,10 +15,22 @@ namespace FleetManagement.DAL.Repositories
     public class ReadLicensePlateRepository : IReadLicensePlatesRepository
     {
         private readonly FleetManagementContext _context;
+        private readonly IMapper _mapper;
 
-        public ReadLicensePlateRepository(FleetManagementContext context)
+        public ReadLicensePlateRepository(FleetManagementContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
+        }
+
+        public async Task<LicensePlateDetailed> GetDetailedLicensePlate(string identifier, CancellationToken cancellationToken = default)
+        {
+            var licensePlate = await _context.Set<LicensePlate>()
+                .Include(x => x.History)
+                .Include(x => x.MotorVehicle)
+                .SingleOrDefaultAsync(x => x.Identifier == identifier, cancellationToken);
+
+            return _mapper.Map<LicensePlateDetailed>(licensePlate);
         }
 
         public async Task<IEnumerable<LicensePlate>> GetLicensePlates(int page, int pageSize, string sortBy = null, CancellationToken cancellation = default, params Expression<Func<LicensePlate, bool>>[] filters) =>

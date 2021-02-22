@@ -61,6 +61,7 @@ namespace FleetManagement.Blazor.Services
             {
                 "POST"  => await _httpClient.PostAsync(uri, content),
                 "PUT"   => await _httpClient.PutAsync(uri, content),
+                "PATCH" => await _httpClient.PatchAsync(uri, content),
                 _       => throw new InvalidProgramException($"The method set in the command is invalid. Method set was: {command.HttpMethod.Method}")
             };
 

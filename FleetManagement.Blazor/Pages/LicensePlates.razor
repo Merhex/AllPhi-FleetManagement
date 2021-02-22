@@ -61,6 +61,47 @@
     </BarMenu>
 </Bar>
 
+<Container Fluid="true">
+    @if (AddLicensePlateShown)
+    {
+        <Fields>
+            <Validations @ref="LicensePlateValidations" Mode="ValidationMode.Auto">
+                <Validation Validator="@ValidateLicensePlate">
+                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                        <TextEdit @bind-Text="@AddLicensePlateIdentifier">
+                            <Feedback>
+                                <ValidationNone>Enter a license plate identifier.</ValidationNone>
+                                <ValidationError>Please enter in a valid identifier.</ValidationError>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validation>
+            </Validations>
+            <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                <Button Margin="Margin.Is4.FromTop.OnAll"
+                        Color="Color.Info"
+                        Clicked="@AddLicensePlate"
+                        Type="ButtonType.Submit"
+                        Loading="IsAddingLicensePlate"
+                        Disabled="IsAddingLicensePlate">
+                    Add
+                </Button>
+                <Button Clicked="@ToggleAddLicensePlate"
+                        Color="Color.Secondary">
+                    Close
+                </Button>
+            </Field>
+        </Fields>
+    }
+    else
+    {
+        <Button Clicked="@ToggleAddLicensePlate">
+            <Blazorise.Icon Name="FontAwesomeIcons.Plus"></Blazorise.Icon>
+            Add new license plate
+        </Button>
+    }
+</Container>
+
 <DataGrid TItem="LicensePlateResponse"
           Data="@LicensePlatesItems"
           ReadData="@ReadData"
@@ -87,3 +128,5 @@
         <Loader />
     </LoadingTemplate>
 </DataGrid>
+
+<SnackbarStack @ref="SnackbarStack" Location="SnackbarStackLocation.Center" Interval="10000" Multiline="true" />

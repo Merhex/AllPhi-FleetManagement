@@ -8,6 +8,6 @@ namespace FleetManagement.Blazor.Commands
         public string Identifier { get; set; }
 
         public string Endpoint => "MotorVehicles/licensePlates/assign";
-        public HttpMethod HttpMethod { get; set; } = HttpMethod.Post;
+        public HttpMethod HttpMethod => HttpMethod.Post;
     }
 }
