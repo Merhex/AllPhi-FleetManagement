@@ -1,4 +1,5 @@
 ﻿@page "/licensePlates/details/{identifier}"
+@using Blazor.Responses
 
 <Heading Size="HeadingSize.Is3">Details for license plate: @Identifier</Heading>
 <Divider />
@@ -6,23 +7,25 @@
 
 <Heading Size="HeadingSize.Is4">History</Heading>
 <Loader Loading="@IsInitializing">
-    <Accordion>
-        @for (int i = 0; i < LicensePlate.History.Count; i++)
-        {
-            int local = i;
-            <Collapse Visible="@CollapseDictionary[local]">
-                <CollapseHeader>
-                    <Heading Size="HeadingSize.Is5">
-                        <Button Clicked="@(() => CollapseDictionary[local] = ! CollapseDictionary[local])">
-                            @(LicensePlate.History[local].SnapshotDate.ToShortDateString())
-                        </Button>
-                    </Heading>
-                </CollapseHeader>
-                <CollapseBody>
-                    <Paragraph>@(LicensePlate.History[local].MotorVehicle.Brand) @(LicensePlate.History[local].MotorVehicle.Model), with chassis number: @(LicensePlate.History[local].MotorVehicle.ChassisNumber)</Paragraph>
-                    <Paragraph>The status of the license plate was changed to: @(Activity(LicensePlate.History[local].InUse))</Paragraph>
-                </CollapseBody>
-            </Collapse>
-        }
-    </Accordion>
+    <DataGrid TItem="LicensePlateSnapshotResponse"
+              Data="@LicensePlate.History"
+              Filterable="true"
+              FilterMethod="DataGridFilterMethod.Contains">
+        <ChildContent>
+            <DataGridColumn TItem="LicensePlateSnapshotResponse" Field="@nameof(LicensePlateSnapshotResponse.MotorVehicle.ChassisNumber)" Caption="VIN"></DataGridColumn>
+            <DataGridColumn TItem="LicensePlateSnapshotResponse" Field="@nameof(LicensePlateSnapshotResponse.MotorVehicle.Brand)" Caption="Brand"></DataGridColumn>
+            <DataGridColumn TItem="LicensePlateSnapshotResponse" Field="@nameof(LicensePlateSnapshotResponse.MotorVehicle.Model)" Caption="Model"></DataGridColumn>
+            <DataGridCheckColumn TItem="LicensePlateSnapshotResponse" Field="@nameof(LicensePlateSnapshotResponse.InUse)">
+                <DisplayTemplate>
+                    <Check TValue="bool" Checked="context.InUse" Disabled="true" ReadOnly="true" />
+                </DisplayTemplate>
+            </DataGridCheckColumn>
+        </ChildContent>
+        <EmptyTemplate>
+            <Paragraph>No items to be displayed.</Paragraph>
+        </EmptyTemplate>
+        <LoadingTemplate>
+            <Loader />
+        </LoadingTemplate>
+    </DataGrid>
 </Loader>
