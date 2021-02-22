@@ -12,7 +12,7 @@
      Margin="Margin.Is2.FromBottom">
 
     <BarBrand>
-        <BarLink Clicked="@FilterVisibilityToggle">
+        <BarLink Clicked="@(() => FilterIsVisible = !FilterIsVisible)">
             <BarItem>
                 <BarIcon IconName="FontAwesomeIcons.Filter" />
             </BarItem>
@@ -102,7 +102,7 @@
             <DisplayTemplate>
                 @if (context.LicensePlateIdentifier is not null)
                 {
-                    <Button Color="Color.Danger" Outline="true" Disabled="true" ReadOnly="true">@context.LicensePlateIdentifier</Button>
+                    <Button Color="Color.Danger" Outline="true" ReadOnly="true" Clicked="@((identifier) => LicensePlateDetailPage(context.LicensePlateIdentifier))">@context.LicensePlateIdentifier</Button>
                 }
                 else
                 {

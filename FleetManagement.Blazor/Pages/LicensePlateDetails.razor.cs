@@ -19,10 +19,14 @@ namespace FleetManagement.Blazor.Pages
 
         private LicensePlateDetailedResponse LicensePlate { get; set; }
         private bool IsInitializing { get; set; } = true;
+        private Dictionary<int, bool> CollapseDictionary { get; set; } = new Dictionary<int, bool>(); 
 
         protected async override Task OnInitializedAsync()
         {
             LicensePlate = await GetLicensePlate();
+
+            for (int i = 0; i < LicensePlate.History.Count; i++)
+                CollapseDictionary[i] = false;
 
             IsInitializing = false;
         }
@@ -33,5 +37,7 @@ namespace FleetManagement.Blazor.Pages
 
             return await ApiRequestService.SendQuery<LicensePlateDetailedResponse>(query);
         }
+
+        private static string Activity(bool status) => status ? "Active" : "Inactive";
     }
 }

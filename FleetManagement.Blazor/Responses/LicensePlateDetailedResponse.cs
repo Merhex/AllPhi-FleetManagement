@@ -6,7 +6,7 @@ namespace FleetManagement.Blazor.Responses
     {
         public string Identifier { get; set; }
         public bool InUse { get; set; }
-        public IEnumerable<LicensePlateSnapshotResponse> History { get; set; }
+        public List<LicensePlateSnapshotResponse> History { get; set; }
         public MotorVehicleSimpleResponse CurrentMotorVehicle { get; set; }
     }
 }

@@ -106,11 +106,6 @@ namespace FleetManagement.Blazor.Pages
             MotorVehiclesTotal = content.TotalCount;
         }
 
-        private void FilterVisibilityToggle()
-        {
-            FilterIsVisible = !FilterIsVisible;
-        }
-
         private async Task ClearFilter()
         {
             MotorVehicleFilter = new MotorVehicleFilter();
@@ -137,6 +132,11 @@ namespace FleetManagement.Blazor.Pages
             });
 
             NavigationManager.NavigateTo($"/fleet/details/{e.Item.ChassisNumber}");
+        }
+
+        private void LicensePlateDetailPage(string identifier)
+        {
+            NavigationManager.NavigateTo($"/licensePlates/details/{identifier}");
         }
 
         private static IEnumerable<ColumnState> GetColumnState(List<DataGridColumnInfo> columns)
