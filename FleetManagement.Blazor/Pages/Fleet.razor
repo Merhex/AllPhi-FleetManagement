@@ -106,7 +106,7 @@
             <DisplayTemplate>
                 @if (context.LicensePlateIdentifier is not null)
                 {
-                    <Button Color="Color.Danger" Outline="true" ReadOnly="true" Clicked="@((identifier) => LicensePlateDetailPage(context.LicensePlateIdentifier))">@context.LicensePlateIdentifier</Button>
+                    <Button Color="Color.Danger" Outline="true" ReadOnly="true" Clicked="@((identifier) => LicensePlateHistoryPage(context.LicensePlateIdentifier))">@context.LicensePlateIdentifier</Button>
                 }
                 else
                 {

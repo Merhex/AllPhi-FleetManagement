@@ -43,7 +43,7 @@ namespace FleetManagement.API.Read.Queries.Handlers
                 cancellationToken, 
                 filters.ToArray());
 
-            var count = await _readRepository.GetTotalCount(filters.ToArray());
+            var count = await _readRepository.GetTotalCount(cancellationToken, filters.ToArray());
             var mappedResult = _mapper.Map<IEnumerable<MotorVehicleResponse>>(result);
 
             return new PaginatedResponse<MotorVehicleResponse>

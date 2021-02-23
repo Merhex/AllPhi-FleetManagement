@@ -33,7 +33,7 @@ namespace FleetManagement.API.Read.Queries.Handlers
                 filters.Add(x => x.InUse == request.InUse);
 
             var result = await _repository.GetLicensePlates(request.Page, request.PageSize, request.SortBy, cancellationToken, filters.ToArray());
-            var count = await _repository.GetTotalCount(filters.ToArray());
+            var count = await _repository.GetTotalCount(cancellationToken, filters.ToArray());
             var mappedResult = _mapper.Map<IEnumerable<LicensePlateResponse>>(result);
 
             return new PaginatedResponse<LicensePlateResponse>

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FleetManagement.Blazor.Pages
 {
-    public partial class LicensePlateDetails : ComponentBase
+    public partial class LicensePlateHistory : ComponentBase
     {
         [Parameter]
         public string Identifier { get; set; }
@@ -31,6 +31,7 @@ namespace FleetManagement.Blazor.Pages
             Page = eventArgs.Page;
             PageSize = eventArgs.PageSize;
             Columns = eventArgs.Columns.ToList();
+            LicensePlateHistoryFilter.LicensePlateFilter.Identifier = Identifier;
 
             var details = await GetLicensePlateDetails();
 
@@ -42,7 +43,7 @@ namespace FleetManagement.Blazor.Pages
 
         private async Task<PaginatedResponse<LicensePlateSnapshotResponse>> GetLicensePlateDetails()
         {
-            var query = new LicensePlateDetailedQuery
+            var query = new LicensePlateHistoryQuery
             {
                 LicensePlateHistoryFilter = LicensePlateHistoryFilter,
                 Page = Page,

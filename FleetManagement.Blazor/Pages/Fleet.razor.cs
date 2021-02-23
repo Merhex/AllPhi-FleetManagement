@@ -134,9 +134,9 @@ namespace FleetManagement.Blazor.Pages
             NavigationManager.NavigateTo($"/fleet/details/{e.Item.ChassisNumber}");
         }
 
-        private void LicensePlateDetailPage(string identifier)
+        private void LicensePlateHistoryPage(string identifier)
         {
-            NavigationManager.NavigateTo($"/licensePlates/details/{identifier}");
+            NavigationManager.NavigateTo($"/licensePlates/history/{identifier}");
         }
 
         private static IEnumerable<ColumnState> GetColumnState(List<DataGridColumnInfo> columns)

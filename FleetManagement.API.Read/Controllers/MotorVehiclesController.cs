@@ -41,8 +41,8 @@ namespace FleetManagement.API.Read.Controllers
         }
 
 
-        [HttpGet("licensePlate/detailed")]
-        public async Task<IActionResult> GetLicensePlate([FromQuery] LicensePlateDetailedQuery query)
+        [HttpGet("licensePlate/history")]
+        public async Task<IActionResult> GetLicensePlate([FromQuery] LicensePlateHistoryQuery query)
         {
             var result = await _mediator.Send(query);
 

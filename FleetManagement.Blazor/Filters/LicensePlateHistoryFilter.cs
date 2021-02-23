@@ -8,10 +8,11 @@ namespace FleetManagement.Blazor.Filters
         public LicensePlateFilter LicensePlateFilter { get; set; } = new LicensePlateFilter();
 
         public string GetFilterParameters()
-        { 
-            return string.Join('&',
-                MotorVehicleSimpleFilter.GetFilterParameters(), 
-                LicensePlateFilter.GetFilterParameters());
+        {
+            var motorVehicleParams = MotorVehicleSimpleFilter.GetFilterParameters();
+            var licensePlateParams = LicensePlateFilter.GetFilterParameters();
+
+            return string.Join('&', motorVehicleParams, licensePlateParams);
         }
     }
 }

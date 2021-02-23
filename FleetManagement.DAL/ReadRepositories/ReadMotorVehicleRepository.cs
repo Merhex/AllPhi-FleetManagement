@@ -58,10 +58,10 @@ namespace FleetManagement.DAL.Repositories
         public async Task<int> GetTotalCount<T>() where T : class =>
             await _context.Set<T>().CountAsync();
 
-        public async Task<int> GetTotalCount<T>(params Expression<Func<T, bool>>[] filters) where T : class =>
+        public async Task<int> GetTotalCount<T>(CancellationToken cancellationToken = default, params Expression<Func<T, bool>>[] filters) where T : class =>
            await _context.Set<T>()
                     .AsQueryable()
                     .AddFilters(filters)
-                    .CountAsync();
+                    .CountAsync(cancellationToken);
     }
 }

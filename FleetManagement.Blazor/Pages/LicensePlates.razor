@@ -10,7 +10,7 @@
      Margin="Margin.Is2.FromBottom">
 
     <BarBrand>
-        <BarLink Clicked="@FilterVisibilityToggle">
+        <BarLink Clicked="@(() => FilterIsVisible = !FilterIsVisible)">
             <BarItem>
                 <BarIcon IconName="FontAwesomeIcons.Filter" />
             </BarItem>
@@ -68,38 +68,39 @@
 <Container Fluid="true">
     @if (AddLicensePlateShown)
     {
-        <Fields>
-            <Validations @ref="LicensePlateValidations" Mode="ValidationMode.Auto">
-                <Validation Validator="@ValidateLicensePlate">
-                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
-                        <TextEdit @bind-Text="@AddLicensePlateIdentifier">
-                            <Feedback>
-                                <ValidationNone>Enter a license plate identifier.</ValidationNone>
-                                <ValidationError>Please enter in a valid identifier.</ValidationError>
-                            </Feedback>
-                        </TextEdit>
-                    </Field>
-                </Validation>
-            </Validations>
-            <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
-                <Button Margin="Margin.Is4.FromTop.OnAll"
-                        Color="Color.Info"
-                        Clicked="@AddLicensePlate"
-                        Type="ButtonType.Submit"
-                        Loading="IsAddingLicensePlate"
-                        Disabled="IsAddingLicensePlate">
-                    Add
-                </Button>
-                <Button Clicked="@ToggleAddLicensePlate"
-                        Color="Color.Secondary">
-                    Close
-                </Button>
-            </Field>
-        </Fields>
+    <Fields>
+        <Validations @ref="LicensePlateValidations" Mode="ValidationMode.Auto">
+            <Validation Validator="@ValidateLicensePlate">
+                <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                    <TextEdit @bind-Text="@AddLicensePlateIdentifier">
+                        <Feedback>
+                            <ValidationNone>Enter a license plate identifier.</ValidationNone>
+                            <ValidationError>Please enter in a valid identifier.</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Field>
+            </Validation>
+        </Validations>
+        <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+            <Button Color="Color.Info"
+                    Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
+                    Clicked="@AddLicensePlate"
+                    Loading="@IsAddingLicensePlate"
+                    Disabled="@IsAddingLicensePlate"
+                    Type="ButtonType.Submit">
+                Add
+            </Button>
+            <Button Color="Color.Warning"
+                    Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
+                    Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
+                Cancel
+            </Button>
+        </Field>
+    </Fields>
     }
     else
     {
-        <Button Clicked="@ToggleAddLicensePlate">
+        <Button Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
             <Blazorise.Icon Name="FontAwesomeIcons.Plus"></Blazorise.Icon>
             Add new license plate
         </Button>

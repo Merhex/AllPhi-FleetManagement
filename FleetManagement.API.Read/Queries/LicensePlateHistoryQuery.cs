@@ -3,7 +3,7 @@ using MediatR;
 
 namespace FleetManagement.API.Read.Queries
 {
-    public class LicensePlateDetailedQuery : IRequest<LicensePlateDetailedResponse>, IPaginatedQuery, ISortableQuery
+    public class LicensePlateHistoryQuery : IRequest<PaginatedResponse<LicensePlateSnapshotResponse>>, IPaginatedQuery, ISortableQuery
     {
         public int Page { get; set; }
         public int PageSize { get; set; }
@@ -13,6 +13,6 @@ namespace FleetManagement.API.Read.Queries
         public string Brand { get; set; }
         public string Model { get; set; }
         public string ChassisNumber { get; set; }
-
+        public bool? InUse { get; set; }
     }
 }

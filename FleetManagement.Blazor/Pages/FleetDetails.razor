@@ -121,13 +121,15 @@
 
             @if (MotorVehicleDetailed.LicensePlates.Any())
             {
-                <Table Margin="Margin.Is4.FromTop.OnDesktop.Is2.OnMobile">
-                    <TableHeader ThemeContrast="ThemeContrast.Light">
-                        <TableRow>
-                            <TableHeaderCell>Active</TableHeaderCell>
-                            <TableHeaderCell>Identifier</TableHeaderCell>
-                        </TableRow>
-                    </TableHeader>
+        <Table Margin="Margin.Is4.FromTop.OnDesktop.Is2.OnMobile">
+            <TableHeader ThemeContrast="ThemeContrast.Light">
+                <TableRow>
+                    <TableHeaderCell>Active</TableHeaderCell>
+                    <TableHeaderCell>Identifier</TableHeaderCell>
+                </TableRow>
+            </TableHeader>
+                @if (InChangeStatusOperation is false)
+                {
                     @foreach (var licensePlate in MotorVehicleDetailed.LicensePlates)
                     {
                         <TableRow Color="@LicensePlateTableRowColor">
@@ -139,7 +141,12 @@
                             </TableRowCell>
                         </TableRow>
                     }
-                </Table>
+                }
+                else
+                {
+                    <Loader/>
+                }
+        </Table>
             }
             else
             {

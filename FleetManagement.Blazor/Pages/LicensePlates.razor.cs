@@ -115,16 +115,6 @@ namespace FleetManagement.Blazor.Pages
             }
         }
 
-        private void FilterVisibilityToggle()
-        {
-            FilterIsVisible = !FilterIsVisible;
-        }
-
-        private void ToggleAddLicensePlate()
-        {
-            AddLicensePlateShown = !AddLicensePlateShown;
-        }
-
         private async Task ClearFilter()
         {
             LicensePlateFilter = new LicensePlateFilter();

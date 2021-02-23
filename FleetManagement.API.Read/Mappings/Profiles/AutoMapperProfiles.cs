@@ -24,10 +24,6 @@ namespace FleetManagement.API.Read.Mappings
 
             CreateMap<Driver, DriverResponse>();
 
-            CreateMap<LicensePlateDetailed, LicensePlateDetailedResponse>()
-                .ForCtorParam(nameof(LicensePlateDetailedResponse.AssignedMotorVehicle), x => x
-                    .MapFrom(x => x.MotorVehicle));
-
             CreateMap<LicensePlateSnapshot, LicensePlateSnapshotResponse>();
         }
     }

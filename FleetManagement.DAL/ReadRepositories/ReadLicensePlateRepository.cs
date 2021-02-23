@@ -15,36 +15,34 @@ namespace FleetManagement.DAL.Repositories
     public class ReadLicensePlateRepository : IReadLicensePlatesRepository
     {
         private readonly FleetManagementContext _context;
-        private readonly IMapper _mapper;
 
-        public ReadLicensePlateRepository(FleetManagementContext context, IMapper mapper)
+        public ReadLicensePlateRepository(FleetManagementContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
-        public async Task<LicensePlateDetailed> GetDetailedLicensePlate(string identifier, CancellationToken cancellationToken = default)
-        {
-            var licensePlate = await _context.Set<LicensePlate>()
-                .Include(x => x.History)
+        public async Task<IEnumerable<LicensePlateSnapshot>> GetLicensePlateHistory(string identifier, int page, int pageSize, string sortBy = null, CancellationToken cancellationToken = default, params Expression<Func<LicensePlateSnapshot, bool>>[] filters) =>
+            await _context.Set<LicensePlateSnapshot>()
                 .Include(x => x.MotorVehicle)
-                .SingleOrDefaultAsync(x => x.Identifier == identifier, cancellationToken);
+                .AsQueryable()
+                .Where(x => x.LicensePlate.Identifier == identifier)
+                .AddFilters(filters)
+                .SortBy(sortBy)
+                .Pagination(page, pageSize)
+                .ToListAsync(cancellationToken);
 
-            return _mapper.Map<LicensePlateDetailed>(licensePlate);
-        }
-
-        public async Task<IEnumerable<LicensePlate>> GetLicensePlates(int page, int pageSize, string sortBy = null, CancellationToken cancellation = default, params Expression<Func<LicensePlate, bool>>[] filters) =>
+        public async Task<IEnumerable<LicensePlate>> GetLicensePlates(int page, int pageSize, string sortBy = null, CancellationToken cancellationToken = default, params Expression<Func<LicensePlate, bool>>[] filters) =>
             await _context.Set<LicensePlate>()
                 .AsQueryable()
                 .AddFilters(filters)
                 .SortBy(sortBy)
                 .Pagination(page, pageSize)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-        public async Task<int> GetTotalCount<T>(params Expression<Func<T, bool>>[] filters) where T : class =>
+        public async Task<int> GetTotalCount<T>(CancellationToken cancellationToken = default, params Expression<Func<T, bool>>[] filters) where T : class =>
             await _context.Set<T>()
                 .AsQueryable()
                 .AddFilters(filters)
-                .CountAsync();
+                .CountAsync(cancellationToken);
     }
 }

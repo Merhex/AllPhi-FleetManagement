@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FleetManagement.Blazor.Queries
 {
-    public class LicensePlateDetailedQuery : IQuery, IPageable, IMultiSortable
+    public class LicensePlateHistoryQuery : IQuery, IPageable, IMultiSortable
     {
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
@@ -18,7 +18,7 @@ namespace FleetManagement.Blazor.Queries
                 IMultiSortable multiSortable = this;
                 var filterParams = LicensePlateHistoryFilter.GetFilterParameters();
 
-                return $"MotorVehicles/licensePlate/details?{pageable.GetPaginationQueryString()}&{filterParams}&{multiSortable.GetSortQueryString()}";
+                return $"MotorVehicles/licensePlate/history?{pageable.GetPaginationQueryString()}&{filterParams}&{multiSortable.GetSortQueryString()}";
             }
         }
     }
