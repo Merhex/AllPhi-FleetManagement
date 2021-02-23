@@ -1,5 +1,6 @@
 ﻿@page "/licensePlates/"
 @using FleetManagement.Blazor.Responses
+@using FleetManagement.Blazor.Filters 
 
 <Bar Mode="BarMode.Horizontal"
      Breakpoint="Breakpoint.None"
@@ -32,10 +33,13 @@
                             </Addon>
                         </Addons>
                     </Column>
-                    <Column ColumnSize="ColumnSize.Is1.OnDesktop.IsFull.OnMobile">
+                    <Column ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
                         <Field Margin="Margin.Is4.FromLeft.OnDesktop.IsAuto">
-                            <Switch TValue="bool"
-                                    @bind-Checked="@LicensePlateFilter.InUse" Size="Size.Medium">Active</Switch>
+                            <Select TValue="ActivityFilterSelect" @bind-SelectedValue="@LicensePlateFilter.InUse">
+                                <SelectItem TValue="ActivityFilterSelect" Value="ActivityFilterSelect.Active">Active</SelectItem>
+                                <SelectItem TValue="ActivityFilterSelect" Value="ActivityFilterSelect.Inactive">Inactive</SelectItem>
+                                <SelectItem TValue="ActivityFilterSelect" Value="ActivityFilterSelect.All">All</SelectItem>
+                            </Select>
                         </Field>
                     </Column>
                 </Row>

@@ -1,5 +1,10 @@
-﻿using Blazorise.Snackbar;
+﻿using Blazorise;
+using Blazorise.DataGrid;
+using Blazorise.Snackbar;
+using FleetManagement.Blazor.Filters;
+using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FleetManagement.Blazor
@@ -13,6 +18,42 @@ namespace FleetManagement.Blazor
                     await snackbar.PushAsync(message, SnackbarColor.Danger);
 
             return response;
+        }
+
+        public static string Activity(this ActivityFilterSelect filterSelect)
+        {
+            return filterSelect switch
+            {
+                ActivityFilterSelect.Active => "true",
+                ActivityFilterSelect.Inactive => "false",
+                ActivityFilterSelect.All => null,
+                _ => null
+            };
+        }
+
+        public static bool IsDescending(this SortDirection direction) => direction switch
+        {
+            SortDirection.Descending => true,
+            SortDirection.Ascending => false,
+            SortDirection.None => false,
+            _ => false
+        };
+
+
+        public static IEnumerable<ISortable> GetSortables(this List<DataGridColumnInfo> columns)
+        {
+            if (columns.Count is not 0)
+                foreach (var column in columns)
+                {
+                    if (column.Direction is SortDirection.None)
+                        continue;
+
+                    yield return new Sortable
+                    {
+                        Descending = column.Direction.IsDescending(),
+                        PropertyName = column.Field
+                    };
+                }
         }
     }
 }

@@ -10,6 +10,6 @@ namespace FleetManagement.API.Read.Queries
         public string SortBy { get; set; }
 
         public string Identifier { get; set; }
-        public bool InUse { get; set; }
+        public bool? InUse { get; set; }
     }
 }

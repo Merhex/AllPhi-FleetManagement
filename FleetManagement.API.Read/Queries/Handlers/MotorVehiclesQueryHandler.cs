@@ -32,8 +32,9 @@ namespace FleetManagement.API.Read.Queries.Handlers
                 filters.Add(x => x.ChassisNumber.Contains(query.ChassisNumber));
             if (query.Model is not null)
                 filters.Add(x => x.Model.Contains(query.Model));
-               
-            filters.Add(x => x.Operational == query.Operational);
+            
+            if (query.Operational is not null)
+                filters.Add(x => x.Operational == query.Operational);
 
             var result = await _readRepository.GetMotorVehicles(
                 query.Page,

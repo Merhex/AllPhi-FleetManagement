@@ -97,7 +97,7 @@ namespace FleetManagement.Blazor.Pages
                 Page = Page,
                 PageSize = PageSize,
                 MotorVehicleFilter = MotorVehicleFilter,
-                Sortables = GetSortables(Columns).ToList()
+                Sortables = Columns.GetSortables().ToList()
             };
 
             var content = await ApiRequestService.SendQuery<PaginatedResponse<MotorVehicleResponse>>(query);
@@ -150,29 +150,5 @@ namespace FleetManagement.Blazor.Pages
                 };
             }
         }
-
-        private static IEnumerable<ISortable> GetSortables(List<DataGridColumnInfo> columns)
-        {
-            if (columns.Count is not 0)
-                foreach (var column in columns)
-                {
-                    if (column.Direction is SortDirection.None)
-                        continue;
-
-                    yield return new Sortable
-                    {
-                        Descending = IsDescending(column.Direction),
-                        PropertyName = column.Field
-                    };
-                }
-        }
-
-        private static bool IsDescending(SortDirection direction) => direction switch
-        {
-            SortDirection.Descending => true,
-            SortDirection.Ascending => false,
-            SortDirection.None => false,
-            _ => false
-        };
     }
 }

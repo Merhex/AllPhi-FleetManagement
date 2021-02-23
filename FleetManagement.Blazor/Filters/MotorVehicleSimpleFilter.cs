@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace FleetManagement.Blazor.Filters
 {
-    public class MotorVehicleFilter : IFilterable
+    public class MotorVehicleSimpleFilter
     {
         public string ChassisNumber { get; set; }
         public string Model { get; set; }
         public string Brand { get; set; }
-        public ActivityFilterSelect Operational { get; set; } = ActivityFilterSelect.All;
 
         public string GetFilterParameters()
         {
@@ -25,9 +20,6 @@ namespace FleetManagement.Blazor.Filters
 
             if (string.IsNullOrWhiteSpace(Brand) is false)
                 filterParameters.Add($"Brand={Brand}");
-            
-            if (Operational.Activity() is not null)
-                filterParameters.Add($"Operational={Operational.Activity()}");
 
             return string.Join('&', filterParameters);
         }

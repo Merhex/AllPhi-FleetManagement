@@ -1,4 +1,6 @@
-﻿using FleetManagement.Blazor.Queries;
+﻿using Blazorise.DataGrid;
+using FleetManagement.Blazor.Filters;
+using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using FleetManagement.Blazor.Services;
 using Microsoft.AspNetCore.Components;
@@ -17,27 +19,38 @@ namespace FleetManagement.Blazor.Pages
         [Inject]
         private IApiRequestService ApiRequestService { get; set; }
 
-        private LicensePlateDetailedResponse LicensePlate { get; set; }
-        private bool IsInitializing { get; set; } = true;
-        private Dictionary<int, bool> CollapseDictionary { get; set; } = new Dictionary<int, bool>(); 
+        private List<LicensePlateSnapshotResponse> History { get; set; }
+        private LicensePlateHistoryFilter LicensePlateHistoryFilter { get; set; } = new LicensePlateHistoryFilter();
+        private List<DataGridColumnInfo> Columns { get; set; }
+        private int TotalItems { get; set; }
+        private int Page { get; set; } = 1;
+        private int PageSize { get; set; } = 10;
 
-        protected async override Task OnInitializedAsync()
+        private async Task ReadData(DataGridReadDataEventArgs<LicensePlateSnapshotResponse> eventArgs)
         {
-            LicensePlate = await GetLicensePlate();
+            Page = eventArgs.Page;
+            PageSize = eventArgs.PageSize;
+            Columns = eventArgs.Columns.ToList();
 
-            for (int i = 0; i < LicensePlate.History.Count; i++)
-                CollapseDictionary[i] = false;
+            var details = await GetLicensePlateDetails();
 
-            IsInitializing = false;
+            TotalItems = details.TotalCount;
+            History = details.Items.ToList();
+
+            await GetLicensePlateDetails();
         }
 
-        private async Task<LicensePlateDetailedResponse> GetLicensePlate()
+        private async Task<PaginatedResponse<LicensePlateSnapshotResponse>> GetLicensePlateDetails()
         {
-            var query = new LicensePlateDetailedQuery(Identifier);
+            var query = new LicensePlateDetailedQuery
+            {
+                LicensePlateHistoryFilter = LicensePlateHistoryFilter,
+                Page = Page,
+                PageSize = PageSize,
+                Sortables = Columns.GetSortables().ToList()
+            };
 
-            return await ApiRequestService.SendQuery<LicensePlateDetailedResponse>(query);
+            return await ApiRequestService.SendQuery<PaginatedResponse<LicensePlateSnapshotResponse>>(query);
         }
-
-        private static string Activity(bool status) => status ? "Active" : "Inactive";
     }
 }

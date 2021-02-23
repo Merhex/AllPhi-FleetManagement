@@ -28,7 +28,9 @@ namespace FleetManagement.API.Read.Queries.Handlers
 
             if (string.IsNullOrWhiteSpace(request.Identifier) is false)
                 filters.Add(x => x.Identifier.StartsWith(request.Identifier));
-            filters.Add(x => x.InUse == request.InUse);
+
+            if (request.InUse.HasValue)
+                filters.Add(x => x.InUse == request.InUse);
 
             var result = await _repository.GetLicensePlates(request.Page, request.PageSize, request.SortBy, cancellationToken, filters.ToArray());
             var count = await _repository.GetTotalCount(filters.ToArray());

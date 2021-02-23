@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace FleetManagement.Blazor.Filters
 {
     public class LicensePlateFilter : IFilterable
     {
         public string Identifier { get; set; }
-        public bool InUse { get; set; } = false;
+        public ActivityFilterSelect InUse { get; set; } = ActivityFilterSelect.All;
 
         public string GetFilterParameters()
         {
@@ -14,7 +15,8 @@ namespace FleetManagement.Blazor.Filters
             if (string.IsNullOrWhiteSpace(Identifier) is false)
                 filterParameters.Add($"Identifier={Identifier}");
 
-            filterParameters.Add($"InUse={InUse}");
+            if (InUse.Activity() is not null)
+                filterParameters.Add($"InUse={InUse.Activity()}");
 
             return string.Join('&', filterParameters);
         }

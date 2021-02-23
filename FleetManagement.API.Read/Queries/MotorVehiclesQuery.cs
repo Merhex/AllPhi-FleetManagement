@@ -15,6 +15,6 @@ namespace FleetManagement.API.Read.Queries
         public string ChassisNumber { get; set; }
         public string Model { get; set; }
         public string Brand { get; set; }
-        public bool Operational { get; set; }
+        public bool? Operational { get; set; }
     }
 }
