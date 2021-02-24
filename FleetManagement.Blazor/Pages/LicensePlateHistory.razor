@@ -15,9 +15,10 @@
           CurrentPage="@Page"
           ShowPager="true">
     <ChildContent>
-        <DataGridColumn TItem="LicensePlateSnapshotResponse" Field="@nameof(LicensePlateSnapshotResponse.MotorVehicle.ChassisNumber)" Caption="VIN"></DataGridColumn>
-        <DataGridColumn TItem="LicensePlateSnapshotResponse" Field="@nameof(LicensePlateSnapshotResponse.MotorVehicle.Brand)" Caption="Brand"></DataGridColumn>
-        <DataGridColumn TItem="LicensePlateSnapshotResponse" Field="@nameof(LicensePlateSnapshotResponse.MotorVehicle.Model)" Caption="Model"></DataGridColumn>
+        <DataGridDateColumn TItem="LicensePlateSnapshotResponse" Field="@nameof(LicensePlateSnapshotResponse.SnapshotDate)" Caption="Date of snapshot"></DataGridDateColumn>
+        <DataGridColumn TItem="LicensePlateSnapshotResponse" Field="MotorVehicle.ChassisNumber" Caption="VIN"></DataGridColumn>
+        <DataGridColumn TItem="LicensePlateSnapshotResponse" Field="MotorVehicle.Brand" Caption="Brand"></DataGridColumn>
+        <DataGridColumn TItem="LicensePlateSnapshotResponse" Field="MotorVehicle.Model" Caption="Model"></DataGridColumn>
         <DataGridCheckColumn TItem="LicensePlateSnapshotResponse" Field="@nameof(LicensePlateSnapshotResponse.InUse)" Caption="Activated">
             <DisplayTemplate>
                 <Check TValue="bool" Checked="context.InUse" Disabled="true" ReadOnly="true" />

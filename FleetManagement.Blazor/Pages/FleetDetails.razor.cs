@@ -117,6 +117,10 @@ namespace FleetManagement.Blazor.Pages
             }
             else
             {
+                licensePlate.InUse = false;
+
+                StateHasChanged();
+
                 await SnackbarStack.PushAsync("✓", "Success", SnackbarColor.Success);
             }
         }
@@ -141,6 +145,8 @@ namespace FleetManagement.Blazor.Pages
                     await response.ShowErrorsWithSnackbar(SnackbarStack);
                     return;
                 }
+
+                activeLicensePlate.InUse = false;
             }
 
             command = new ActivateLicensePlateCommand
@@ -156,7 +162,10 @@ namespace FleetManagement.Blazor.Pages
             }
             else
             {
-                await GetDetailedMotorVehicle();
+                licensePlate.InUse = true;
+
+                StateHasChanged();
+
                 await SnackbarStack.PushAsync("✓", "Success", SnackbarColor.Success);
             }
         }
