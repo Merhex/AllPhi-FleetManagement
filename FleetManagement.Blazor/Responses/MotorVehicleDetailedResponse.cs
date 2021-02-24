@@ -13,6 +13,6 @@ namespace FleetManagement.Blazor.Responses
         public DriverResponse Driver {get;set;}
         public IEnumerable<LicensePlateResponse> LicensePlates {get;set;}
         public IEnumerable<MotorVehicleMileageResponse> MileageHistory {get;set;}
-        public IEnumerable<MotorVehicleWorkOrderResponse> Conditio {get;set;}
+        public IEnumerable<MotorVehicleWorkOrderResponse> Condition {get;set;}
     }
 }

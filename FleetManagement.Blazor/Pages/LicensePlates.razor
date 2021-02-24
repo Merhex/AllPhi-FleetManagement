@@ -117,10 +117,10 @@
     <ChildContent>
         <DataGridColumn Direction="@IdentifierSortDirection" TItem="LicensePlateResponse" Field="@nameof(LicensePlateResponse.Identifier)" Caption="Identifier">
             <DisplayTemplate>
-                <Button Color="Color.Danger" Outline="true" Disabled="true" ReadOnly="true">@context.Identifier</Button>
+                <Button Color="Color.Danger" Outline="true" Clicked="@(() => LicensePlateHistoryPage(context.Identifier))">@context.Identifier</Button>
             </DisplayTemplate>
         </DataGridColumn>
-        <DataGridCheckColumn TItem="LicensePlateResponse" Field="@nameof(LicensePlateResponse.InUse)" Sortable="false" Caption="Active">
+        <DataGridCheckColumn Direction="@InUseDirection" TItem="LicensePlateResponse" Field="@nameof(LicensePlateResponse.InUse)" Sortable="false" Caption="Active">
             <DisplayTemplate>
                 <Check TValue="bool" Checked="context.InUse" Disabled="true" ReadOnly="true" />
             </DisplayTemplate>

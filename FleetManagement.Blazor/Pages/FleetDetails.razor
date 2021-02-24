@@ -137,7 +137,7 @@
                                 <Check TValue="bool" Checked="@licensePlate.InUse" Disabled="@InChangeStatusOperation" CheckedChanged="@((value) => ChangeLicensePlateStatus(value, licensePlate))"></Check>
                             </TableRowHeader>
                             <TableRowCell>
-                                <Button Color="Color.Danger" Outline="true" Disabled="true">@licensePlate.Identifier</Button>
+                                <Button Color="Color.Danger" Outline="true" Clicked="@(() => LicensePlateHistoryPage(licensePlate.Identifier))">@licensePlate.Identifier</Button>
                             </TableRowCell>
                         </TableRow>
                     }

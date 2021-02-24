@@ -1,4 +1,5 @@
-﻿using Blazorise;
+﻿using Blazored.LocalStorage;
+using Blazorise;
 using Blazorise.Charts;
 using Blazorise.Snackbar;
 using FleetManagement.Blazor.Commands;
@@ -22,6 +23,8 @@ namespace FleetManagement.Blazor.Pages
         private IApiRequestService ApiRequestService { get; set; }
         [Inject]
         private NavigationManager NavigationManager { get; set; }
+        [Inject]
+        private ILocalStorageService LocalStorage { get; set; }
 
         private LineChart<double> MileageChart { get; set; } = new LineChart<double>();
         private MotorVehicleDetailedResponse MotorVehicleDetailed { get; set; }
@@ -56,6 +59,13 @@ namespace FleetManagement.Blazor.Pages
 
                 await HandleRedraw(MileageChart, GetLineChartDataset);
             }
+        }
+
+        private async Task LicensePlateHistoryPage(string identifier)
+        {
+            await LocalStorage.SetItemAsync("return", $"/fleet/details/{ChassisNumber}");
+
+            NavigationManager.NavigateTo($"/licensePlates/history/{identifier}");
         }
 
         private async Task UpdateMotorVehicle()

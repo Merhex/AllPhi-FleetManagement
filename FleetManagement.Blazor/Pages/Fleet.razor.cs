@@ -33,8 +33,6 @@ namespace FleetManagement.Blazor.Pages
         private bool DataLoading { get; set; } = true;
         private bool FilterIsVisible { get; set; } = false;
 
-        private const string _fleetStateLocalStorageKey = "fleetStateKey";
-
 
         [Inject]
         private NavigationManager NavigationManager { get; set; }
@@ -47,15 +45,20 @@ namespace FleetManagement.Blazor.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var state = SynchronousLocalStorage.GetItem<FleetState>(_fleetStateLocalStorageKey);
+            await RetrieveState();
+        }
+
+        private async Task RetrieveState()
+        {
+            var state = SynchronousLocalStorage.GetItem<FleetState>("state");
 
             if (state is not null)
             {
-                Page = state.Page;
-                PageSize = state.PageSize;
+                Page = state.FilterState.Page;
+                PageSize = state.FilterState.PageSize;
                 MotorVehicleFilter = state.Filter;
 
-                foreach (var columnState in state.ColumnStates)
+                foreach (var columnState in state.FilterState.ColumnStates)
                 {
                     _ = columnState.Field switch
                     {
@@ -67,7 +70,7 @@ namespace FleetManagement.Blazor.Pages
                 }
             }
 
-            await LocalStorage.RemoveItemAsync(_fleetStateLocalStorageKey);
+            await LocalStorage.RemoveItemAsync("state");
         }
 
         private async Task ReadData(DataGridReadDataEventArgs<MotorVehicleResponse> eventArgs)
@@ -122,33 +125,35 @@ namespace FleetManagement.Blazor.Pages
 
         private async Task RowClicked(DataGridRowMouseEventArgs<MotorVehicleResponse> e)
         {
-            await LocalStorage.SetItemAsync(_fleetStateLocalStorageKey, new FleetState
-            {
-                Filter = MotorVehicleFilter,
-                Page = Page,
-                PageSize = PageSize,
-                FilterIsVisible = FilterIsVisible,
-                ColumnStates = GetColumnState(Columns).ToList()
-            });
+            await SetState();
 
             NavigationManager.NavigateTo($"/fleet/details/{e.Item.ChassisNumber}");
         }
 
-        private void LicensePlateHistoryPage(string identifier)
+        private async Task SetState()
         {
-            NavigationManager.NavigateTo($"/licensePlates/history/{identifier}");
+            var filterState = new FilterState
+            {
+                ColumnStates = StateHelper.GetColumnState(Columns).ToList(),
+                Page = Page,
+                PageSize = PageSize,
+                FilterIsVisible = FilterIsVisible
+            };
+
+            await LocalStorage.SetItemAsync("state", new FleetState
+            {
+                Filter = MotorVehicleFilter,
+                FilterState = filterState
+            });
+
+            await LocalStorage.SetItemAsync("return", "/fleet");
         }
 
-        private static IEnumerable<ColumnState> GetColumnState(List<DataGridColumnInfo> columns)
+        private async Task LicensePlateHistoryPage(string identifier)
         {
-            foreach (var column in columns)
-            {
-                yield return new ColumnState
-                {
-                    Direction = column.Direction,
-                    Field = column.Field
-                };
-            }
+            await SetState();
+
+            NavigationManager.NavigateTo($"/licensePlates/history/{identifier}");
         }
     }
 }

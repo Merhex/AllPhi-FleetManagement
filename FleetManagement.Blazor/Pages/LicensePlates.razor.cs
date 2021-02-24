@@ -1,4 +1,5 @@
-﻿using Blazorise;
+﻿using Blazored.LocalStorage;
+using Blazorise;
 using Blazorise.DataGrid;
 using Blazorise.Snackbar;
 using FleetManagement.Blazor.Commands;
@@ -6,6 +7,7 @@ using FleetManagement.Blazor.Filters;
 using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using FleetManagement.Blazor.Services;
+using FleetManagement.Blazor.States;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -20,6 +22,12 @@ namespace FleetManagement.Blazor.Pages
     {
         [Inject]
         private IApiRequestService ApiRequestService { get; set; }
+        [Inject]
+        private NavigationManager NavigationManager { get; set; }
+        [Inject]
+        private ILocalStorageService LocalStorage { get; set; }
+        [Inject]
+        private ISyncLocalStorageService SynchronousLocalStorage { get; set; }
 
         private LicensePlateFilter LicensePlateFilter { get; set; } = new LicensePlateFilter();
         private SnackbarStack SnackbarStack { get; set; }
@@ -35,6 +43,31 @@ namespace FleetManagement.Blazor.Pages
         private List<LicensePlateResponse> LicensePlatesItems { get; set; } = new List<LicensePlateResponse>();
         private SortDirection IdentifierSortDirection { get; set; }
         private List<DataGridColumnInfo> Columns { get; set; }
+        private SortDirection InUseDirection { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            var state = SynchronousLocalStorage.GetItem<LicensePlatesState>("state");
+
+            if (state is not null)
+            {
+                Page = state.FilterState.Page;
+                PageSize = state.FilterState.PageSize;
+                LicensePlateFilter = state.Filter;
+
+                foreach (var columnState in state.FilterState.ColumnStates)
+                {
+                    _ = columnState.Field switch
+                    {
+                        "Identifier" => IdentifierSortDirection = columnState.Direction,
+                        "InUse" => InUseDirection = columnState.Direction,
+                        _ => _ = columnState.Direction
+                    };
+                }
+            }
+
+            await LocalStorage.RemoveItemAsync("state");
+        }
 
         private async Task ReadData(DataGridReadDataEventArgs<LicensePlateResponse> eventArgs)
         {
@@ -97,6 +130,27 @@ namespace FleetManagement.Blazor.Pages
             }
 
             IsAddingLicensePlate = false;
+        }
+
+        private async Task LicensePlateHistoryPage(string identifier)
+        {
+            var filterState = new FilterState
+            {
+                ColumnStates = StateHelper.GetColumnState(Columns).ToList(),
+                Page = Page,
+                PageSize = PageSize,
+                FilterIsVisible = FilterIsVisible
+            };
+
+            await LocalStorage.SetItemAsync("state", new LicensePlatesState
+            {
+                Filter = LicensePlateFilter,
+                FilterState = filterState
+            });
+
+            await LocalStorage.SetItemAsync("return", "/licensePlates");
+
+            NavigationManager.NavigateTo($"/licensePlates/history/{identifier}");
         }
 
         private static void ValidateLicensePlate(ValidatorEventArgs e)
