@@ -27,7 +27,8 @@ namespace FleetManagement.DAL.NHibernate.Mappings
                 .Not.Nullable();
 
             Map(x => x.NationalNumber)
-                .Length(15)
+                .CustomSqlType("nchar(21)")
+                .Length(21)
                 .Unique()
                 .Not.Nullable();
 
@@ -38,7 +39,7 @@ namespace FleetManagement.DAL.NHibernate.Mappings
                 .Length(50)
                 .Not.Nullable();
 
-            DiscriminateSubClassesOnColumn("[Discriminator]");
+            DiscriminateSubClassesOnColumn("Discriminator");
         }
     }
 }

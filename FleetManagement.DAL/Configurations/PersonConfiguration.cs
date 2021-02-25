@@ -29,7 +29,7 @@ namespace FleetManagement.DAL.Configurations
 
             builder
                 .Property(u => u.NationalNumber)
-                .HasMaxLength(15)
+                .HasMaxLength(21)
                 .IsRequired()
                 .IsFixedLength();
         }

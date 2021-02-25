@@ -19,6 +19,7 @@ namespace FleetManagement.DAL.NHibernate
                 db.ConnectionString = connectionString;
                 db.BatchSize = 100;
                 db.Driver<SqlClientDriver>();
+                db.SchemaAction = SchemaAutoAction.Validate;
             });
 
             var sessionFactory = Fluently
@@ -42,6 +43,7 @@ namespace FleetManagement.DAL.NHibernate
         {
             collection.AddTransient<IDriverSession, DriverSession>();
             collection.AddTransient<IPersonSession, PersonSession>();
+            collection.AddTransient<IReadDriverSession, ReadDriverSession>();
 
             return collection;
         }

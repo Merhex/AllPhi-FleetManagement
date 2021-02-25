@@ -79,23 +79,23 @@
                         </Feedback>
                     </TextEdit>
                 </Field>
+                <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+                    <Button Color="Color.Info"
+                            Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
+                            Clicked="@AddLicensePlate"
+                            Loading="@IsAddingLicensePlate"
+                            Disabled="@IsAddingLicensePlate"
+                            Type="ButtonType.Submit">
+                        Add
+                    </Button>
+                    <Button Color="Color.Warning"
+                            Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
+                            Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
+                        Cancel
+                    </Button>
+                </Field>
             </Validation>
         </Validations>
-        <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
-            <Button Color="Color.Info"
-                    Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
-                    Clicked="@AddLicensePlate"
-                    Loading="@IsAddingLicensePlate"
-                    Disabled="@IsAddingLicensePlate"
-                    Type="ButtonType.Submit">
-                Add
-            </Button>
-            <Button Color="Color.Warning"
-                    Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
-                    Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
-                Cancel
-            </Button>
-        </Field>
     </Fields>
     }
     else

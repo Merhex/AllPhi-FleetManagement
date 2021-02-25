@@ -25,11 +25,6 @@ namespace FleetManagement.API.Write
         }
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
-            services.AddDbContext<FleetManagementContext>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("FleetManagementDatabase"));
-            });
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FleetManagement.API.Write", Version = "v1" });
@@ -45,15 +40,17 @@ namespace FleetManagement.API.Write
                 .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(BusinessLogicLayer).Assembly))
                 .AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
 
-            services.AddDbContext<FleetManagementContext>();
+            services.AddDbContext<FleetManagementContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("FleetManagementDatabase"));
+            });
+
             services.AddRepositories();
             services.AddNHibernate(Configuration.GetConnectionString("FleetManagementDatabase"));
 
             services.AddBusinessLogicDependencies();
 
             services.AddMediatR(typeof(Startup).Assembly);
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

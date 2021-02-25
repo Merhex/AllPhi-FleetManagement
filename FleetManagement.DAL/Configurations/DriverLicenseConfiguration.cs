@@ -20,8 +20,7 @@ namespace FleetManagement.DAL.Configurations
 
             builder
                 .Property(dl => dl.Identifier)
-                .IsRequired()
-                .HasMaxLength(20);
+                .IsRequired();
         }
     }
 }

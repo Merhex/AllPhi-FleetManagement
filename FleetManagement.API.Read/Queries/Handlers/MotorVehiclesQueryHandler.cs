@@ -24,6 +24,21 @@ namespace FleetManagement.API.Read.Queries.Handlers
 
         public async Task<IPaginatedResponse<MotorVehicleResponse>> Handle(MotorVehiclesQuery query, CancellationToken cancellationToken)
         {
+            var filters = GetFilters(query);
+
+            var motorVehicles = await _readRepository.GetMotorVehicles(query.Page, query.PageSize, query.SortBy, cancellationToken, filters.ToArray());
+            var count = await _readRepository.GetTotalCount(cancellationToken, filters.ToArray());
+            var mappedResult = _mapper.Map<IEnumerable<MotorVehicleResponse>>(motorVehicles);
+
+            return new PaginatedResponse<MotorVehicleResponse>
+            {
+                Items = mappedResult,
+                TotalCount = count
+            };
+        }
+
+        private static List<Expression<Func<MotorVehicle, bool>>> GetFilters(MotorVehiclesQuery query)
+        {
             var filters = new List<Expression<Func<MotorVehicle, bool>>>();
 
             if (query.Brand is not null)
@@ -32,25 +47,10 @@ namespace FleetManagement.API.Read.Queries.Handlers
                 filters.Add(x => x.ChassisNumber.Contains(query.ChassisNumber));
             if (query.Model is not null)
                 filters.Add(x => x.Model.Contains(query.Model));
-            
             if (query.Operational is not null)
                 filters.Add(x => x.Operational == query.Operational);
 
-            var result = await _readRepository.GetMotorVehicles(
-                query.Page,
-                query.PageSize,
-                query.SortBy,
-                cancellationToken, 
-                filters.ToArray());
-
-            var count = await _readRepository.GetTotalCount(cancellationToken, filters.ToArray());
-            var mappedResult = _mapper.Map<IEnumerable<MotorVehicleResponse>>(result);
-
-            return new PaginatedResponse<MotorVehicleResponse>
-            {
-                Items = mappedResult,
-                TotalCount = count
-            };
+            return filters;
         }
     }
 }

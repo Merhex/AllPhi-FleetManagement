@@ -1,10 +1,12 @@
-﻿using FleetManagement.WinForms.Queries;
+﻿using FleetManagement.WinForms.Commands;
+using FleetManagement.WinForms.Queries;
 using FleetManagement.WinForms.Responses;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FleetManagement.WinForms.Services
@@ -22,23 +24,19 @@ namespace FleetManagement.WinForms.Services
             _httpClient = httpClient;
 
             _readUrl = _configuration
-                            .GetSection("ApiUrls")
-                            .GetSection("ReadSSL").Value
+                            .GetSection("ApiUrls").GetSection("ReadSSL").Value
                             ??
                             _configuration
-                            .GetSection("ApiUrls")
-                            .GetSection("Read").Value;
+                            .GetSection("ApiUrls").GetSection("Read").Value;
 
             _writeUrl = _configuration
-                            .GetSection("ApiUrls")
-                            .GetSection("WriteSSL").Value
+                            .GetSection("ApiUrls").GetSection("WriteSSL").Value
                             ??
                             _configuration
-                            .GetSection("ApiUrls")
-                            .GetSection("Write").Value;
+                            .GetSection("ApiUrls").GetSection("Write").Value;
         }
 
-        public async Task<T> SendGetRequest<T>(IQuery query)
+        public async Task<T> SendQuery<T>(IQuery query)
         {
             var request = new HttpRequestMessage
             {
@@ -49,28 +47,22 @@ namespace FleetManagement.WinForms.Services
             return await SendRequest<T>(request);
         }
 
-        public async Task<IApiCommandResponse> SendPutRequest<T>(string endpoint, T data)
+        public async Task<IApiCommandResponse> SendCommand(IApiCommand command)
         {
-            var uri = new Uri($"{_writeUrl}/{endpoint}");
+            var uri = new Uri($"{_writeUrl}/{command.Endpoint}");
+            var json = JsonConvert.SerializeObject(command);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var result = await _httpClient.PutAsJsonAsync(uri, data);
+            var response = command.HttpMethod.Method switch
+            {
+                "POST"   => await _httpClient.PostAsync(uri, content),
+                "PUT"    => await _httpClient.PutAsync(uri, content),
+                "PATCH"  => await _httpClient.PatchAsync(uri, content),
+                "DELETE" => await _httpClient.DeleteAsync(uri),
+                _        => throw new InvalidProgramException($"The method set in the command is invalid. Method set was: {command.HttpMethod.Method}")
+            };
 
-            return await ApiCommandResponse(result);
-        }
-
-        public Task<IApiCommandResponse> SendPostRequest<T>(string endpoint, T data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IApiCommandResponse> SendPatchRequest<T>(string endpoint, T data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IApiCommandResponse> SendDeleteRequest<T>(string endpoint, T data)
-        {
-            throw new NotImplementedException();
+            return await ApiCommandResponse(response);
         }
 
         #region PRIVATE

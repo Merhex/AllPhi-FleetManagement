@@ -1,5 +1,6 @@
 using AutoMapper;
 using FleetManagement.DAL;
+using FleetManagement.DAL.NHibernate;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -44,10 +45,13 @@ namespace FleetManagement.API.Write
 
             services.AddDbContext<FleetManagementContext>();
             services.AddReadRepositories();
+            services.AddNHibernate(Configuration.GetConnectionString("FleetManagementDatabase"));
 
             services.AddAutoMapper(typeof(Startup).Assembly, typeof(FleetManagementContext).Assembly);
 
             services.AddMediatR(typeof(Startup).Assembly);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

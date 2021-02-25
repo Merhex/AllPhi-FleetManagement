@@ -24,6 +24,8 @@ namespace FleetManagement.API.Read.Mappings
 
             CreateMap<Driver, DriverResponse>();
 
+            CreateMap<DriverLicense, DriverLicenseResponse>();
+
             CreateMap<LicensePlateSnapshot, LicensePlateSnapshotResponse>();
         }
     }

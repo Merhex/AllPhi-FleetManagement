@@ -1,10 +1,10 @@
+using FleetManagement.WinForms.Views;
+using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Drawing.Text;
 using System.Windows.Forms;
 
-namespace FleetManagement.Blazor
+namespace FleetManagement.WinForms
 {
     static class Program
     {
@@ -17,7 +17,16 @@ namespace FleetManagement.Blazor
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+
+            var services = new ServiceCollection();
+
+            using var provider = services
+                .ConfigureServices()
+                .BuildServiceProvider();
+
+            var mainForm = provider.GetRequiredService<MainForm>();
+
+            Application.Run(mainForm);
         }
     }
 }

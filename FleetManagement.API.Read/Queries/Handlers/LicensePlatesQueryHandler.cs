@@ -24,13 +24,7 @@ namespace FleetManagement.API.Read.Queries.Handlers
 
         public async Task<IPaginatedResponse<LicensePlateResponse>> Handle(LicensePlatesQuery request, CancellationToken cancellationToken)
         {
-            var filters = new List<Expression<Func<LicensePlate, bool>>>();
-
-            if (string.IsNullOrWhiteSpace(request.Identifier) is false)
-                filters.Add(x => x.Identifier.StartsWith(request.Identifier));
-
-            if (request.InUse.HasValue)
-                filters.Add(x => x.InUse == request.InUse);
+            var filters = GetFilters(request);
 
             var result = await _repository.GetLicensePlates(request.Page, request.PageSize, request.SortBy, cancellationToken, filters.ToArray());
             var count = await _repository.GetTotalCount(cancellationToken, filters.ToArray());
@@ -41,6 +35,18 @@ namespace FleetManagement.API.Read.Queries.Handlers
                 Items = mappedResult,
                 TotalCount = count
             };
+        }
+
+        private static List<Expression<Func<LicensePlate, bool>>> GetFilters(LicensePlatesQuery request)
+        {
+            var filters = new List<Expression<Func<LicensePlate, bool>>>();
+
+            if (string.IsNullOrWhiteSpace(request.Identifier) is false)
+                filters.Add(x => x.Identifier.StartsWith(request.Identifier));
+
+            if (request.InUse.HasValue)
+                filters.Add(x => x.InUse == request.InUse);
+            return filters;
         }
     }
 }

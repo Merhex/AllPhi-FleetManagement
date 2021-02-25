@@ -24,6 +24,21 @@ namespace FleetManagement.API.Read.Queries.Handlers
 
         public async Task<PaginatedResponse<LicensePlateSnapshotResponse>> Handle(LicensePlateHistoryQuery query, CancellationToken cancellationToken)
         {
+            var filters = GetFilters(query);
+
+            var snapshots = await _repository.GetLicensePlateHistory(query.Identifier, query.Page, query.PageSize, query.SortBy, cancellationToken, filters.ToArray());
+            var count = await _repository.GetTotalCount(cancellationToken, filters.ToArray());
+            var mappedResult = _mapper.Map<IEnumerable<LicensePlateSnapshotResponse>>(snapshots);
+
+            return new PaginatedResponse<LicensePlateSnapshotResponse>()
+            {
+                Items = mappedResult,
+                TotalCount = count
+            };
+        }
+
+        private static List<Expression<Func<LicensePlateSnapshot, bool>>> GetFilters(LicensePlateHistoryQuery query)
+        {
             var filters = new List<Expression<Func<LicensePlateSnapshot, bool>>>();
 
             if (string.IsNullOrWhiteSpace(query.Identifier) is false)
@@ -37,15 +52,7 @@ namespace FleetManagement.API.Read.Queries.Handlers
             if (query.InUse is not null)
                 filters.Add(x => x.InUse == query.InUse);
 
-            var snapshots = await _repository.GetLicensePlateHistory(query.Identifier, query.Page, query.PageSize, query.SortBy, cancellationToken, filters.ToArray());
-            var count = await _repository.GetTotalCount(cancellationToken, filters.ToArray());
-            var mappedResult = _mapper.Map<IEnumerable<LicensePlateSnapshotResponse>>(snapshots);
-
-            return new PaginatedResponse<LicensePlateSnapshotResponse>()
-            {
-                Items = mappedResult,
-                TotalCount = count
-            };
+            return filters;
         }
     }
 }

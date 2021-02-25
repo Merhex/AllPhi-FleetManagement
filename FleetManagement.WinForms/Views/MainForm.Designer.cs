@@ -1,5 +1,10 @@
 ﻿
-namespace FleetManagement.Blazor
+using FleetManagement.WinForms.Properties;
+using System.Drawing;
+using System.Drawing.Text;
+using System.IO;
+
+namespace FleetManagement.WinForms.Views
 {
     partial class MainForm
     {
@@ -29,94 +34,95 @@ namespace FleetManagement.Blazor
         /// </summary>
         private void InitializeComponent()
         {
-            this.gradientPanel1 = new FleetManagement.Blazor.Components.GradientPanel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.labelExit = new System.Windows.Forms.Label();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.gradientPanel = new FleetManagement.Blazor.Components.GradientPanel();
+            this.mainPanel = new System.Windows.Forms.Panel();
+            this.driversGridPanel = new System.Windows.Forms.Panel();
+            this.driversGrid = new System.Windows.Forms.DataGridView();
+            this.driversLabel = new System.Windows.Forms.Label();
+            this.mainPanel.SuspendLayout();
+            this.driversGridPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.driversGrid)).BeginInit();
             this.SuspendLayout();
             // 
-            // gradientPanel1
+            // gradientPanel
             // 
-            this.gradientPanel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.gradientPanel1.FadeFromColor = System.Drawing.Color.White;
-            this.gradientPanel1.FadeToColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.gradientPanel1.Location = new System.Drawing.Point(0, 0);
-            this.gradientPanel1.Name = "gradientPanel1";
-            this.gradientPanel1.Size = new System.Drawing.Size(200, 549);
-            this.gradientPanel1.TabIndex = 0;
+            this.gradientPanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.gradientPanel.FadeFromColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
+            this.gradientPanel.FadeToColor = System.Drawing.Color.FromArgb(((int)(((byte)(201)))), ((int)(((byte)(214)))), ((int)(((byte)(255)))));
+            this.gradientPanel.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.gradientPanel.Location = new System.Drawing.Point(0, 0);
+            this.gradientPanel.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.gradientPanel.Name = "gradientPanel";
+            this.gradientPanel.Size = new System.Drawing.Size(129, 408);
+            this.gradientPanel.TabIndex = 0;
             // 
-            // panel1
+            // mainPanel
             // 
-            this.panel1.Controls.Add(this.labelExit);
-            this.panel1.Controls.Add(this.dataGridView1);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(200, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(713, 549);
-            this.panel1.TabIndex = 1;
+            this.mainPanel.Controls.Add(this.driversGridPanel);
+            this.mainPanel.Controls.Add(this.driversLabel);
+            this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainPanel.Location = new System.Drawing.Point(129, 0);
+            this.mainPanel.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
+            this.mainPanel.Name = "mainPanel";
+            this.mainPanel.Size = new System.Drawing.Size(459, 408);
+            this.mainPanel.TabIndex = 1;
             // 
-            // label1
+            // driversGridPanel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(12, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(88, 25);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Drivers";
+            this.driversGridPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.driversGridPanel.Controls.Add(this.driversGrid);
+            this.driversGridPanel.Location = new System.Drawing.Point(16, 41);
+            this.driversGridPanel.Name = "driversGridPanel";
+            this.driversGridPanel.Size = new System.Drawing.Size(431, 355);
+            this.driversGridPanel.TabIndex = 1;
             // 
-            // dataGridView1
+            // driversGrid
             // 
-            this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 67);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(689, 470);
-            this.dataGridView1.TabIndex = 1;
+            this.driversGrid.AllowUserToDeleteRows = false;
+            this.driversGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.driversGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.driversGrid.Location = new System.Drawing.Point(0, 0);
+            this.driversGrid.Name = "driversGrid";
+            this.driversGrid.RowTemplate.Height = 25;
+            this.driversGrid.Size = new System.Drawing.Size(431, 355);
+            this.driversGrid.TabIndex = 0;
             // 
-            // labelExit
+            // driversLabel
             // 
-            this.labelExit.AutoSize = true;
-            this.labelExit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.labelExit.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labelExit.ForeColor = System.Drawing.Color.Black;
-            this.labelExit.Location = new System.Drawing.Point(675, 19);
-            this.labelExit.Name = "labelExit";
-            this.labelExit.Size = new System.Drawing.Size(26, 25);
-            this.labelExit.TabIndex = 2;
-            this.labelExit.Text = "X";
-            this.labelExit.Click += new System.EventHandler(this.labelExit_Click);
+            this.driversLabel.AutoSize = true;
+            this.driversLabel.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.driversLabel.Location = new System.Drawing.Point(5, 13);
+            this.driversLabel.Name = "driversLabel";
+            this.driversLabel.Size = new System.Drawing.Size(88, 25);
+            this.driversLabel.TabIndex = 0;
+            this.driversLabel.Text = "Drivers";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(913, 549);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.gradientPanel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.ClientSize = new System.Drawing.Size(588, 408);
+            this.Controls.Add(this.mainPanel);
+            this.Controls.Add(this.gradientPanel);
             this.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Fleet Management";
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.Text = "MainForm";
+            this.mainPanel.ResumeLayout(false);
+            this.mainPanel.PerformLayout();
+            this.driversGridPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.driversGrid)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Blazor.Components.GradientPanel gradientPanel1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label labelExit;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Label label1;
+        private Blazor.Components.GradientPanel gradientPanel;
+        private System.Windows.Forms.Panel mainPanel;
+        private System.Windows.Forms.Label driversLabel;
+        private System.Windows.Forms.Panel driversGridPanel;
+        private System.Windows.Forms.DataGridView driversGrid;
     }
 }

@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using FleetManagement.API.Read.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace FleetManagement.API.Read.Controllers
 {
@@ -12,6 +14,14 @@ namespace FleetManagement.API.Read.Controllers
         public DriversController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMotorVehicles([FromQuery] DriversQuery query)
+        {
+            var result = await _mediator.Send(query);
+
+            return Ok(result);
         }
     }
 }

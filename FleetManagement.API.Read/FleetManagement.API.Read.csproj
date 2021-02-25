@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FleetManagement.DAL.NHibernate\FleetManagement.DAL.NHibernate.csproj" />
     <ProjectReference Include="..\FleetManagement.DAL\FleetManagement.DAL.csproj" />
   </ItemGroup>
 
