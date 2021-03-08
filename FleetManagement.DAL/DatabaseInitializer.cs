@@ -88,12 +88,17 @@ namespace FleetManagement.DAL
             var motorVehicles = motorVehicle.Generate(50);
             var driverLicenses = driverLicense.Generate(50);
             var drivers = driver.Generate(50);
+            var random = new Random();
 
             foreach (var lp in licensePlates)
             {
                 var history = licensePlateHistory.Generate(10);
+
                 foreach (var snapshot in history)
+                {
+                    snapshot.MotorVehicle = motorVehicles[random.Next(50)];
                     lp.History.Add(snapshot);
+                }
             }
 
             foreach (var mv in motorVehicles)

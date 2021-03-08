@@ -9,7 +9,8 @@ namespace FleetManagement.DAL.Configurations
         public void Configure(EntityTypeBuilder<Person> builder)
         {
             builder
-                .HasKey(person => person.Id);
+                .HasKey(person => person.Id)
+                .IsClustered();
 
             builder
                 .Property(u => u.FirstName)
@@ -28,8 +29,13 @@ namespace FleetManagement.DAL.Configurations
                 .HasMaxLength(100);
 
             builder
+                .HasIndex(x => x.NationalNumber)
+                .IsUnique()
+                .IsClustered(false);
+
+            builder
                 .Property(u => u.NationalNumber)
-                .HasMaxLength(21)
+                .HasMaxLength(16)
                 .IsRequired()
                 .IsFixedLength();
         }

@@ -32,6 +32,7 @@ namespace FleetManagement.Blazor.Pages
         private int MotorVehiclesTotal { get; set; }
         private bool DataLoading { get; set; } = true;
         private bool FilterIsVisible { get; set; } = false;
+        private bool LicensePlateClicked { get; set; } = false;
 
 
         [Inject]
@@ -125,9 +126,12 @@ namespace FleetManagement.Blazor.Pages
 
         private async Task RowClicked(DataGridRowMouseEventArgs<MotorVehicleResponse> e)
         {
-            await SetState();
+            if (LicensePlateClicked is false)
+            {
+                await SetState();
 
-            NavigationManager.NavigateTo($"/fleet/details/{e.Item.ChassisNumber}");
+                NavigationManager.NavigateTo($"/fleet/details/{e.Item.ChassisNumber}");
+            }
         }
 
         private async Task SetState()
@@ -151,9 +155,13 @@ namespace FleetManagement.Blazor.Pages
 
         private async Task LicensePlateHistoryPage(string identifier)
         {
+            LicensePlateClicked = true;
+
             await SetState();
 
             NavigationManager.NavigateTo($"/licensePlates/history/{identifier}");
+
+            LicensePlateClicked = false;
         }
     }
 }

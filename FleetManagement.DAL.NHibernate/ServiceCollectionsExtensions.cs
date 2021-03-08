@@ -16,7 +16,7 @@ namespace FleetManagement.DAL.NHibernate
         {
             #if DEBUG
             Task
-                .Delay(500)
+                .Delay(1000)
                 .Wait();
             #endif
 

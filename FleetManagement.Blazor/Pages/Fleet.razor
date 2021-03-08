@@ -110,7 +110,7 @@
                 }
                 else
                 {
-                    <Paragraph>-</Paragraph>
+                    <Paragraph Style="opacity: .5;">-</Paragraph>
                 }
             </DisplayTemplate>
         </DataGridColumn>
@@ -120,6 +120,9 @@
             </DisplayTemplate>
         </DataGridCheckColumn>
     </ChildContent>
+    <EmptyCellTemplate>
+        <Text Style="opacity: .5;">-</Text>
+    </EmptyCellTemplate>
     <EmptyTemplate>
         <Paragraph>No items to be displayed.</Paragraph>
     </EmptyTemplate>
