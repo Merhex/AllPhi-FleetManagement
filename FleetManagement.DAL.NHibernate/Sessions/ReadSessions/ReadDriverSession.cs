@@ -13,8 +13,9 @@ namespace FleetManagement.DAL.NHibernate
     {
         public ReadDriverSession(ISession session) : base(session) { }
 
-        public async Task<IEnumerable<Driver>> GetDrivers(int page, int pageSize, string sortBy, CancellationToken cancellationToken = default) =>
+        public async Task<IEnumerable<Driver>> GetDrivers(int page, int pageSize, string sortBy, CancellationToken cancellationToken = default, params Expression<Func<Driver, bool>>[] filters) =>
             await _session.Query<Driver>()
+                .AddFilters(filters)
                 .SortBy(sortBy)
                 .Pagination(page, pageSize)
                 .ToListAsync(cancellationToken);

@@ -1,5 +1,6 @@
 ﻿using Blazorise.DataGrid;
 using Blazorise.Snackbar;
+using FleetManagement.Blazor.Filters;
 using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using FleetManagement.Blazor.Services;
@@ -21,8 +22,10 @@ namespace FleetManagement.Blazor.Pages
         public List<DriverResponse> DriverItems { get; set; }
         public int DriverTotal { get; set; }
         public bool DataLoading { get; set; }
+        public bool FilterIsVisible { get; set; }
         public IEnumerable<DataGridColumnInfo> Columns { get; set; }
         public SnackbarStack SnackbarStack { get; set; }
+        public DriverFilter DriverFilter { get; set; } = new DriverFilter();
 
         [Inject]
         public IApiRequestService ApiRequestService { get; set; }
@@ -53,6 +56,7 @@ namespace FleetManagement.Blazor.Pages
             {
                 Page = Page,
                 PageSize = PageSize,
+                DriverFilter = DriverFilter,
                 Sortables = Columns.GetSortables().ToList()
             };
 
@@ -60,6 +64,20 @@ namespace FleetManagement.Blazor.Pages
 
             DriverItems = content.Items.ToList();
             DriverTotal = content.TotalCount;
+        }
+
+        private async Task ApplyFilter()
+        {
+            Page = 1;
+
+            await GetDrivers();
+        }
+
+        private async Task ClearFilter()
+        {
+            DriverFilter = new DriverFilter();
+
+            await ApplyFilter();
         }
     }
 }

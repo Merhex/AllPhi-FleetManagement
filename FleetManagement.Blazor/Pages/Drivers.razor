@@ -1,10 +1,95 @@
 ﻿@page "/drivers"
 @using FleetManagement.Blazor.Responses
-@using System.Globalization
+@using FleetManagement.Blazor.Filters
 
 <Heading Margin="Margin.Is2" Display="Display.Inline">Drivers</Heading>
 
 <Divider />
+
+<Bar Mode="BarMode.Horizontal"
+     Breakpoint="Breakpoint.None"
+     ThemeContrast="ThemeContrast.None"
+     Visible="@FilterIsVisible"
+     Padding="Padding.Is0"
+     Margin="Margin.Is2.FromBottom">
+
+    <BarBrand>
+        <BarLink Clicked="@(() => FilterIsVisible = !FilterIsVisible)">
+            <BarItem>
+                <BarIcon IconName="FontAwesomeIcons.Filter" />
+            </BarItem>
+            Filter
+        </BarLink>
+    </BarBrand>
+
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <Row Gutter="(32, 16)">
+                    <Column ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Start">
+                                <AddonLabel>First name</AddonLabel>
+                            </Addon>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="Bill"
+                                          @bind-Text="@DriverFilter.FirstName" />
+                            </Addon>
+                        </Addons>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Start">
+                                <AddonLabel>Last name</AddonLabel>
+                            </Addon>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="Gates"
+                                          @bind-Text="@DriverFilter.LastName" />
+                            </Addon>
+                        </Addons>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Start">
+                                <AddonLabel>National number</AddonLabel>
+                            </Addon>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="XX.XX.XX-XXX.XX"
+                                          @bind-Text="@DriverFilter.NationalNumber" />
+                            </Addon>
+                        </Addons>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                        <Field Margin="Margin.Is4.FromLeft.OnDesktop.IsAuto">
+                            <Select TValue="ActivityFilterSelect" @bind-SelectedValue="@DriverFilter.Active">
+                                <SelectItem TValue="ActivityFilterSelect" Value="ActivityFilterSelect.Active">Active</SelectItem>
+                                <SelectItem TValue="ActivityFilterSelect" Value="ActivityFilterSelect.Inactive">Inactive</SelectItem>
+                                <SelectItem TValue="ActivityFilterSelect" Value="ActivityFilterSelect.All">All</SelectItem>
+                            </Select>
+                        </Field>
+                    </Column>
+                </Row>
+            </BarItem>
+        </BarStart>
+        <BarEnd Margin="Margin.Is2.FromTop">
+            <BarItem>
+                <Buttons Margin="Margin.IsAuto.OnDesktop.Is2.OnMobile">
+                    <Button Color="Color.Primary"
+                            Clicked="@ApplyFilter"
+                            Disabled="@DataLoading"
+                            Loading="@DataLoading">
+                        Apply filter
+                    </Button>
+                    <Button Color="Color.Secondary"
+                            Clicked="@ClearFilter"
+                            Disabled="@DataLoading">
+                        Clear filter
+                    </Button>
+                </Buttons>
+            </BarItem>
+        </BarEnd>
+    </BarMenu>
+</Bar>
 
 <DataGrid TItem="DriverResponse"
           Data="@DriverItems"
