@@ -5,6 +5,7 @@ using FleetManagement.Blazor.Filters;
 using FleetManagement.Blazor.Queries;
 using FleetManagement.Blazor.Responses;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FleetManagement.Blazor
@@ -40,9 +41,9 @@ namespace FleetManagement.Blazor
         };
 
 
-        public static IEnumerable<ISortable> GetSortables(this List<DataGridColumnInfo> columns)
+        public static IEnumerable<ISortable> GetSortables(this IEnumerable<DataGridColumnInfo> columns)
         {
-            if (columns.Count is not 0)
+            if (columns.Any())
                 foreach (var column in columns)
                 {
                     if (column.Direction is SortDirection.None)

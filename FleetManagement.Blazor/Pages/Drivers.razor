@@ -1,5 +1,41 @@
 ﻿@page "/drivers"
+@using FleetManagement.Blazor.Responses
+@using System.Globalization
 
-<Heading>Drivers</Heading>
+<Heading Margin="Margin.Is2" Display="Display.Inline">Drivers</Heading>
 
 <Divider />
+
+<DataGrid TItem="DriverResponse"
+          Data="@DriverItems"
+          ReadData="@ReadData"
+          TotalItems="@DriverTotal"
+          PageSize="@PageSize"
+          CurrentPage="@Page"
+          ShowPager="true">
+    <ChildContent>
+        <DataGridColumn TItem="DriverResponse" Field="@nameof(DriverResponse.NationalNumber)" Caption="National number"></DataGridColumn>
+        <DataGridColumn TItem="DriverResponse" Field="@nameof(DriverResponse.FirstName)" Caption="First name"></DataGridColumn>
+        <DataGridColumn TItem="DriverResponse" Field="@nameof(DriverResponse.LastName)" Caption="Last name"></DataGridColumn>
+        <DataGridDateColumn TItem="DriverResponse" Field="@nameof(DriverResponse.DateOfBirth)" Caption="Birthdate">
+            <DisplayTemplate>
+                 @context.DateOfBirth.ToString("dd/MM/yyyy")
+            </DisplayTemplate>
+        </DataGridDateColumn>
+        <DataGridCheckColumn TItem="DriverResponse" Field="@nameof(DriverResponse.Active)" Sortable="false" Caption="Active">
+            <DisplayTemplate>
+                <Check TValue="bool" Checked="context.Active" Disabled="true" ReadOnly="true" />
+            </DisplayTemplate>
+        </DataGridCheckColumn>
+    </ChildContent>
+    <EmptyCellTemplate>
+        <Text Style="opacity: .5;">-</Text>
+    </EmptyCellTemplate>
+    <EmptyTemplate>
+        <Paragraph>No items to be displayed.</Paragraph>
+    </EmptyTemplate>
+    <LoadingTemplate>
+        <Loader />
+    </LoadingTemplate>
+</DataGrid>
+

@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FleetManagement.BLL\FleetManagement.BLL.csproj" />
+    <ProjectReference Include="..\FleetManagement.DAL.DatabaseSeeding\FleetManagement.DAL.DatabaseSeeding.csproj" />
   </ItemGroup>
 
 </Project>

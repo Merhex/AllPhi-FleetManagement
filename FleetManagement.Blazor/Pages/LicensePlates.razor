@@ -70,45 +70,36 @@
 </Bar>
 
 <Container Fluid="true">
-    @if (AddLicensePlateShown)
-    {
-        <Fields>
-            <Validations @ref="LicensePlateValidations" Mode="ValidationMode.Auto">
-                <Validation Validator="@ValidateLicensePlate">
-                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
-                        <TextEdit @bind-Text="@AddLicensePlateIdentifier">
-                            <Feedback>
-                                <ValidationNone>Enter a license plate identifier.</ValidationNone>
-                                <ValidationError>Please enter in a valid identifier.</ValidationError>
-                            </Feedback>
-                        </TextEdit>
-                    </Field>
-                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
-                        <Button Color="Color.Info"
-                                Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
-                                Clicked="@AddLicensePlate"
-                                Loading="@IsAddingLicensePlate"
-                                Disabled="@IsAddingLicensePlate"
-                                Type="ButtonType.Submit">
-                            Add
-                        </Button>
-                        <Button Color="Color.Warning"
-                                Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
-                                Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
-                            Cancel
-                        </Button>
-                    </Field>
-                </Validation>
-            </Validations>
-        </Fields>
-    }
-    else
-    {
-        <Button Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
-            <Blazorise.Icon Name="FontAwesomeIcons.Plus"></Blazorise.Icon>
-            Add new license plate
-        </Button>
-    }
+@if (AddLicensePlateShown)
+{
+    <Fields>
+        <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+            <FieldLabel>License plate identifier</FieldLabel>
+            <TextEdit @bind-Text="@AddLicensePlateIdentifier" />
+        </Field>
+        <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+            <Button Color="Color.Info"
+                    Clicked="@AddLicensePlate"
+                    Loading="@IsAddingLicensePlate"
+                    Disabled="@IsAddingLicensePlate"
+                    Type="ButtonType.Submit">
+                Add
+            </Button>
+            <Button Color="Color.Warning"
+                    Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
+                Cancel
+            </Button>
+        </Field>
+    </Fields>
+}
+else
+{
+    <Button Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)"
+            Margin="Margin.IsAuto.OnDesktop.Is3.OnY.OnMobile">
+        <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
+        Add new license plate
+    </Button>
+}
 </Container>
 
 <DataGrid TItem="LicensePlateResponse"

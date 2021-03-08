@@ -36,7 +36,17 @@ namespace FleetManagement.Blazor.Pages
         private bool Disabled { get; set; } = true;
         private bool AlreadyInitialized { get; set; } = false;
         public bool IsAssigningLicensePlate { get; set; } = false;
-        private bool UpdateButtonShown { get; set; } = false;
+        private bool UpdateButtonShown 
+        { 
+            get 
+            {
+                return ! Disabled;
+            } 
+            set 
+            {
+                Disabled = ! value;
+            }
+        }
         private bool AddLicensePlateShown { get; set; } = false;
         private bool MileageAddShown { get; set; } = false;
         private int MileageSnapshotValue { get; set; } = 0;

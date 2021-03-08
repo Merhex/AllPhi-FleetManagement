@@ -17,7 +17,7 @@ namespace FleetManagement.API.Read.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMotorVehicles([FromQuery] DriversQuery query)
+        public async Task<IActionResult> GetDrivers([FromQuery] DriversQuery query)
         {
             var result = await _mediator.Send(query);
 
