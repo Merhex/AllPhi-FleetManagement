@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,17 +27,17 @@ namespace FleetManagement.DAL
 
             if (context is not null)
             {
-                if (context.Database.GetPendingMigrations().Any())
-                    await context.Database.MigrateAsync();
-            }
+                await context.Database.EnsureDeletedAsync();
 
-            await context.Database.EnsureDeletedAsync();
+                if (await context.Database.EnsureCreatedAsync())
+                {
+                    if (context.Database.GetPendingMigrations().Any())
+                        await context.Database.MigrateAsync();
 
-            if (await context.Database.EnsureCreatedAsync())
-            {
-                SeedDevelopmentData(context);
-                await context.SaveChangesAsync();
-            }
+                    SeedDevelopmentData(context);
+                    await context.SaveChangesAsync();
+                }
+            }   
         }
 
         #region PRIVATE
@@ -50,7 +51,7 @@ namespace FleetManagement.DAL
                 .RuleFor(x => x.NameHolderFirstName, f => f.Name.FirstName());
 
             var driver = new Faker<Driver>()
-                .CustomInstantiator(x => new Driver { NationalNumber = x.Random.Replace("##.##.##-###.###") })
+                .RuleFor(x => x.NationalNumber, f => f.Random.Replace("##.##.##-###.###"))
                 .RuleFor(x => x.DateOfBirth, f => f.Date.Past(18))
                 .RuleFor(x => x.Active, f => f.Random.Bool(0.9f))
                 .RuleFor(x => x.AddressLine, f => f.Address.StreetAddress(true))
@@ -60,6 +61,7 @@ namespace FleetManagement.DAL
                 .RuleFor(x => x.LastName, f => f.Name.LastName());
 
             var licensePlate = new Faker<LicensePlate>()
+                .RuleFor(x => x.History, () => new List<LicensePlateSnapshot>())
                 .RuleFor(x => x.Identifier, f => f.Random.Replace("#-???-###"))
                 .RuleFor(x => x.InUse, f => f.Random.Bool(0.1f));
 
@@ -71,6 +73,9 @@ namespace FleetManagement.DAL
                 .RuleFor(x => x.ChassisNumber, f => f.Vehicle.Vin())
                 .RuleFor(x => x.Model, f => f.Vehicle.Model())
                 .RuleFor(x => x.Brand, f => f.Vehicle.Manufacturer())
+                .RuleFor(x => x.Operational, f => f.Random.Bool(0.9f))
+                .RuleFor(x => x.MileageHistory, () => new List<MotorVehicleMileageSnapshot>())
+                .RuleFor(x => x.LicensePlates, () => new List<LicensePlate>())
                 .RuleFor(x => x.BodyType, f => f.Random.Enum<MotorVehicleBodyType>())
                 .RuleFor(x => x.PropulsionType, f => f.Random.Enum<MotorVehiclePropulsionType>());
 
@@ -79,18 +84,38 @@ namespace FleetManagement.DAL
                 .RuleFor(x => x.SnapshotDate, f => f.Date.Between(f.Date.Past(1), DateTime.Now));
 
 
-            licensePlate
-                .RuleFor(x => x.History, licensePlateHistory.Generate(10));
+            var licensePlates = licensePlate.Generate(50);
+            var motorVehicles = motorVehicle.Generate(50);
+            var driverLicenses = driverLicense.Generate(50);
+            var drivers = driver.Generate(50);
 
-            driver
-                .RuleFor(x => x.DriverLicense, f => driverLicense.Generate());
+            foreach (var lp in licensePlates)
+            {
+                var history = licensePlateHistory.Generate(10);
+                foreach (var snapshot in history)
+                    lp.History.Add(snapshot);
+            }
 
-            motorVehicle
-                .RuleFor(x => x.Driver, driver.Generate())
-                .RuleFor(x => x.MileageHistory, mileageSnapshot.Generate(10))
-                .RuleFor(x => x.LicensePlates, f => licensePlate.Generate(f.Random.Int(1, 3)));
+            foreach (var mv in motorVehicles)
+            {
+                var history = mileageSnapshot.Generate(10);
+                foreach (var snapshot in history)
+                    mv.MileageHistory.Add(snapshot);
+            }
 
-            context.MotorVehicles.AddRange(motorVehicle.Generate(200));
+            for (int i = 0; i < drivers.Count; i++)
+                drivers[i].DriverLicense = driverLicenses[i];
+
+            for (int i = 0; i < drivers.Count; i++)
+                drivers[i].MotorVehicle = motorVehicles[i];
+
+            for (int i = 0; i < motorVehicles.Count; i++)
+                motorVehicles[i].LicensePlates.Add(licensePlates[i]);
+
+            for (int i = 0; i < motorVehicles.Count; i++)
+                motorVehicles[i].Driver = drivers[i];
+
+            context.MotorVehicles.AddRange(motorVehicles);
         }
         #endregion
     }

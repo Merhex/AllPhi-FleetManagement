@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Driver;
+using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.NHibernate
 {
@@ -13,6 +14,12 @@ namespace FleetManagement.DAL.NHibernate
     {
 		public static IServiceCollection AddNHibernate(this IServiceCollection collection, string connectionString)
         {
+            #if DEBUG
+            Task
+                .Delay(500)
+                .Wait();
+            #endif
+
             var configuration = new Configuration().DataBaseIntegration(db =>
             {
                 db.Dialect<MsSql2012Dialect>();
@@ -21,6 +28,7 @@ namespace FleetManagement.DAL.NHibernate
                 db.Driver<SqlClientDriver>();
                 db.SchemaAction = SchemaAutoAction.Validate;
             });
+
 
             var sessionFactory = Fluently
                 .Configure(configuration)

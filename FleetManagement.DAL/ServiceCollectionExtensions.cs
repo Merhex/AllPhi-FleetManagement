@@ -42,10 +42,5 @@ namespace FleetManagement.DAL
 
             return collection;
         }
-
-        public static async Task SeedDatabase(this IApplicationBuilder applicationBuilder)
-        {
-
-        } 
     }
 }
