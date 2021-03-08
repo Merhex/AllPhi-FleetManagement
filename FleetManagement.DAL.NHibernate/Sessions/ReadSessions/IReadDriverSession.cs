@@ -7,6 +7,11 @@ namespace FleetManagement.DAL.NHibernate
 {
     public interface IReadDriverSession : IMapperSession, ITotalEntityCounter<Driver>
     {
-        Task<IEnumerable<Driver>> GetDrivers(int page, int pageSize, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Driver>> GetDrivers(
+            int page,
+            int pageSize,
+            string sortBy,
+            CancellationToken cancellationToken = default
+        );
     }
 }

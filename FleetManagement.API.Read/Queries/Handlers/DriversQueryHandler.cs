@@ -22,7 +22,7 @@ namespace FleetManagement.API.Read.Queries.Handlers
 
         public async Task<IPaginatedResponse<DriverResponse>> Handle(DriversQuery query, CancellationToken cancellationToken)
         {
-            var drivers = await _readSession.GetDrivers(query.Page, query.PageSize, cancellationToken);
+            var drivers = await _readSession.GetDrivers(query.Page, query.PageSize, query.SortBy, cancellationToken);
 
             var mappedResult = _mapper.Map<IEnumerable<DriverResponse>>(drivers);
             var count = await _readSession.GetTotalCount(cancellationToken);
