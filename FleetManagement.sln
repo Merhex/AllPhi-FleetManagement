@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.WinForms", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManagement.DAL.NHibernate", "FleetManagement.DAL.NHibernate\FleetManagement.DAL.NHibernate.csproj", "{6B3BB5D6-BC4C-4134-8F5A-B29E57D3AB91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManagement.DAL.DatabaseSeeding", "FleetManagement.DAL.DatabaseSeeding\FleetManagement.DAL.DatabaseSeeding.csproj", "{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +159,18 @@ Global
 		{6B3BB5D6-BC4C-4134-8F5A-B29E57D3AB91}.Release|x64.Build.0 = Release|Any CPU
 		{6B3BB5D6-BC4C-4134-8F5A-B29E57D3AB91}.Release|x86.ActiveCfg = Release|Any CPU
 		{6B3BB5D6-BC4C-4134-8F5A-B29E57D3AB91}.Release|x86.Build.0 = Release|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Debug|x64.Build.0 = Debug|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Debug|x86.Build.0 = Debug|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Release|x64.ActiveCfg = Release|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Release|x64.Build.0 = Release|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Release|x86.ActiveCfg = Release|Any CPU
+		{A99600F4-8C5A-48C2-AA14-01D4F3CE809E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

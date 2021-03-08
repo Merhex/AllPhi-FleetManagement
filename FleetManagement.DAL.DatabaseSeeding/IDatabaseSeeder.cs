@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace FleetManagement.DAL
+namespace FleetManagement.DAL.DatabaseSeeding
 {
     public interface IDatabaseSeeder
     {

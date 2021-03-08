@@ -1,14 +1,15 @@
 ﻿using Bogus;
+using Fare;
 using FleetManagement.Models;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace FleetManagement.DAL
+namespace FleetManagement.DAL.DatabaseSeeding
 {
 
     public class DatabaseInitializer : IDatabaseSeeder
@@ -43,6 +44,7 @@ namespace FleetManagement.DAL
         #region PRIVATE
         private static void SeedDevelopmentData(FleetManagementContext context)
         {
+
             var driverLicense = new Faker<DriverLicense>()
                 .RuleFor(x => x.Identifier, f => f.Finance.CreditCardNumber())
                 .RuleFor(x => x.Categories, f => f.Random.Enum<DriverLicenseType>())
@@ -52,7 +54,7 @@ namespace FleetManagement.DAL
 
             var driver = new Faker<Driver>()
                 .RuleFor(x => x.NationalNumber, f => f.Random.Replace("##.##.##-###.###"))
-                .RuleFor(x => x.DateOfBirth, f => f.Date.Past(18))
+                .RuleFor(x => x.DateOfBirth, f => f.Date.Past(50, DateTime.Now.AddYears(-18)))
                 .RuleFor(x => x.Active, f => f.Random.Bool(0.9f))
                 .RuleFor(x => x.AddressLine, f => f.Address.StreetAddress(true))
                 .RuleFor(x => x.City, f => f.Address.City())
@@ -62,15 +64,16 @@ namespace FleetManagement.DAL
 
             var licensePlate = new Faker<LicensePlate>()
                 .RuleFor(x => x.History, () => new List<LicensePlateSnapshot>())
-                .RuleFor(x => x.Identifier, f => f.Random.Replace("#-???-###"))
+                .RuleFor(x => x.Identifier, f => f.Random.Replace("1-???-###"))
                 .RuleFor(x => x.InUse, f => f.Random.Bool(0.1f));
 
             var mileageSnapshot = new Faker<MotorVehicleMileageSnapshot>()
                 .RuleFor(x => x.SnapshotDate, f => f.Date.Recent(180))
                 .RuleFor(x => x.Mileage, f => f.Random.Int(0, 5000));
 
+            var chars = Regex.Replace((Chars.Numbers + Chars.UpperCase), "[IOQ]", string.Empty);
             var motorVehicle = new Faker<MotorVehicle>()
-                .RuleFor(x => x.ChassisNumber, f => f.Vehicle.Vin())
+                .RuleFor(x => x.ChassisNumber, f => f.Random.String2(17, chars))
                 .RuleFor(x => x.Model, f => f.Vehicle.Model())
                 .RuleFor(x => x.Brand, f => f.Vehicle.Manufacturer())
                 .RuleFor(x => x.Operational, f => f.Random.Bool(0.9f))
