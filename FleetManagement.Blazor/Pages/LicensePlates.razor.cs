@@ -32,6 +32,7 @@ namespace FleetManagement.Blazor.Pages
         private LicensePlateFilter LicensePlateFilter { get; set; } = new LicensePlateFilter();
         private SnackbarStack SnackbarStack { get; set; }
         public Validations LicensePlateValidations { get; set; }
+        private bool InChangeStatusOperation { get; set; }
         private bool FilterIsVisible { get; set; }
         public bool AddLicensePlateShown { get; set; }
         public bool IsAddingLicensePlate { get; set; }
@@ -166,6 +167,67 @@ namespace FleetManagement.Blazor.Pages
             else
             {
                 e.Status = ValidationStatus.Error;
+            }
+        }
+
+        private async Task ChangeLicensePlateStatus(bool status, LicensePlateResponse licensePlate)
+        {
+            InChangeStatusOperation = true;
+
+            var changeOperation = status switch
+            {
+                true => ActivateLicensePlate(licensePlate),
+                false => DeactivateLicensePlate(licensePlate)
+            };
+
+            await changeOperation;
+
+            InChangeStatusOperation = false;
+        }
+
+        private async Task DeactivateLicensePlate(LicensePlateResponse licensePlate)
+        {
+            var command = new DeactivateLicensePlateCommand
+            {
+                Identifier = licensePlate.Identifier
+            };
+
+            var response = await ApiRequestService.SendCommand(command);
+
+            if (response.Errors.Any())
+            {
+                await response.ShowErrorsWithSnackbar(SnackbarStack);
+            }
+            else
+            {
+                licensePlate.InUse = false;
+
+                StateHasChanged();
+
+                await SnackbarStack.PushAsync("✓", "Success", SnackbarColor.Success);
+            }
+        }
+
+        private async Task ActivateLicensePlate(LicensePlateResponse licensePlate)
+        {
+            var command = new ActivateLicensePlateCommand
+            {
+                Identifier = licensePlate.Identifier
+            };
+
+            var response = await ApiRequestService.SendCommand(command);
+
+            if (response.Errors.Any())
+            {
+                await response.ShowErrorsWithSnackbar(SnackbarStack);
+            }
+            else
+            {
+                licensePlate.InUse = true;
+
+                StateHasChanged();
+
+                await SnackbarStack.PushAsync("✓", "Success", SnackbarColor.Success);
             }
         }
 

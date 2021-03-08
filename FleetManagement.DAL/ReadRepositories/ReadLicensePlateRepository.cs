@@ -27,6 +27,7 @@ namespace FleetManagement.DAL.Repositories
                 .AsQueryable()
                 .Where(x => x.LicensePlate.Identifier == identifier)
                 .AddFilters(filters)
+                .OrderByDescending(x => x.SnapshotDate)
                 .SortBy(sortBy)
                 .Pagination(page, pageSize)
                 .ToListAsync(cancellationToken);

@@ -1,6 +1,10 @@
 ﻿@page "/licensePlates/"
 @using FleetManagement.Blazor.Responses
-@using FleetManagement.Blazor.Filters 
+@using FleetManagement.Blazor.Filters
+
+<Heading Margin="Margin.Is2" Display="Display.Inline">License plates</Heading>
+
+<Divider />
 
 <Bar Mode="BarMode.Horizontal"
      Breakpoint="Breakpoint.None"
@@ -68,35 +72,35 @@
 <Container Fluid="true">
     @if (AddLicensePlateShown)
     {
-    <Fields>
-        <Validations @ref="LicensePlateValidations" Mode="ValidationMode.Auto">
-            <Validation Validator="@ValidateLicensePlate">
-                <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
-                    <TextEdit @bind-Text="@AddLicensePlateIdentifier">
-                        <Feedback>
-                            <ValidationNone>Enter a license plate identifier.</ValidationNone>
-                            <ValidationError>Please enter in a valid identifier.</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Field>
-                <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
-                    <Button Color="Color.Info"
-                            Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
-                            Clicked="@AddLicensePlate"
-                            Loading="@IsAddingLicensePlate"
-                            Disabled="@IsAddingLicensePlate"
-                            Type="ButtonType.Submit">
-                        Add
-                    </Button>
-                    <Button Color="Color.Warning"
-                            Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
-                            Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
-                        Cancel
-                    </Button>
-                </Field>
-            </Validation>
-        </Validations>
-    </Fields>
+        <Fields>
+            <Validations @ref="LicensePlateValidations" Mode="ValidationMode.Auto">
+                <Validation Validator="@ValidateLicensePlate">
+                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnMobile">
+                        <TextEdit @bind-Text="@AddLicensePlateIdentifier">
+                            <Feedback>
+                                <ValidationNone>Enter a license plate identifier.</ValidationNone>
+                                <ValidationError>Please enter in a valid identifier.</ValidationError>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                    <Field ColumnSize="ColumnSize.Is3.OnDesktop.IsFull.OnTablet">
+                        <Button Color="Color.Info"
+                                Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
+                                Clicked="@AddLicensePlate"
+                                Loading="@IsAddingLicensePlate"
+                                Disabled="@IsAddingLicensePlate"
+                                Type="ButtonType.Submit">
+                            Add
+                        </Button>
+                        <Button Color="Color.Warning"
+                                Margin="Margin.Is4.OnY.OnDesktop.Is2.OnY.OnMobile"
+                                Clicked="@(() => AddLicensePlateShown = !AddLicensePlateShown)">
+                            Cancel
+                        </Button>
+                    </Field>
+                </Validation>
+            </Validations>
+        </Fields>
     }
     else
     {
@@ -122,7 +126,7 @@
         </DataGridColumn>
         <DataGridCheckColumn Direction="@InUseDirection" TItem="LicensePlateResponse" Field="@nameof(LicensePlateResponse.InUse)" Sortable="false" Caption="Active">
             <DisplayTemplate>
-                <Check TValue="bool" Checked="context.InUse" Disabled="true" ReadOnly="true" />
+                <Check TValue="bool" Checked="context.InUse" Disabled="@InChangeStatusOperation" CheckedChanged="@((value) => ChangeLicensePlateStatus(value, context))" />
             </DisplayTemplate>
         </DataGridCheckColumn>
     </ChildContent>

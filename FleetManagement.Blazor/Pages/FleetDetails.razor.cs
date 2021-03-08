@@ -29,7 +29,6 @@ namespace FleetManagement.Blazor.Pages
         private LineChart<double> MileageChart { get; set; } = new LineChart<double>();
         private MotorVehicleDetailedResponse MotorVehicleDetailed { get; set; }
         private SnackbarStack SnackbarStack { get; set; }
-        private Color LicensePlateTableRowColor { get; set; } = Color.None;
         public string LicensePlateToBeAssigned { get; set; }
         private bool IsLoading { get; set; } = true;
         private bool IsAddingMileage { get; set; }
@@ -98,7 +97,6 @@ namespace FleetManagement.Blazor.Pages
         private async Task ChangeLicensePlateStatus(bool status, LicensePlateResponse licensePlate)
         {
             InChangeStatusOperation = true;
-            LicensePlateTableRowColor = Color.Dark;
 
             var changeOperation = status switch
             {
@@ -109,7 +107,6 @@ namespace FleetManagement.Blazor.Pages
             await changeOperation;
 
             InChangeStatusOperation = false;
-            LicensePlateTableRowColor = Color.None;
         }
 
         private async Task DeactivateLicensePlate(LicensePlateResponse licensePlate)

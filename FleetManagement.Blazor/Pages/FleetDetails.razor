@@ -132,7 +132,7 @@
                 {
                     @foreach (var licensePlate in MotorVehicleDetailed.LicensePlates)
                     {
-                        <TableRow Color="@LicensePlateTableRowColor">
+                        <TableRow>
                             <TableRowHeader>
                                 <Check TValue="bool" Checked="@licensePlate.InUse" Disabled="@InChangeStatusOperation" CheckedChanged="@((value) => ChangeLicensePlateStatus(value, licensePlate))"></Check>
                             </TableRowHeader>
