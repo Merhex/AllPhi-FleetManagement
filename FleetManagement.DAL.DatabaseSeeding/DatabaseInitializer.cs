@@ -44,13 +44,12 @@ namespace FleetManagement.DAL.DatabaseSeeding
         #region PRIVATE
         private static void SeedDevelopmentData(FleetManagementContext context)
         {
+            var faker = new Faker();
 
             var driverLicense = new Faker<DriverLicense>()
                 .RuleFor(x => x.Identifier, f => f.Finance.CreditCardNumber())
                 .RuleFor(x => x.Categories, f => f.Random.Enum<DriverLicenseType>())
-                .RuleFor(x => x.ExpiryDate, f => f.Date.Future(3))
-                .RuleFor(x => x.NameHolderLastName, f => f.Name.LastName())
-                .RuleFor(x => x.NameHolderFirstName, f => f.Name.FirstName());
+                .RuleFor(x => x.ExpiryDate, f => f.Date.Future(3));
 
             var driver = new Faker<Driver>()
                 .RuleFor(x => x.NationalNumber, f => f.Random.Replace("##.##.##-###.###"))
@@ -89,7 +88,6 @@ namespace FleetManagement.DAL.DatabaseSeeding
 
             var licensePlates = licensePlate.Generate(50);
             var motorVehicles = motorVehicle.Generate(50);
-            var driverLicenses = driverLicense.Generate(50);
             var drivers = driver.Generate(50);
             var random = new Random();
 
@@ -106,13 +104,36 @@ namespace FleetManagement.DAL.DatabaseSeeding
 
             foreach (var mv in motorVehicles)
             {
-                var history = mileageSnapshot.Generate(10);
-                foreach (var snapshot in history)
+                var previousMileage = 0;
+                var previousSnapshotDate = faker.Date.Past(yearsToGoBack: 2, DateTime.Now);
+
+                for (int i = 0; i < 20; i++)
+                {
+                    var mileage = random.Next(previousMileage, previousMileage + random.Next(500,1500));
+                    var snapshotDate = faker.Date.Soon(random.Next(5, 30), previousSnapshotDate);
+
+                    var snapshot = new MotorVehicleMileageSnapshot
+                    {
+                        Mileage = mileage,
+                        SnapshotDate = snapshotDate
+                    };
+
                     mv.MileageHistory.Add(snapshot);
+
+                    previousMileage = mileage;
+                    previousSnapshotDate = snapshotDate;
+                }
             }
 
-            for (int i = 0; i < drivers.Count; i++)
-                drivers[i].DriverLicense = driverLicenses[i];
+            foreach (var d in drivers)
+            {
+                var license = driverLicense.Generate();
+
+                license.NameHolderFirstName = d.FirstName;
+                license.NameHolderLastName = d.LastName;
+
+                d.DriverLicense = license;
+            }
 
             for (int i = 0; i < drivers.Count; i++)
                 drivers[i].MotorVehicle = motorVehicles[i];

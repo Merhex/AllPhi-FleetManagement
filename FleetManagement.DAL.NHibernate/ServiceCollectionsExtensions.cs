@@ -29,7 +29,6 @@ namespace FleetManagement.DAL.NHibernate
                 db.SchemaAction = SchemaAutoAction.Validate;
             });
 
-
             var sessionFactory = Fluently
                 .Configure(configuration)
                 .Mappings(x =>
