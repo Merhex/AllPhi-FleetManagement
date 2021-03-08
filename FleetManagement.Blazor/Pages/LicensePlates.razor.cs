@@ -31,7 +31,6 @@ namespace FleetManagement.Blazor.Pages
 
         private LicensePlateFilter LicensePlateFilter { get; set; } = new LicensePlateFilter();
         private SnackbarStack SnackbarStack { get; set; }
-        public Validations LicensePlateValidations { get; set; }
         private bool InChangeStatusOperation { get; set; }
         private bool FilterIsVisible { get; set; }
         public bool AddLicensePlateShown { get; set; }
@@ -109,9 +108,6 @@ namespace FleetManagement.Blazor.Pages
         private async Task AddLicensePlate()
         {
             IsAddingLicensePlate = true;
-
-            var validation = LicensePlateValidations.ValidateAll();
-            if (validation is false) return;
 
             var command = new CreateLicensePlateCommand
             {
