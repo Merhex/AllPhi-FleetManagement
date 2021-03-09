@@ -8,7 +8,6 @@ namespace FleetManagement.API.Read.Controllers
 {
     [Route("api/read/[controller]")]
     [ApiController]
-    [Authorize]
     public class DriversController : ControllerBase
     {
         private readonly IMediator _mediator;

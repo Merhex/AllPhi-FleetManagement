@@ -56,6 +56,15 @@ namespace FleetManagement.API.Write
                     };
                 });
 
+            services.AddAuthorization(options => 
+            {
+                options.AddPolicy("API", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", "FleetManagement.API.Read");
+                });
+            });
+
             services.AddDbContext<FleetManagementContext>();
             services.AddReadRepositories();
             services.AddNHibernate(Configuration.GetConnectionString("FleetManagementDatabase"));
@@ -111,7 +120,8 @@ namespace FleetManagement.API.Write
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers()
+                    .RequireAuthorization("API");
             });
         }
     }

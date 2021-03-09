@@ -6,7 +6,6 @@ namespace FleetManagement.API.Read.Controllers
 {
     [Route("api/read/[controller]")]
     [ApiController]
-    [Authorize]
     public class PersonsController : ControllerBase
     {
         private readonly IMediator _mediator;
