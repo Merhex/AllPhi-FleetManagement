@@ -12,7 +12,8 @@ namespace FleetManagement.IdentityServer4
         public static IEnumerable<IdentityResource> IdentityResources =>
             new IdentityResource[]
             {
-                new IdentityResources.OpenId()
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile()
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>
@@ -27,7 +28,7 @@ namespace FleetManagement.IdentityServer4
             {
                 new()
                 {
-                    ClientId = "Administrative",
+                    ClientId = "blazor",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets =
                     {

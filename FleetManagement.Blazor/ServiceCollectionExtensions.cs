@@ -34,7 +34,7 @@ namespace FleetManagement.Blazor
             var httpClient = new HttpClient();
             var identitySection = builder.Configuration.GetSection("IdentityServer4");
 
-            var discovery = await httpClient.GetDiscoveryDocumentAsync(identitySection.GetSection("Endpoint").Value);
+            var discovery = await httpClient.GetDiscoveryDocumentAsync(identitySection.GetSection("Authority").Value);
             if (discovery.IsError)
                 throw new Exception(discovery.Error);
 
