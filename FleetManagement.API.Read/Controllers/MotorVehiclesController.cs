@@ -1,5 +1,6 @@
 ﻿using FleetManagement.API.Read.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -7,6 +8,7 @@ namespace FleetManagement.API.Read.Controllers
 {
     [Route("api/read/[controller]")]
     [ApiController]
+    [Authorize]
     public class MotorVehiclesController : ControllerBase
     {
         private readonly IMediator _mediator;

@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Linq;
 
 namespace FleetManagement.API.Write
 {
@@ -22,6 +24,7 @@ namespace FleetManagement.API.Write
         {
             Configuration = configuration;
         }
+
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             services.AddDbContext<FleetManagementContext>(options =>
@@ -39,9 +42,19 @@ namespace FleetManagement.API.Write
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddControllers()
+            services.AddControllers()
                 .AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
+
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "https://localhost:5001";
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
+                });
 
             services.AddDbContext<FleetManagementContext>();
             services.AddReadRepositories();
@@ -60,13 +73,6 @@ namespace FleetManagement.API.Write
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-
-                app.UseCors(options =>
-                {
-                    options.AllowAnyOrigin();
-                    options.AllowAnyMethod();
-                    options.AllowAnyHeader();
-                });
             }
 
             app.UseExceptionHandler(a => a.Run(async context =>
@@ -87,6 +93,21 @@ namespace FleetManagement.API.Write
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(options => 
+            {
+                var origins = Configuration.GetSection("AllowedOrigins")
+                    .GetChildren()
+                    .Select(x => x.Value);
+
+                options.WithOrigins(origins.ToArray());
+                options.AllowAnyHeader();
+                options.AllowAnyMethod();
+            });
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

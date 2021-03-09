@@ -14,12 +14,6 @@ namespace FleetManagement.DAL.NHibernate
     {
 		public static IServiceCollection AddNHibernate(this IServiceCollection collection, string connectionString)
         {
-            #if DEBUG
-            Task
-                .Delay(1000)
-                .Wait();
-            #endif
-
             var configuration = new Configuration().DataBaseIntegration(db =>
             {
                 db.Dialect<MsSql2012Dialect>();

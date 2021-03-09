@@ -28,8 +28,6 @@ namespace FleetManagement.DAL.DatabaseSeeding
 
             if (context is not null)
             {
-                await context.Database.EnsureDeletedAsync();
-
                 if (await context.Database.EnsureCreatedAsync())
                 {
                     if (context.Database.GetPendingMigrations().Any())
