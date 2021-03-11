@@ -3,9 +3,6 @@ using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions.Helpers;
 using Microsoft.Extensions.DependencyInjection;
-using NHibernate.Cfg;
-using NHibernate.Dialect;
-using NHibernate.Driver;
 using System.Threading.Tasks;
 
 namespace FleetManagement.DAL.NHibernate
@@ -14,17 +11,13 @@ namespace FleetManagement.DAL.NHibernate
     {
 		public static IServiceCollection AddNHibernate(this IServiceCollection collection, string connectionString)
         {
-            var configuration = new Configuration().DataBaseIntegration(db =>
-            {
-                db.Dialect<MsSql2012Dialect>();
-                db.ConnectionString = connectionString;
-                db.BatchSize = 100;
-                db.Driver<SqlClientDriver>();
-                db.SchemaAction = SchemaAutoAction.Validate;
-            });
+            #if DEBUG
+            Task.Delay(5000).Wait();
+            #endif
 
             var sessionFactory = Fluently
-                .Configure(configuration)
+                .Configure()
+                .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
                 .Mappings(x =>
                 {
                     x.FluentMappings.Conventions.Add(DefaultLazy.Never());

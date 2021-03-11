@@ -28,14 +28,20 @@ namespace FleetManagement.DAL.DatabaseSeeding
 
             if (context is not null)
             {
-                if (await context.Database.EnsureCreatedAsync())
-                {
-                    if (context.Database.GetPendingMigrations().Any())
-                        await context.Database.MigrateAsync();
+                await context.Database.EnsureDeletedAsync();
 
-                    SeedDevelopmentData(context);
-                    await context.SaveChangesAsync();
+                var migrations = await context.Database.GetPendingMigrationsAsync();
+                if (migrations.Any())
+                {
+                    await context.Database.MigrateAsync();
                 }
+                else
+                {
+                    await context.Database.EnsureCreatedAsync();
+                }
+
+                SeedDevelopmentData(context);
+                await context.SaveChangesAsync();
             }   
         }
 
